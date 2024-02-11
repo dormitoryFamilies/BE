@@ -45,3 +45,6 @@ database/data/
 ### REDIS/DATA Directory ###
 redis/data/
 /src/main/generated/com/haejwo/tripcometrue
+
+### resources Directory###
+application.yml
