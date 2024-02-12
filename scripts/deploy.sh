@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 APP_NAME=doomz
-REPOSITORY=/home/ubuntu/
 
 echo "> Check the currently running container"
 CONTAINER_ID=$(docker ps -aqf "name=$APP_NAME")
@@ -18,8 +17,10 @@ fi
 echo "> Remove previous Docker image"
 docker rmi "$APP_NAME"
 
+cd /home/ubuntu
+
 echo "> Build Docker image"
-docker build -t "$APP_NAME" "$REPOSITORY"
+docker build -t "$APP_NAME" .
 
 echo "> Run the Docker container"
 docker run -d -p 3000:8080 --name "$APP_NAME" "$APP_NAME"
