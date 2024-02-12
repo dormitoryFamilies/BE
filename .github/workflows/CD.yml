@@ -67,4 +67,4 @@ jobs:
          aws deploy create-deployment --application-name dormitory-family-codedeploy
          --deployment-config-name CodeDeployDefault.AllAtOnce
          --deployment-group-name dormitory-family-deploy-group
-         --s3-location bucket=dormitory-family-deploy,bundleType=zip,key=deploy/dormitory-family-build.zip
+         --s3-location bucket=dormitory-family-deploy,bundleType=zip,key=dormitory-family-build.zip
