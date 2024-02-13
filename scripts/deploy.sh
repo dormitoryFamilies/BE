@@ -17,7 +17,7 @@ fi
 echo "> Remove previous Docker image"
 docker rmi "$APP_NAME"
 
-cd /home/ubuntu
+cd /home/ubuntu/app
 
 echo "> Build Docker image"
 docker build -t "$APP_NAME" .
