@@ -1,8 +1,8 @@
-name: test CD
+name: CD
 
 on:
   push:
-    branches: ["fix/#11-fix-ci/cd"]
+    branches: ["main", "develop"]
 
 jobs:
   deploy:
