@@ -20,13 +20,13 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "::set-env name=DB_URL::${{ secrets.DB_URL }}"
-          echo "::set-env name=DB_USERNAME::${{ secrets.DB_USERNAME }}"
-          echo "::set-env name=DB_PASSWORD::${{ secrets.DB_PASSWORD }}"
-          echo "::set-env name=AWS_S3_ACCESS_KEY::${{ secrets.AWS_S3_ACCESS_KEY }}"
-          echo "::set-env name=AWS_S3_SECRET_KEY::${{ secrets.AWS_SE_SECRET_KEY }}"
-          echo "::set-env name=AWS_S3_BUCKET::${{ secrets.AWS_S3_BUCKET }}"    
-          echo "::set-env name=AWS_S3_REGION::${{ secrets.AWS_S3_REGION }}"    
+         echo "DB_URL=${{ secrets.DB_URL }}" >> "$GITHUB_ENV"
+         echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> "$GITHUB_ENV"
+         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> "$GITHUB_ENV"
+         echo "AWS_S3_ACCESS_KEY=${{ secrets.AWS_S3_ACCESS_KEY }}" >> "$GITHUB_ENV"
+         echo "AWS_S3_SECRET_KEY=${{ secrets.AWS_S3_SECRET_KEY }}" >> "$GITHUB_ENV"
+         echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> "$GITHUB_ENV"
+         echo "AWS_S3_REGION=${{ secrets.AWS_S3_REGION }}" >> "$GITHUB_ENV"
 
       - name: Gradle Caching
         uses: actions/cache@v3
