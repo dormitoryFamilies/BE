@@ -1,0 +1,26 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  profiles:
+    active: dev
+
+    servlet:
+      multipart:
+        max-file-size: 5MB
+        max-request-size: 5MB
+
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 200
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_S3_REGION}
