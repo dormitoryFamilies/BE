@@ -18,6 +18,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set environment variables
+          run:|
+            echo "::set-env name=DB_URL::${{ secrets.DB_URL }}"
+            echo "::set-env name=DB_USERNAME::${{ secrets.DB_USERNAME }}"
+            echo "::set-env name=DB_PASSWORD::${{ secrets.DB_PASSWORD }}"
+            echo "::set-env name=AWS_ACCESS_KEY::${{ secrets.AWS_ACCESS_KEY }}"
+            echo "::set-env name=AWS_SECRET_KEY::${{ secrets.AWS_SECRET_KEY }}"
+            echo "::set-env name=AWS_S3_DEV_BUCKET::${{ secrets.AWS_S3_DEV_BUCKET }}"    
+            echo "::set-env name=AWS_S3_REGION::${{ secrets.AWS_S3_REGION }}"    
+
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
