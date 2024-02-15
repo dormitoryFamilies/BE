@@ -48,7 +48,3 @@ redis/data/
 
 generated/
 
-### resources Directory ###
-application.yml
-application-dev.yml
-application-prod.yml
