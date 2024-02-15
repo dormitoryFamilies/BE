@@ -47,6 +47,7 @@ jobs:
           cp ./Dockerfile ./deploy/
           cp ./scripts/*.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
+          cp ./.env ./deploy/
           zip -r -qq -j ./dormitory-family-build.zip ./deploy
           
       - name: Configure AWS credentials
