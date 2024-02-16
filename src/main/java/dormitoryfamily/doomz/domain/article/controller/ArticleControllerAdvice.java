@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.article.controller;
 
 import dormitoryfamily.doomz.domain.article.exception.ArticleDormitoryTypeNotExistsException;
+import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.exception.BoardTypeNotExistsException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,15 @@ public class ArticleControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleBoardTypeNotExistsException(BoardTypeNotExistsException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleArticleNotExistsException(ArticleNotExistsException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity

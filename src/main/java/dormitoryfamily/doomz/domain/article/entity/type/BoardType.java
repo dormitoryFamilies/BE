@@ -1,7 +1,9 @@
 package dormitoryfamily.doomz.domain.article.entity.type;
 
 import dormitoryfamily.doomz.domain.article.exception.BoardTypeNotExistsException;
+import lombok.Getter;
 
+@Getter
 public enum BoardType {
 
     HELP("도와주세요"),
