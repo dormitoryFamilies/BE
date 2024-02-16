@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.domain.article.entity.type;
 
+import dormitoryfamily.doomz.domain.article.exception.BoardTypeNotExistsException;
+
 public enum BoardType {
 
     HELP("도와주세요"),
@@ -12,5 +14,14 @@ public enum BoardType {
 
     BoardType(String description) {
         this.description = description;
+    }
+
+    public static BoardType fromDescription(String description) {
+        for (BoardType type : BoardType.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new BoardTypeNotExistsException();
     }
 }
