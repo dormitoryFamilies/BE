@@ -33,11 +33,12 @@ public class ArticleService {
     }
 
     private void saveArticleImages(Article article, CreateArticleRequestDto requestDto) {
-        requestDto.imagesUrls().forEach(url -> {
-                    ArticleImage articleImage = ArticleImage.builder().article(article).imageUrl(url).build();
-                    articleImageRepository.save(articleImage);
-                }
-        );
+        if (!requestDto.imagesUrls().isEmpty()) {
+            requestDto.imagesUrls().forEach(url -> {
+                ArticleImage articleImage = ArticleImage.builder().article(article).imageUrl(url).build();
+                articleImageRepository.save(articleImage);
+            });
+        }
     }
 
     @Transactional
