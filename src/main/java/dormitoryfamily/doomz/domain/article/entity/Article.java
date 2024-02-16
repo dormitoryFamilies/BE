@@ -63,4 +63,15 @@ public class Article extends BaseTimeEntity {
         this.viewCount = viewCount;
         this.wishCount = wishCount;
     }
+
+    public void plusViewCount() {
+        viewCount += 1;
+    }
+
+    @PrePersist
+    private void init() {
+        commentCount = 0;
+        viewCount = 0;
+        wishCount = 0;
+    }
 }
