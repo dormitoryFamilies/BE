@@ -21,7 +21,7 @@ public record CreateArticleRequestDto(
                 .member(member)
                 .title(requestDto.title)
                 .content(requestDto.content)
-                .thumbnailUrl(requestDto.imagesUrls.get(0))
+                .thumbnailUrl(!requestDto.imagesUrls.isEmpty() ? requestDto.imagesUrls.get(0) : null)
                 .status(StatusType.PROGRESS)
                 .dormitoryType(ArticleDormitoryType.fromName(requestDto.dormitoryType))
                 .boardType(BoardType.fromDescription(requestDto.boardType))
