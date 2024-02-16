@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum StatusType {
-    DONE("모집 완료"),
+    DONE("모집완료"),
     PROGRESS("모집중");
 
     private String status;
