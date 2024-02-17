@@ -17,7 +17,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/articles/{articleId}/comments")
-    public ResponseEntity<ResponseDto<CreateCommentResponseDto>> registerComment(
+    public ResponseEntity<ResponseDto<CreateCommentResponseDto>> saveComment(
             @PathVariable Long articleId,
             @RequestBody CreateCommentRequestDto requestDto
     ) {
@@ -25,7 +25,7 @@ public class CommentController {
         Member member = new Member();
         member.setId(1L);
 
-        CreateCommentResponseDto responseDto = commentService.save(articleId, member, requestDto);
+        CreateCommentResponseDto responseDto = commentService.saveComment(articleId, member, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
@@ -40,5 +40,19 @@ public class CommentController {
         commentService.removeComment(member, commentId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    @PostMapping("/comments/{commentId}/replyComments")
+    public ResponseEntity<ResponseDto<CreateCommentResponseDto>> saveReplyComment(
+            @PathVariable Long commentId,
+            @RequestBody CreateCommentRequestDto requestDto
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        CreateCommentResponseDto responseDto = commentService.saveChildComment(member, commentId, requestDto);
+        return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
+    }
+
 
 }
