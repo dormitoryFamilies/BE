@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/articles/{articleId}")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/comments")
+    @PostMapping("/articles/{articleId}/comments")
     public ResponseEntity<ResponseDto<CreateCommentResponseDto>> registerComment(
             @PathVariable Long articleId,
             @RequestBody CreateCommentRequestDto requestDto
@@ -27,6 +27,18 @@ public class CommentController {
 
         CreateCommentResponseDto responseDto = commentService.save(articleId, member, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<ResponseDto<Void>> deleteComment(
+            @PathVariable Long commentId
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        commentService.removeComment(member, commentId);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
 }
