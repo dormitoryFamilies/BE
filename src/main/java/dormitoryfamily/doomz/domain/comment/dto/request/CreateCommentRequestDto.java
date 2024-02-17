@@ -10,10 +10,20 @@ public record CreateCommentRequestDto (
         @NotNull(message = "댓글 내용은 null일 수 없습니다.")
         String content
 ){
-    public static Comment toEntity(Member member, Article article, CreateCommentRequestDto requestDto){
+    public static Comment toComment(Member member, Article article, CreateCommentRequestDto requestDto){
         return Comment.builder()
                 .article(article)
                 .member(member)
+                .content(requestDto.content())
+                .isDeleted(false)
+                .build();
+    }
+
+    public static Comment toChildComment(Member member, Comment parentComment, CreateCommentRequestDto requestDto){
+        return Comment.builder()
+                .article(parentComment.getArticle())
+                .member(member)
+                .parentComment(parentComment)
                 .content(requestDto.content())
                 .isDeleted(false)
                 .build();
