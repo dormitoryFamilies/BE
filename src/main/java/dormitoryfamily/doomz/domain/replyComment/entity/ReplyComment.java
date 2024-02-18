@@ -1,8 +1,8 @@
-package dormitoryfamily.doomz.domain.comment.entity;
+package dormitoryfamily.doomz.domain.replyComment.entity;
 
 import dormitoryfamily.doomz.domain.article.entity.Article;
+import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,25 +10,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "comment")
-public class Comment extends BaseTimeEntity {
+@Table(name = "reply_comment")
+public class ReplyComment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "reply_comment_id")
     private Long id;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "article_id")
-    private Article article;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -37,17 +30,15 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "comment")
-    private List<ReplyComment> replyComments  = new ArrayList<>();
-
-    private boolean isDeleted;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @Builder
-    public Comment(Article article, Member member, String content, boolean isDeleted) {
-        this.article = article;
+    public ReplyComment(Article article, Member member, Comment comment, String content) {
         this.member = member;
+        this.comment = comment;
         this.content = content;
-        this.isDeleted = isDeleted;
     }
 
 }

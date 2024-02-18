@@ -23,7 +23,7 @@ public class CommentService {
 
     public CreateCommentResponseDto saveComment(Long articleId, Member member, CreateCommentRequestDto requestDto) {
         Article article = getArticleById(articleId);
-        Comment comment = CreateCommentRequestDto.toComment(member, article, requestDto);
+        Comment comment = CreateCommentRequestDto.toEntity(member, article, requestDto);
         Comment savedComment = commentRepository.save(comment);
         //댓글 수 증가 로직 추가 예정
         //알람 로직 추가 예정
@@ -35,13 +35,6 @@ public class CommentService {
         Comment comment = getCommentById(commentId);
         //댓글 수 감소 로직 추가 예정
         commentRepository.delete(comment);
-    }
-
-    public CreateCommentResponseDto saveChildComment(Member member, Long parentCommentId, CreateCommentRequestDto requestDto) {
-        Comment parentComment = getCommentById(parentCommentId);
-        Comment childComment = CreateCommentRequestDto.toChildComment(member, parentComment, requestDto);
-        Comment savedChildComment = commentRepository.save(childComment);
-        return CreateCommentResponseDto.fromEntity(savedChildComment);
     }
 
     private Article getArticleById(Long articleId){

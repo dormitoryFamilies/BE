@@ -41,18 +41,4 @@ public class CommentController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @PostMapping("/comments/{commentId}/replyComments")
-    public ResponseEntity<ResponseDto<CreateCommentResponseDto>> saveReplyComment(
-            @PathVariable Long commentId,
-            @RequestBody CreateCommentRequestDto requestDto
-    ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
-
-        CreateCommentResponseDto responseDto = commentService.saveChildComment(member, commentId, requestDto);
-        return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
-    }
-
-
 }
