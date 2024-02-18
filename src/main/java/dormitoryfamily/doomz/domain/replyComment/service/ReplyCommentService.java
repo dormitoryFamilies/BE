@@ -10,6 +10,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;
 import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
+import dormitoryfamily.doomz.domain.replyComment.exception.ReplyCommentNotExistsException;
 import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,15 @@ public class ReplyCommentService {
                 .orElseThrow(CommentNotExistsException::new);
     }
 
+    public void removeReplyComment(Member member, Long replyCommentId) {
+        //작성자 확인 및 대댓글 수 감소 로직 추가 예정
+        ReplyComment replyComment = getReplyCommentById(replyCommentId);
+        replyCommentRepository.delete(replyComment);
+    }
 
+    private ReplyComment getReplyCommentById(Long replyCommentId){
+        return replyCommentRepository.findById(replyCommentId)
+                .orElseThrow(ReplyCommentNotExistsException::new);
+    }
 }
 
