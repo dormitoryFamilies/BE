@@ -33,5 +33,16 @@ public class ReplyCommentController {
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
+    @DeleteMapping("/replyComments/{replyCommentId}")
+    public ResponseEntity<ResponseDto<Void>> deleteComment(
+            @PathVariable Long replyCommentId
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        replyCommentService.removeReplyComment(member, replyCommentId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 
 }
