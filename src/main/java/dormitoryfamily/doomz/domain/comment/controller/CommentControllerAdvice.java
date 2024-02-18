@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.comment.controller;
 
-import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.comment.dto.request;
 
-
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.entity.Member;

@@ -1,9 +1,5 @@
 package dormitoryfamily.doomz.domain.replyComment.controller;
 
-
-import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
-import dormitoryfamily.doomz.domain.comment.dto.response.CreateCommentResponseDto;
-import dormitoryfamily.doomz.domain.comment.service.CommentService;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;

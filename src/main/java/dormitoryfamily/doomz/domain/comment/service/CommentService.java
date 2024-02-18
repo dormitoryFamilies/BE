@@ -31,10 +31,24 @@ public class CommentService {
     }
 
     public void removeComment(Member member, Long commentId) {
-        //작성자 확인 코드 추가 예정
+        //작성자 확인 및 댓글수 감소 로직 추가 예정
         Comment comment = getCommentById(commentId);
-        //댓글 수 감소 로직 추가 예정
-        commentRepository.delete(comment);
+
+        if (hasReplyComment(comment)) {
+            comment.markAsDeleted();
+        } else {
+            commentRepository.delete(comment);
+        }
+    }
+
+    public void decideCommentDeletion(Comment comment){;
+        if(comment.isDeleted()&&hasReplyComment(comment)){
+            commentRepository.delete(comment);
+        }
+    }
+
+    private boolean hasReplyComment(Comment comment) {
+        return comment.getReplyComments().stream().anyMatch(reply -> true);
     }
 
     private Article getArticleById(Long articleId){

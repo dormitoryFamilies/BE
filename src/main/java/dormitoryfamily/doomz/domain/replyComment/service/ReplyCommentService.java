@@ -4,8 +4,10 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
+import dormitoryfamily.doomz.domain.comment.exception.CommentDeletedException;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
+import dormitoryfamily.doomz.domain.comment.service.CommentService;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;
@@ -23,6 +25,7 @@ public class ReplyCommentService {
 
     private final CommentRepository commentRepository;
     private final ReplyCommentRepository replyCommentRepository;
+    private final CommentService commentService;
 
     public CreateReplyCommentResponseDto saveReplyComment(Member member, Long commentId, CreateReplyCommentRequestDto requestDto) {
         Comment comment = getCommentById(commentId);
@@ -40,6 +43,7 @@ public class ReplyCommentService {
         //작성자 확인 및 대댓글 수 감소 로직 추가 예정
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
         replyCommentRepository.delete(replyComment);
+        commentService.decideCommentDeletion(replyComment.getComment());
     }
 
     private ReplyComment getReplyCommentById(Long replyCommentId){
