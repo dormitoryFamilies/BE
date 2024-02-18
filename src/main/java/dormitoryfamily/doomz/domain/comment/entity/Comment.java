@@ -38,6 +38,7 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     @OneToMany(mappedBy = "comment")
+    @OrderBy("createdAt ASC")
     private List<ReplyComment> replyComments  = new ArrayList<>();
 
     private boolean isDeleted;

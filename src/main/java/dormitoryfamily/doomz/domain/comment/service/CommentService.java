@@ -4,17 +4,22 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
+import dormitoryfamily.doomz.domain.comment.dto.response.CommentListResponseDto;
+import dormitoryfamily.doomz.domain.comment.dto.response.CommentResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CreateCommentResponseDto;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,19 @@ public class CommentService {
         commentRepository.save(comment);
         article.increaseCommentCount();
         return CreateCommentResponseDto.fromEntity(comment);
+    }
+
+    public CommentListResponseDto getCommentList(Long articleId, Member member) {
+
+        Article article = getArticleById(articleId);
+
+        List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
+
+        List<CommentResponseDto> commentResponseDto = comments.stream()
+                .map(comment -> CommentResponseDto.fromEntity(member, comment))
+                .collect(toList());
+
+        return CommentListResponseDto.toDto(article.getCommentCount(), commentResponseDto);
     }
 
     public void removeComment(Member member, Long commentId) {
