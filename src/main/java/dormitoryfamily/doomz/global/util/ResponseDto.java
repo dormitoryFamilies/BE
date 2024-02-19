@@ -32,6 +32,12 @@ public class ResponseDto<T> {
                 .build();
     }
 
+    public static ResponseDto<Void> created() {
+        return ResponseDto.<Void>builder()
+                .code(HttpStatus.CREATED.value())
+                .build();
+    }
+
     public static <T> ResponseDto<T> createdWithData(T data) {
         return ResponseDto.<T>builder()
                 .code(HttpStatus.CREATED.value())
