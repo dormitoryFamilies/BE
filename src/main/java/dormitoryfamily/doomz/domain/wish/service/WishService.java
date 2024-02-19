@@ -5,6 +5,7 @@ import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
+import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class WishService {
 
     public void saveWish(Member member, Long articleId) {
         Article article = getArticleById(articleId);
+        checkArticleIsWished(member.getId(),articleId);
         article.increaseWishCount();
         Wish wish = createWish(article, member);
         wishRepository.save(wish);
@@ -28,6 +30,12 @@ public class WishService {
     private Article getArticleById(Long articleId){
         return articleRepository.findById(articleId)
                 .orElseThrow(ArticleNotExistsException::new);
+    }
+
+    private void checkArticleIsWished(Long memberId, Long articleId){
+        if(wishRepository.existsByMemberIdAndArticleId(memberId, articleId)){
+            throw new AlreadyWishedArticleException();
+        }
     }
 
     private Wish createWish(Article article, Member member){
