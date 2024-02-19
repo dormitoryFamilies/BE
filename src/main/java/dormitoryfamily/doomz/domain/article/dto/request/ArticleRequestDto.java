@@ -8,7 +8,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import java.util.List;
 
-public record CreateArticleRequestDto(
+public record ArticleRequestDto(
         String dormitoryType,
         String boardType,
         String title,
@@ -16,7 +16,7 @@ public record CreateArticleRequestDto(
         String tags,
         List<String> imagesUrls
 ) {
-    public static Article toEntity(Member member, CreateArticleRequestDto requestDto) {
+    public static Article toEntity(Member member, ArticleRequestDto requestDto) {
         return Article.builder()
                 .member(member)
                 .title(requestDto.title)
