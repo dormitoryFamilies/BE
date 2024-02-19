@@ -6,6 +6,7 @@ import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
+import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,17 @@ public class WishService {
 
     public void saveWish(Member member, Long articleId) {
         Article article = getArticleById(articleId);
-        checkArticleIsWished(member.getId(),articleId);
-        article.increaseWishCount();
+        checkArticleIsNotWished(member.getId(),articleId);
         Wish wish = createWish(article, member);
         wishRepository.save(wish);
+        article.increaseWishCount();
+    }
+
+    public void removeWish(Member member, Long articleId){
+        Article article = getArticleById(articleId);
+        Wish wish = getWishByMemberIdAndArticleId(member.getId(), articleId);
+        wishRepository.delete(wish);
+        article.decreaseWishCount();
     }
 
     private Article getArticleById(Long articleId){
@@ -32,7 +40,7 @@ public class WishService {
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
-    private void checkArticleIsWished(Long memberId, Long articleId){
+    private void checkArticleIsNotWished(Long memberId, Long articleId){
         if(wishRepository.existsByMemberIdAndArticleId(memberId, articleId)){
             throw new AlreadyWishedArticleException();
         }
@@ -40,6 +48,11 @@ public class WishService {
 
     private Wish createWish(Article article, Member member){
         return Wish.builder().member(member).article(article).build();
+    }
+
+    private Wish getWishByMemberIdAndArticleId(Long memberId, Long articleId){
+        return wishRepository.findByMemberIdAndArticleId(memberId, articleId)
+                .orElseThrow(NotWishedArticleException::new);
     }
 
 }
