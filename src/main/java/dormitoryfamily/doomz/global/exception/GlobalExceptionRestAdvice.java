@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionRestAdvice {
@@ -52,10 +52,12 @@ public class GlobalExceptionRestAdvice {
     public ResponseEntity<ResponseDto<Void>> handleValidationExceptions(MethodArgumentNotValidException e) {
 
         BindingResult bindingResult = e.getBindingResult();
-        Optional<FieldError> firstError = bindingResult.getFieldErrors().stream().findFirst();
+        List<String> fieldErrors = bindingResult.getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
 
-        FieldError error = firstError.get();
-        String errorMessage = error.getField() + ": " + error.getDefaultMessage();
+        String errorMessage = String.join(" | ", fieldErrors);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ResponseDto.errorWithMessage(HttpStatus.BAD_REQUEST, errorMessage));
