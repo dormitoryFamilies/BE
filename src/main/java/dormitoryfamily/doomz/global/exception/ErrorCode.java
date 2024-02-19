@@ -24,6 +24,7 @@ public enum ErrorCode {
 
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 댓글입니다."),
+    COMMENT_IS_DELETED(HttpStatus.BAD_REQUEST, "삭제된 댓글입니다."),
 
     //replyComment
     REPLY_COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 대댓글입니다."),
