@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = TagCountConstraintValidator.class)
 public @interface TagCountConstraint {
 
-    int value() default 2;
+    int value() default 5;
     String message() default "입력 가능한 태그 개수를 초과하였습니다.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
