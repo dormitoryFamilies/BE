@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.domain.article.dto.request;
 
+import dormitoryfamily.doomz.domain.article.dto.validation.MaxListSize;
+import dormitoryfamily.doomz.domain.article.dto.validation.TagCountConstraint;
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
@@ -11,9 +13,13 @@ import java.util.List;
 public record ArticleRequestDto(
         String dormitoryType,
         String boardType,
-        String title,
-        String content,
+        String title, //최대 50자
+        String content, //최대 1500자
+
+        @TagCountConstraint
         String tags,
+
+        @MaxListSize
         List<String> imagesUrls
 ) {
     public static Article toEntity(Member member, ArticleRequestDto requestDto) {
