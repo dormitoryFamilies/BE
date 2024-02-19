@@ -6,6 +6,7 @@ import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDt
 import dormitoryfamily.doomz.domain.article.service.ArticleService;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ArticleController {
 
     @PostMapping("/articles")
     public ResponseEntity<ResponseDto<CreateArticleResponseDto>> register(
-            @RequestBody ArticleRequestDto requestDto
+            @RequestBody @Valid ArticleRequestDto requestDto
     ) {
         // 삭제 예정
         Member member = new Member();
