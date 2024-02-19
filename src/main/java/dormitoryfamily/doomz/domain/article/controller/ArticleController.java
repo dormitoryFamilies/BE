@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.article.controller;
 
-import dormitoryfamily.doomz.domain.article.dto.request.CreateArticleRequestDto;
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.service.ArticleService;
@@ -19,7 +19,7 @@ public class ArticleController {
 
     @PostMapping("/articles")
     public ResponseEntity<ResponseDto<CreateArticleResponseDto>> register(
-            @RequestBody CreateArticleRequestDto requestDto
+            @RequestBody ArticleRequestDto requestDto
     ) {
         // 삭제 예정
         Member member = new Member();
@@ -29,7 +29,7 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
-    @GetMapping("articles/{articleId}")
+    @GetMapping("/articles/{articleId}")
     public ResponseEntity<ResponseDto<ArticleResponseDto>> findArticle(
             @PathVariable Long articleId
     ) {
@@ -41,4 +41,16 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
+    @PutMapping("/articles/{articleId}")
+    public ResponseEntity<ResponseDto<Void>> modifyArticle(
+            @PathVariable Long articleId,
+            @RequestBody ArticleRequestDto requestDto
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        articleService.updateArticle(member, articleId, requestDto);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }

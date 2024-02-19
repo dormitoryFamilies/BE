@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.article.entity;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
@@ -66,6 +67,15 @@ public class Article extends BaseTimeEntity {
 
     public void plusViewCount() {
         viewCount += 1;
+    }
+
+    public void updateArticle(ArticleRequestDto requestDto) {
+        dormitoryType = ArticleDormitoryType.fromName(requestDto.dormitoryType());
+        boardType = BoardType.fromDescription(requestDto.boardType());
+        title = requestDto.title();
+        content = requestDto.content();
+        tags = requestDto.tags();
+        thumbnailUrl = (!requestDto.imagesUrls().isEmpty() ? requestDto.imagesUrls().get(0) : null);
     }
 
     @PrePersist

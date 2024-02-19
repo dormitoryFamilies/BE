@@ -17,6 +17,9 @@ public enum ErrorCode {
     BOARD_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시판 유형이 존재하지 않습니다."),
     ARTICLE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시글은 존재하지 않습니다."),
 
+    // Member
+    INVALID_MEMBER_ACCESS(HttpStatus.NOT_FOUND, "해당 게시글에 대한 권한이 없습니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
