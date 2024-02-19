@@ -7,14 +7,22 @@ import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
 public record ArticleRequestDto(
         String dormitoryType,
         String boardType,
-        String title, //최대 50자
-        String content, //최대 1500자
+
+        @Length(min = 1, max = 20, message = "제목은 최소 1자, 최대 20자 입니다.")
+        @NotBlank(message = "공백은 유효하지 않습니다.")
+        String title,
+
+        @Length(min = 1, max = 500, message = "본문은 최소 1자, 최대 500자 입니다.")
+        @NotBlank(message = "공백은 유효하지 않습니다.")
+        String content,
 
         @TagCountConstraint
         String tags,
