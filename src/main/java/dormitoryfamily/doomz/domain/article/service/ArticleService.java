@@ -73,4 +73,11 @@ public class ArticleService {
             throw new InvalidMemberAccessException();
         }
     }
+
+    public void deleteArticle(Member loginMember, Long articleId) {
+        Article article = getArticleById(articleId);
+        isWriter(loginMember, article.getMember());
+
+        articleRepository.delete(article);
+    }
 }
