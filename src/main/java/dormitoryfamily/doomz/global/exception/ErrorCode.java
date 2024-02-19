@@ -28,7 +28,10 @@ public enum ErrorCode {
 
     //replyComment
     REPLY_COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 대댓글입니다."),
-    ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다"),
+
+    //wish
+    ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
+    ARTICLE_IS_NOT_WISHED(HttpStatus.CONFLICT, "찜하지 않은 게시글입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
