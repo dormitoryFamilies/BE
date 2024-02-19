@@ -53,4 +53,16 @@ public class ArticleController {
         articleService.updateArticle(member, articleId, requestDto);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    @DeleteMapping("/articles/{articleId}")
+    public ResponseEntity<ResponseDto<Void>> removeArticle(
+            @PathVariable Long articleId
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        articleService.deleteArticle(member, articleId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }

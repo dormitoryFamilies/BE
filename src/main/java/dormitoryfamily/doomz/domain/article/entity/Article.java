@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
@@ -28,8 +31,12 @@ public class Article extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    private List<ArticleImage> articleImages = new ArrayList<>();
+
     @Column(nullable = false)
     private String title;
+
     private String content;
     private String thumbnailUrl;
 
