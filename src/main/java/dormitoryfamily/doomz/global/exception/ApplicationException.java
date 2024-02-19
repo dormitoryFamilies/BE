@@ -11,8 +11,16 @@ public class ApplicationException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    protected ApplicationException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
     @Override
     public String getMessage() {
-        return errorCode.getMessage();
+        if (super.getMessage() == null) {
+            return errorCode.getMessage();
+        }
+        return super.getMessage();
     }
 }
