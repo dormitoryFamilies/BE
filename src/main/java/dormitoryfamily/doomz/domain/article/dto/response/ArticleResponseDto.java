@@ -41,7 +41,7 @@ public record ArticleResponseDto(
                 article.getContent(),
                 article.getWishCount(),
                 false, // 추후 수정 예정
-                article.getStatus().getStatus(),
+                article.getStatus().getDescription(),
                 article.getCreatedAt(),
                 getArticleImagesUrls(articleImages)
         );

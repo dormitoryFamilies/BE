@@ -65,4 +65,17 @@ public class ArticleController {
         articleService.deleteArticle(member, articleId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    @PutMapping("/articles/{articleId}/status")
+    public ResponseEntity<ResponseDto<Void>> changeStatus(
+            @PathVariable Long articleId,
+            @RequestParam String status
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        articleService.changeStatus(member, articleId, status);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }

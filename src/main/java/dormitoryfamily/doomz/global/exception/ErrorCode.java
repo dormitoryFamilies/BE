@@ -15,7 +15,9 @@ public enum ErrorCode {
     // Article
     ARTICLE_DORMITORY_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기숙사 유형이 존재하지 않습니다."),
     BOARD_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시판 유형이 존재하지 않습니다."),
+    STATUS_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시글 상태는 존재하지 않습니다"),
     ARTICLE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시글은 존재하지 않습니다."),
+    STATUS_ALREADY_SET(HttpStatus.BAD_REQUEST, null),
 
     // Member
     INVALID_MEMBER_ACCESS(HttpStatus.NOT_FOUND, "해당 게시글에 대한 권한이 없습니다."),

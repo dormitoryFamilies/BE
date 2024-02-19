@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.article.entity.type;
 
-import dormitoryfamily.doomz.domain.article.exception.BoardTypeNotExistsException;
+import dormitoryfamily.doomz.domain.article.exception.InvalidBoardTypeException;
 import lombok.Getter;
 
 @Getter
@@ -24,6 +24,6 @@ public enum BoardType {
                 return type;
             }
         }
-        throw new BoardTypeNotExistsException();
+        throw new InvalidBoardTypeException();
     }
 }
