@@ -85,6 +85,14 @@ public class Article extends BaseTimeEntity {
         viewCount += 1;
     }
 
+    public void increaseWishCount(){
+        this.wishCount += 1;
+    }
+
+    public void decreaseWishCount(){
+        this.wishCount -= 1;
+    }
+
     public void changeStatus(StatusType status) {
         if (this.status.equals(status)) {
             throw new StatusAlreadySetException("상태 코드는 이미 [" + status.getDescription() + "] 입니다");
