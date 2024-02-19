@@ -45,7 +45,7 @@ public class ArticleController {
     @PutMapping("/articles/{articleId}")
     public ResponseEntity<ResponseDto<Void>> modifyArticle(
             @PathVariable Long articleId,
-            @RequestBody ArticleRequestDto requestDto
+            @RequestBody @Valid ArticleRequestDto requestDto
     ) {
         // 삭제 예정
         Member member = new Member();
