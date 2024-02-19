@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.wish.controller;
 
-import dormitoryfamily.doomz.domain.replyComment.exception.ReplyCommentNotExistsException;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;

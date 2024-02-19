@@ -1,7 +1,5 @@
 package dormitoryfamily.doomz.domain.wish.controller;
 
-import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
-import dormitoryfamily.doomz.domain.comment.dto.response.CreateCommentResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.wish.service.WishService;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -26,7 +24,18 @@ public class WishController {
 
         wishService.saveWish(member, articleId);
         return ResponseEntity.ok(ResponseDto.created());
+    }
 
+    @DeleteMapping
+    public ResponseEntity<ResponseDto<Void>> cancelWish(
+            @PathVariable Long articleId
+    ){
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        wishService.removeWish(member, articleId);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
 }
