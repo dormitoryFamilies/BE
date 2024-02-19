@@ -5,6 +5,7 @@ import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.ArticleImage;
+import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
@@ -19,14 +20,14 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleImageRepository articleImageRepository;
 
-    @Transactional
-    public CreateArticleResponseDto save(Member member, ArticleRequestDto requestDto) {
-        Article article = ArticleRequestDto.toEntity(member, requestDto);
+    public CreateArticleResponseDto save(Member loginMember, ArticleRequestDto requestDto) {
+        Article article = ArticleRequestDto.toEntity(loginMember, requestDto);
 
         articleRepository.save(article);
         saveArticleImages(article, requestDto);
@@ -43,13 +44,12 @@ public class ArticleService {
         }
     }
 
-    @Transactional
-    public ArticleResponseDto findArticle(Member member, Long articleId) {
+    public ArticleResponseDto findArticle(Member loginMember, Long articleId) {
         Article article = getArticleById(articleId);
         List<ArticleImage> articleImages = articleImageRepository.findByArticleId(articleId);
 
         article.plusViewCount();
-        return ArticleResponseDto.fromEntity(member, article, articleImages);
+        return ArticleResponseDto.fromEntity(loginMember, article, articleImages);
     }
 
     private Article getArticleById(Long articleId) {
@@ -57,10 +57,9 @@ public class ArticleService {
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
-    @Transactional
-    public void updateArticle(Member member, Long articleId, ArticleRequestDto requestDto) {
+    public void updateArticle(Member loginMember, Long articleId, ArticleRequestDto requestDto) {
         Article article = getArticleById(articleId);
-        isWriter(member, article.getMember());
+        isWriter(loginMember, article.getMember());
 
         articleImageRepository.deleteAllByArticle(article);
         saveArticleImages(article, requestDto);
@@ -79,5 +78,13 @@ public class ArticleService {
         isWriter(loginMember, article.getMember());
 
         articleRepository.delete(article);
+    }
+
+    public void changeStatus(Member loginMember, Long articleId, String status) {
+        Article article = getArticleById(articleId);
+        isWriter(loginMember, article.getMember());
+
+        StatusType statusType = StatusType.fromDescription(status);
+        article.changeStatus(statusType);
     }
 }

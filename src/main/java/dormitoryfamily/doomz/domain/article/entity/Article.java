@@ -4,6 +4,7 @@ import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
+import dormitoryfamily.doomz.domain.article.exception.StatusAlreadySetException;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -74,6 +75,13 @@ public class Article extends BaseTimeEntity {
 
     public void plusViewCount() {
         viewCount += 1;
+    }
+
+    public void changeStatus(StatusType status) {
+        if (this.status.equals(status)) {
+            throw new StatusAlreadySetException("상태 코드는 이미 [" + status.getDescription() + "] 입니다");
+        }
+        this.status = status;
     }
 
     public void updateArticle(ArticleRequestDto requestDto) {
