@@ -1,10 +1,7 @@
 package dormitoryfamily.doomz.domain.replyComment.service;
 
-import dormitoryfamily.doomz.domain.article.entity.Article;
-import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
-import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
-import dormitoryfamily.doomz.domain.comment.exception.CommentDeletedException;
+import dormitoryfamily.doomz.domain.comment.exception.CommentIsDeletedException;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.comment.service.CommentService;
@@ -29,6 +26,7 @@ public class ReplyCommentService {
 
     public CreateReplyCommentResponseDto saveReplyComment(Member member, Long commentId, CreateReplyCommentRequestDto requestDto) {
         Comment comment = getCommentById(commentId);
+        checkCommentIsDeleted(comment);
         ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(member, comment, requestDto);
         ReplyComment savedReplyComment = replyCommentRepository.save(replyComment);
         return CreateReplyCommentResponseDto.fromEntity(savedReplyComment);
@@ -37,6 +35,12 @@ public class ReplyCommentService {
     private Comment getCommentById(Long commentId){
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotExistsException::new);
+    }
+
+    private void checkCommentIsDeleted(Comment comment) {
+        if (comment.isDeleted()) {
+            throw new CommentIsDeletedException();
+        }
     }
 
     public void removeReplyComment(Member member, Long replyCommentId) {
