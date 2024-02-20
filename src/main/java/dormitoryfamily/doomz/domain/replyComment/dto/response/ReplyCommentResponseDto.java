@@ -19,9 +19,9 @@ public record ReplyCommentResponseDto (
         public static ReplyCommentResponseDto fromEntity(Member member, ReplyComment replyComment) {
                 return new ReplyCommentResponseDto(
                         replyComment.getId(),
-                        member.getId(),
-                        member.getProfileUrl(),
-                        member.getNickname(),
+                        replyComment.getMember().getId(),
+                        replyComment.getMember().getProfileUrl(),
+                        replyComment.getMember().getNickname(),
                         replyComment.getCreatedAt(),
                         replyComment.getContent(),
                         false//추후 수정
