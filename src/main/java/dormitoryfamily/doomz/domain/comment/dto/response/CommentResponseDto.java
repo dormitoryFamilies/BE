@@ -26,9 +26,9 @@ public record CommentResponseDto (
     public static CommentResponseDto fromEntity(Member member, Comment comment){
         return new CommentResponseDto(
                 comment.getId(),
-                member.getId(),
-                member.getProfileUrl(),
-                member.getNickname(),
+                comment.getMember().getId(),
+                comment.getMember().getProfileUrl(),
+                comment.getMember().getNickname(),
                 comment.getCreatedAt(),
                 comment.getContent(),
                 false,//추후 수정
