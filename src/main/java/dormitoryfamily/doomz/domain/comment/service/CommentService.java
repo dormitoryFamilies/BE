@@ -12,11 +12,13 @@ import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -52,6 +54,7 @@ public class CommentService {
 
     public void removeComment(Member member, Long commentId) {
         Comment comment = getCommentById(commentId);
+        isWriter(member, comment.getMember());
         if (hasReplyComment(comment)) {
             comment.markAsDeleted();
         } else {
@@ -63,6 +66,12 @@ public class CommentService {
     public void decideCommentDeletion(Comment comment){;
         if(comment.isDeleted()&&hasReplyComment(comment)){
             commentRepository.delete(comment);
+        }
+    }
+
+    private void isWriter(Member loginMember, Member writer) {
+        if (!Objects.equals(loginMember.getId(), writer.getId())) {
+            throw new InvalidMemberAccessException();
         }
     }
 
