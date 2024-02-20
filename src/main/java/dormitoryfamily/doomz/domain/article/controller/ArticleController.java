@@ -74,7 +74,7 @@ public class ArticleController {
     ) {
         // 삭제 예정
         Member member = new Member();
-        member.setId(1L);
+        member.setId(12222L);
 
         articleService.changeStatus(member, articleId, status);
         return ResponseEntity.ok(ResponseDto.ok());
