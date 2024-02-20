@@ -73,6 +73,14 @@ public class Article extends BaseTimeEntity {
         this.wishCount = wishCount;
     }
 
+    public void increaseCommentCount(){
+        this.commentCount += 1;
+    }
+
+    public void decreaseCommentCount(){
+        this.commentCount -= 1;
+    }
+
     public void plusViewCount() {
         viewCount += 1;
     }
