@@ -6,6 +6,7 @@ import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.comment.service.CommentService;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;
 import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
@@ -14,6 +15,8 @@ import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentReposito
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +49,7 @@ public class ReplyCommentService {
 
     public void removeReplyComment(Member member, Long replyCommentId) {
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
+        isWriter(member, replyComment.getMember());
         replyCommentRepository.delete(replyComment);
         commentService.decideCommentDeletion(replyComment.getComment());
         replyComment.getComment().getArticle().decreaseCommentCount();
@@ -54,6 +58,12 @@ public class ReplyCommentService {
     private ReplyComment getReplyCommentById(Long replyCommentId){
         return replyCommentRepository.findById(replyCommentId)
                 .orElseThrow(ReplyCommentNotExistsException::new);
+    }
+
+    private void isWriter(Member loginMember, Member writer) {
+        if (!Objects.equals(loginMember.getId(), writer.getId())) {
+            throw new InvalidMemberAccessException();
+        }
     }
 }
 
