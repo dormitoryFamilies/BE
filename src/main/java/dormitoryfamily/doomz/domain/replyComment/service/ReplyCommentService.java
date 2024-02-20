@@ -28,8 +28,9 @@ public class ReplyCommentService {
         Comment comment = getCommentById(commentId);
         checkCommentIsDeleted(comment);
         ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(member, comment, requestDto);
-        ReplyComment savedReplyComment = replyCommentRepository.save(replyComment);
-        return CreateReplyCommentResponseDto.fromEntity(savedReplyComment);
+        replyCommentRepository.save(replyComment);
+        comment.getArticle().increaseCommentCount();
+        return CreateReplyCommentResponseDto.fromEntity(replyComment);
     }
 
     private Comment getCommentById(Long commentId){
@@ -44,10 +45,10 @@ public class ReplyCommentService {
     }
 
     public void removeReplyComment(Member member, Long replyCommentId) {
-        //작성자 확인 및 대댓글 수 감소 로직 추가 예정
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
         replyCommentRepository.delete(replyComment);
         commentService.decideCommentDeletion(replyComment.getComment());
+        replyComment.getComment().getArticle().decreaseCommentCount();
     }
 
     private ReplyComment getReplyCommentById(Long replyCommentId){
