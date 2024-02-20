@@ -1,10 +1,13 @@
 package dormitoryfamily.doomz.domain.article.service;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
+import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
+import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.ArticleImage;
+import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
@@ -12,6 +15,8 @@ import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,5 +91,16 @@ public class ArticleService {
 
         StatusType statusType = StatusType.fromDescription(status);
         article.changeStatus(statusType);
+    }
+
+    public ArticleListResponseDto findAllArticles(Member loginMember, String articleDormitoryType, Pageable pageable) {
+
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+        Slice<Article> articles = articleRepository.findByArticleDormitoryType(dormitoryType);
+
+        return ArticleListResponseDto.fromResponseDtos(
+                articles,
+                articles.map(SimpleArticleResponseDto::fromEntity
+                ).stream().toList());
     }
 }
