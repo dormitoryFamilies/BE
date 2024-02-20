@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.article.controller;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
+import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.service.ArticleService;
@@ -8,6 +9,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,5 +80,18 @@ public class ArticleController {
 
         articleService.changeStatus(member, articleId, status);
         return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @GetMapping("/dormitories/{dormitoryType}/articles")
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticles(
+            @PathVariable String dormitoryType,
+            Pageable pageable
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        ArticleListResponseDto responseDto = articleService.findAllArticles(member, dormitoryType, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
