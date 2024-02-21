@@ -1,8 +1,7 @@
 package dormitoryfamily.doomz.domain.wish.controller;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.wish.dto.WishListResponseDto;
-import dormitoryfamily.doomz.domain.wish.dto.WishResponseDto;
+import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
 import dormitoryfamily.doomz.domain.wish.service.WishService;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +28,12 @@ public class WishController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<WishListResponseDto>> getWishList(
+    public ResponseEntity<ResponseDto<WishMemberListResponseDto>> getWishMemberList(
             @PathVariable Long articleId
     ){
-        WishListResponseDto wishListResponseDto = wishService.getWishes(articleId);
-        return ResponseEntity.ok(ResponseDto.okWithData(wishListResponseDto));
+        WishMemberListResponseDto responseDto = wishService.getWishMembers(articleId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
-
 
     @DeleteMapping
     public ResponseEntity<ResponseDto<Void>> cancelWish(
@@ -48,5 +46,4 @@ public class WishController {
         wishService.removeWish(member, articleId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
-
 }
