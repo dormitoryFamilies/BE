@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum MemberDormitoryType {
+
     JINRIGWAN("진리관"),
     JEONGUIGWAN("정의관"),
     GAECHEOKGWAN("개척관"),
