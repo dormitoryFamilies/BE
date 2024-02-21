@@ -20,7 +20,7 @@ public record SimpleArticleResponseDto(
         LocalDateTime createdAt,
         String thumbnailUrl
 ) {
-        public static SimpleArticleResponseDto fromEntity(Article article) {
+        public static SimpleArticleResponseDto fromEntity(Article article, boolean isWished) {
                 return new SimpleArticleResponseDto(
                         article.getId(),
                         article.getMember().getNickname(),
@@ -30,7 +30,7 @@ public record SimpleArticleResponseDto(
                         article.getContent(),
                         article.getCommentCount(),
                         article.getWishCount(),
-                        false, //추후 변경 예정
+                        isWished,
                         article.getStatus().getDescription(),
                         article.getCreatedAt(),
                         article.getThumbnailUrl()
