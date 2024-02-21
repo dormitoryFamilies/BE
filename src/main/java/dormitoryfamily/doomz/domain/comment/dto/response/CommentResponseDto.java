@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.comment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.ReplyCommentResponseDto;
@@ -9,7 +8,6 @@ import dormitoryfamily.doomz.domain.replyComment.dto.response.ReplyCommentRespon
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -18,14 +16,16 @@ public record CommentResponseDto (
         Long memberId,
         String profileUrl,
         String nickname,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH-mm-ss")
         LocalDateTime createdAt,
+
         String content,
         boolean isWriter,
         boolean isDeleted,
         List<ReplyCommentResponseDto> replyComments
 ){
-    public static CommentResponseDto fromEntity(Member loginMember, Article article, Comment comment){
+    public static CommentResponseDto fromEntity(Member loginMember, Comment comment){
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getMember().getId(),
@@ -36,7 +36,7 @@ public record CommentResponseDto (
                 isArticleWriter(loginMember, comment.getMember()),
                 comment.isDeleted(),
                 comment.getReplyComments().stream()
-                        .map(replyComment -> ReplyCommentResponseDto.fromEntity(loginMember, article, replyComment))
+                        .map(replyComment -> ReplyCommentResponseDto.fromEntity(loginMember, replyComment))
                         .collect(toList())
         );
     }
