@@ -52,7 +52,6 @@ public class Comment extends BaseTimeEntity {
     }
 
     public void markAsDeleted(){
-        this.isDeleted=true;
+        this.isDeleted = true;
     }
-
 }
