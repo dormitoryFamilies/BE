@@ -13,6 +13,8 @@ import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
+import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
+import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class CommentService {
 
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
+    private final ReplyCommentRepository replyCommentRepository;
 
     public CreateCommentResponseDto saveComment(Long articleId, Member loginMember, CreateCommentRequestDto requestDto) {
         Article article = getArticleById(articleId);
@@ -51,7 +54,7 @@ public class CommentService {
     public void removeComment(Member loginMember, Long commentId) {
         Comment comment = getCommentById(commentId);
         isWriter(loginMember, comment.getMember());
-        if (hasReplyComment(comment)) {
+        if (hasReplyComment(comment.getId())) {
             comment.markAsDeleted();
         } else {
             commentRepository.delete(comment);
@@ -60,7 +63,7 @@ public class CommentService {
     }
 
     public void decideCommentDeletion(Comment comment){;
-        if(comment.isDeleted()&&!hasReplyComment(comment)){
+        if(comment.isDeleted()&&!hasReplyComment(comment.getId())){
             commentRepository.delete(comment);
         }
     }
@@ -71,8 +74,8 @@ public class CommentService {
         }
     }
 
-    private boolean hasReplyComment(Comment comment) {
-        return comment.getReplyComments().stream().anyMatch(reply -> true);
+    public boolean hasReplyComment(Long commentId) {
+        return replyCommentRepository.findFirstByCommentId(commentId).isPresent();
     }
 
     private Article getArticleById(Long articleId){
