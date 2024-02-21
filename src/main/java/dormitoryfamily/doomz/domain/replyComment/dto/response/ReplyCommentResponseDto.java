@@ -1,10 +1,12 @@
 package dormitoryfamily.doomz.domain.replyComment.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public record ReplyCommentResponseDto (
         Long replyCommentId,
@@ -16,7 +18,7 @@ public record ReplyCommentResponseDto (
         String content,
         boolean isWriter
 ) {
-        public static ReplyCommentResponseDto fromEntity(Member member, ReplyComment replyComment) {
+        public static ReplyCommentResponseDto fromEntity(Member loginMember, Article article, ReplyComment replyComment) {
                 return new ReplyCommentResponseDto(
                         replyComment.getId(),
                         replyComment.getMember().getId(),
@@ -24,8 +26,12 @@ public record ReplyCommentResponseDto (
                         replyComment.getMember().getNickname(),
                         replyComment.getCreatedAt(),
                         replyComment.getContent(),
-                        false//추후 수정
+                        isArticleWriter(loginMember, article.getMember())
                 );
+        }
+
+        private static boolean isArticleWriter(Member loginMember, Member articleWriter) {
+                return Objects.equals(loginMember.getId(), articleWriter.getId());
         }
 
 }
