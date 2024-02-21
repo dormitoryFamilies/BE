@@ -4,6 +4,8 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.wish.dto.WishListResponseDto;
+import dormitoryfamily.doomz.domain.wish.dto.WishResponseDto;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
@@ -11,6 +13,11 @@ import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +33,14 @@ public class WishService {
         Wish wish = createWish(article, member);
         wishRepository.save(wish);
         article.increaseWishCount();
+    }
+
+    public WishListResponseDto getWishes(Long articleId){
+        getArticleById(articleId);
+        List<Wish> wishes = wishRepository.findByArticleId(articleId);
+        List<WishResponseDto> wishResponseDto = wishes.stream()
+                .map(wish -> WishResponseDto.fromEntity(wish.getMember())).collect(toList());
+        return WishListResponseDto.toDto(wishResponseDto);
     }
 
     public void removeWish(Member member, Long articleId){
