@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 public class ReplyCommentControllerAdvice {
+
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleReplyCommentNotExistsException(ReplyCommentNotExistsException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();

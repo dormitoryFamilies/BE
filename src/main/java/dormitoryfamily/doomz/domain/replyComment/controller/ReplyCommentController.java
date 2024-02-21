@@ -40,5 +40,4 @@ public class ReplyCommentController {
         replyCommentService.removeReplyComment(member, replyCommentId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
-
 }

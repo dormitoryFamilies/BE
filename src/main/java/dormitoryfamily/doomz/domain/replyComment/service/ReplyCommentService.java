@@ -27,7 +27,9 @@ public class ReplyCommentService {
     private final ReplyCommentRepository replyCommentRepository;
     private final CommentService commentService;
 
-    public CreateReplyCommentResponseDto saveReplyComment(Member loginMember, Long commentId, CreateReplyCommentRequestDto requestDto) {
+    public CreateReplyCommentResponseDto saveReplyComment(Member loginMember,
+                                                          Long commentId,
+                                                          CreateReplyCommentRequestDto requestDto) {
         Comment comment = getCommentById(commentId);
         checkCommentIsDeleted(comment);
         ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(loginMember, comment, requestDto);

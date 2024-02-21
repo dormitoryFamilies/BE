@@ -35,10 +35,9 @@ public class ReplyComment extends BaseTimeEntity {
     private Comment comment;
 
     @Builder
-    public ReplyComment(Article article, Member member, Comment comment, String content) {
+    public ReplyComment(Member member, Comment comment, String content) {
         this.member = member;
         this.comment = comment;
         this.content = content;
     }
-
 }
