@@ -8,12 +8,12 @@ import dormitoryfamily.doomz.domain.comment.dto.response.CommentListResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CommentResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CreateCommentResponseDto;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
+import dormitoryfamily.doomz.domain.comment.exception.CommentIsDeletedException;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
-import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
-
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +52,7 @@ public class CommentService {
 
     public void removeComment(Member loginMember, Long commentId) {
         Comment comment = getCommentById(commentId);
+        checkAlreadyDeleted(comment);
         isWriter(loginMember, comment.getMember());
         if (hasReplyComment(comment.getId())) {
             comment.markAsDeleted();
@@ -62,9 +62,9 @@ public class CommentService {
         comment.getArticle().decreaseCommentCount();
     }
 
-    public void decideCommentDeletion(Comment comment){;
-        if(comment.isDeleted()&&!hasReplyComment(comment.getId())){
-            commentRepository.delete(comment);
+    private void checkAlreadyDeleted(Comment comment){
+        if (comment.isDeleted()) {
+            throw new CommentIsDeletedException();
         }
     }
 
@@ -72,10 +72,6 @@ public class CommentService {
         if (!Objects.equals(loginMember.getId(), writer.getId())) {
             throw new InvalidMemberAccessException();
         }
-    }
-
-    public boolean hasReplyComment(Long commentId) {
-        return replyCommentRepository.findFirstByCommentId(commentId).isPresent();
     }
 
     private Article getArticleById(Long articleId){
@@ -86,6 +82,16 @@ public class CommentService {
     private Comment getCommentById(Long commentId){
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotExistsException::new);
+    }
+
+    public void decideCommentDeletion(Comment comment){;
+        if(comment.isDeleted()&&!hasReplyComment(comment.getId())){
+            commentRepository.delete(comment);
+        }
+    }
+
+    private boolean hasReplyComment(Long commentId) {
+        return replyCommentRepository.findFirstByCommentId(commentId).isPresent();
     }
 }
 
