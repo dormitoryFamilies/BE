@@ -27,7 +27,7 @@ public record ArticleResponseDto(
         LocalDateTime createdAt,
         List<String> imagesUrls
 ) {
-    public static ArticleResponseDto fromEntity(Member loginMember, Article article, List<ArticleImage> articleImages) {
+    public static ArticleResponseDto fromEntity(Member loginMember, Article article, boolean isWished, List<ArticleImage> articleImages) {
         return new ArticleResponseDto(
                 article.getId(),
                 article.getMember().getId(),
@@ -40,7 +40,7 @@ public record ArticleResponseDto(
                 article.getTitle(),
                 article.getContent(),
                 article.getWishCount(),
-                false, // 추후 수정 예정
+                isWished,
                 article.getStatus().getDescription(),
                 article.getCreatedAt(),
                 getArticleImagesUrls(articleImages)
