@@ -31,30 +31,26 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
 
-    public CreateCommentResponseDto saveComment(Long articleId, Member member, CreateCommentRequestDto requestDto) {
+    public CreateCommentResponseDto saveComment(Long articleId, Member loginMember, CreateCommentRequestDto requestDto) {
         Article article = getArticleById(articleId);
-        Comment comment = CreateCommentRequestDto.toEntity(member, article, requestDto);
+        Comment comment = CreateCommentRequestDto.toEntity(loginMember, article, requestDto);
         commentRepository.save(comment);
         article.increaseCommentCount();
         return CreateCommentResponseDto.fromEntity(comment);
     }
 
-    public CommentListResponseDto getCommentList(Long articleId, Member member) {
-
+    public CommentListResponseDto getCommentList(Long articleId, Member loginMember) {
         Article article = getArticleById(articleId);
-
         List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
-
         List<CommentResponseDto> commentResponseDto = comments.stream()
-                .map(comment -> CommentResponseDto.fromEntity(member, comment))
+                .map(comment -> CommentResponseDto.fromEntity(loginMember, article, comment))
                 .collect(toList());
-
         return CommentListResponseDto.toDto(article.getCommentCount(), commentResponseDto);
     }
 
-    public void removeComment(Member member, Long commentId) {
+    public void removeComment(Member loginMember, Long commentId) {
         Comment comment = getCommentById(commentId);
-        isWriter(member, comment.getMember());
+        isWriter(loginMember, comment.getMember());
         if (hasReplyComment(comment)) {
             comment.markAsDeleted();
         } else {
@@ -64,7 +60,7 @@ public class CommentService {
     }
 
     public void decideCommentDeletion(Comment comment){;
-        if(comment.isDeleted()&&hasReplyComment(comment)){
+        if(comment.isDeleted()&&!hasReplyComment(comment)){
             commentRepository.delete(comment);
         }
     }
