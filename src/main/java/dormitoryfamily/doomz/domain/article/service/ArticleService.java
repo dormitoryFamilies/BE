@@ -14,6 +14,7 @@ import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
+import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -30,6 +31,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleImageRepository articleImageRepository;
+    private final WishRepository wishRepository;
 
     public CreateArticleResponseDto save(Member loginMember, ArticleRequestDto requestDto) {
         Article article = ArticleRequestDto.toEntity(loginMember, requestDto);
@@ -98,9 +100,17 @@ public class ArticleService {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
         Slice<Article> articles = articleRepository.findByArticleDormitoryType(dormitoryType);
 
-        return ArticleListResponseDto.fromResponseDtos(
-                articles,
-                articles.map(SimpleArticleResponseDto::fromEntity
-                ).stream().toList());
+        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+                .map(article -> {
+                    boolean isWished = checkIfArticleIsWished(article, loginMember);
+                    return SimpleArticleResponseDto.fromEntity(article, isWished);
+                })
+                .toList();
+
+        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
+    }
+
+    private boolean checkIfArticleIsWished(Article article, Member loginMember) {
+        return wishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
     }
 }
