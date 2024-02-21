@@ -1,19 +1,18 @@
 package dormitoryfamily.doomz.domain.wish.dto;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
 
-public record WishResponseDto(
+public record WishMemberResponseDto(
         Long memberId,
         String nickName,
-        MemberDormitoryType dormitoryType,
+        String dormitoryType,
         String profileUrl
 ) {
-    public static WishResponseDto fromEntity(Member wishMember) {
-        return new WishResponseDto(
+    public static WishMemberResponseDto fromMember(Member wishMember) {
+        return new WishMemberResponseDto(
                 wishMember.getId(),
                 wishMember.getNickname(),
-                wishMember.getDormitoryType(),
+                wishMember.getDormitoryType().getName(),
                 wishMember.getProfileUrl()
         );
     }

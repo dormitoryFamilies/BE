@@ -34,4 +34,8 @@ public class Wish {
         this.member = member;
         this.article = article;
     }
+
+    public static Wish createWish(Member member, Article article){
+        return Wish.builder().member(member).article(article).build();
+    }
 }

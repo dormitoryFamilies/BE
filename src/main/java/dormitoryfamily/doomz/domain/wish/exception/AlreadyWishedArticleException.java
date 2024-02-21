@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.wish.exception;
 
-
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
 

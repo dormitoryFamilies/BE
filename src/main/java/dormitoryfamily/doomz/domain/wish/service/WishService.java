@@ -4,8 +4,8 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.wish.dto.WishListResponseDto;
-import dormitoryfamily.doomz.domain.wish.dto.WishResponseDto;
+import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
+import dormitoryfamily.doomz.domain.wish.dto.WishMemberResponseDto;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -30,17 +29,17 @@ public class WishService {
     public void saveWish(Member member, Long articleId) {
         Article article = getArticleById(articleId);
         checkArticleIsNotWished(member.getId(),articleId);
-        Wish wish = createWish(article, member);
+        Wish wish = Wish.createWish(member, article);
         wishRepository.save(wish);
         article.increaseWishCount();
     }
 
-    public WishListResponseDto getWishes(Long articleId){
+    public WishMemberListResponseDto getWishMembers(Long articleId){
         getArticleById(articleId);
         List<Wish> wishes = wishRepository.findByArticleId(articleId);
-        List<WishResponseDto> wishResponseDto = wishes.stream()
-                .map(wish -> WishResponseDto.fromEntity(wish.getMember())).collect(toList());
-        return WishListResponseDto.toDto(wishResponseDto);
+        List<WishMemberResponseDto> wishMemberResponseDtos = wishes.stream()
+                .map(wish -> WishMemberResponseDto.fromMember(wish.getMember())).collect(toList());
+        return WishMemberListResponseDto.toDto(wishMemberResponseDtos);
     }
 
     public void removeWish(Member member, Long articleId){
@@ -61,13 +60,8 @@ public class WishService {
         }
     }
 
-    private Wish createWish(Article article, Member member){
-        return Wish.builder().member(member).article(article).build();
-    }
-
     private Wish getWishByMemberIdAndArticleId(Long memberId, Long articleId){
         return wishRepository.findByMemberIdAndArticleId(memberId, articleId)
                 .orElseThrow(NotWishedArticleException::new);
     }
-
 }
