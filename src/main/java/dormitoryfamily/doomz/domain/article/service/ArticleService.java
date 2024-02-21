@@ -54,9 +54,10 @@ public class ArticleService {
     public ArticleResponseDto findArticle(Member loginMember, Long articleId) {
         Article article = getArticleById(articleId);
         List<ArticleImage> articleImages = articleImageRepository.findByArticleId(articleId);
+        boolean isWished = checkIfArticleIsWished(article, loginMember);
 
         article.plusViewCount();
-        return ArticleResponseDto.fromEntity(loginMember, article, articleImages);
+        return ArticleResponseDto.fromEntity(loginMember, article, isWished, articleImages);
     }
 
     private Article getArticleById(Long articleId) {
