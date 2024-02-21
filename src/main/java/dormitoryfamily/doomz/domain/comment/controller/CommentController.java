@@ -53,5 +53,4 @@ public class CommentController {
         commentService.removeComment(member, commentId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
-
 }

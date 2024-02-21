@@ -45,7 +45,7 @@ public class CommentService {
         Article article = getArticleById(articleId);
         List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
         List<CommentResponseDto> commentResponseDto = comments.stream()
-                .map(comment -> CommentResponseDto.fromEntity(loginMember, article, comment))
+                .map(comment -> CommentResponseDto.fromEntity(loginMember, comment))
                 .collect(toList());
         return CommentListResponseDto.toDto(article.getCommentCount(), commentResponseDto);
     }
@@ -91,7 +91,7 @@ public class CommentService {
     }
 
     private boolean hasReplyComment(Long commentId) {
-        return replyCommentRepository.findFirstByCommentId(commentId).isPresent();
+        return replyCommentRepository.existsByCommentId(commentId);
     }
 }
 
