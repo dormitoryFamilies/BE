@@ -27,10 +27,10 @@ public class ReplyCommentService {
     private final ReplyCommentRepository replyCommentRepository;
     private final CommentService commentService;
 
-    public CreateReplyCommentResponseDto saveReplyComment(Member member, Long commentId, CreateReplyCommentRequestDto requestDto) {
+    public CreateReplyCommentResponseDto saveReplyComment(Member loginMember, Long commentId, CreateReplyCommentRequestDto requestDto) {
         Comment comment = getCommentById(commentId);
         checkCommentIsDeleted(comment);
-        ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(member, comment, requestDto);
+        ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(loginMember, comment, requestDto);
         replyCommentRepository.save(replyComment);
         comment.getArticle().increaseCommentCount();
         return CreateReplyCommentResponseDto.fromEntity(replyComment);
@@ -47,12 +47,12 @@ public class ReplyCommentService {
         }
     }
 
-    public void removeReplyComment(Member member, Long replyCommentId) {
+    public void removeReplyComment(Member loginMember, Long replyCommentId) {
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
-        isWriter(member, replyComment.getMember());
+        isWriter(loginMember, replyComment.getMember());
         replyCommentRepository.delete(replyComment);
-        commentService.decideCommentDeletion(replyComment.getComment());
         replyComment.getComment().getArticle().decreaseCommentCount();
+        commentService.decideCommentDeletion(replyComment.getComment());
     }
 
     private ReplyComment getReplyCommentById(Long replyCommentId){
