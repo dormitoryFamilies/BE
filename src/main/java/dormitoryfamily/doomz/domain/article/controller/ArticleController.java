@@ -113,4 +113,18 @@ public class ArticleController {
                 articleService.findAllArticles(member, dormitoryType, boardType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/dormitories/{dormitoryType}/articles/search")
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticles(
+            @PathVariable String dormitoryType,
+            @RequestParam String q,
+            Pageable pageable
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, q, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }

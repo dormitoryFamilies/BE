@@ -138,4 +138,22 @@ public class ArticleService {
                 .findAllByDormitoryTypeAndBoardType(dormitoryType, boardType, request, pageable);
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
+
+    public ArticleListResponseDto searchArticles(Member loginMember,
+                                                 String articleDormitoryType,
+                                                 String keyword,
+                                                 Pageable pageable)
+    {
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+        Slice<Article> articles = articleRepository.searchArticles(dormitoryType, keyword, pageable);
+
+        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+                .map(article -> {
+                    boolean isWished = checkIfArticleIsWished(article, loginMember);
+                    return SimpleArticleResponseDto.fromEntity(article, isWished);
+                })
+                .toList();
+
+        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
+    }
 }
