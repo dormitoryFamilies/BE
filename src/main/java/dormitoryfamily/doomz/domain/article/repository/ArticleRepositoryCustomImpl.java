@@ -7,6 +7,7 @@ import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
+import dormitoryfamily.doomz.domain.article.util.SortType;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -57,17 +58,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     private OrderSpecifier<?>[] getOrderByExpression(String sortType) {
-        if ("createdAt".equals(sortType)) {
-            return new OrderSpecifier[]{article.createdAt.desc()};
-        }
-        if ("popularity".equals(sortType)) {
-            OrderSpecifier<?>[] array = new OrderSpecifier[3];
-            array[0] = article.wishCount.desc();
-            array[1] = article.viewCount.desc();
-            array[2] = article.createdAt.desc();
-            return array;
-        }
-
-        return new OrderSpecifier[]{article.createdAt.desc()};
+        return SortType.fromString(sortType).getOrderSpecifiers();
     }
 }
