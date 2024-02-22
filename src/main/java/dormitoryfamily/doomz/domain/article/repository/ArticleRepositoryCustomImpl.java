@@ -1,10 +1,12 @@
 package dormitoryfamily.doomz.domain.article.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.entity.Article;
+import dormitoryfamily.doomz.domain.article.entity.QArticle;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
@@ -13,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import static dormitoryfamily.doomz.domain.article.entity.QArticle.article;
@@ -73,4 +77,37 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     private OrderSpecifier<?>[] getOrderByExpression(String sortType) {
         return SortType.fromString(sortType).getOrderSpecifiers();
     }
+
+    @Override
+    public Slice<Article> searchArticles(ArticleDormitoryType dormitoryType, String keyword, Pageable pageable) {
+        QArticle article = QArticle.article;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(article.dormitoryType.eq(dormitoryType));
+
+        if (StringUtils.hasText(keyword)) {
+            builder.andAnyOf(
+                    article.title.containsIgnoreCase(keyword),
+                    article.content.containsIgnoreCase(keyword),
+                    article.tags.containsIgnoreCase(keyword)
+            );
+        }
+
+        if (!builder.hasValue()) {
+            return new SliceImpl<>(Collections.emptyList());
+        }
+
+        List<Article> content = queryFactory
+                .selectFrom(article)
+                .where(builder)
+                .orderBy(article.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        boolean hasNext = content.size() > pageable.getPageSize();
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
 }
