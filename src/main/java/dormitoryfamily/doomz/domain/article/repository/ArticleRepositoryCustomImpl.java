@@ -36,10 +36,17 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 )
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return new SliceImpl<>(content, pageable, true);
+        boolean hasNext = false;
+
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(content.size() - 1);
+        }
+
+        return new SliceImpl<Article>(content, pageable, hasNext);
     }
 
     private BooleanExpression dormitoryTypeEq(ArticleDormitoryType dormitoryType) {
