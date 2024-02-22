@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.article.service;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
@@ -96,10 +97,14 @@ public class ArticleService {
         article.changeStatus(statusType);
     }
 
-    public ArticleListResponseDto findAllArticles(Member loginMember, String articleDormitoryType, Pageable pageable) {
-
+    public ArticleListResponseDto findAllArticles(
+            Member loginMember,
+            String articleDormitoryType,
+            ArticleRequest request,
+            Pageable pageable
+    ) {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
-        Slice<Article> articles = articleRepository.findByArticleDormitoryType(dormitoryType);
+        Slice<Article> articles = articleRepository.findAllByDormitoryType(dormitoryType, request, pageable);
 
         List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
                 .map(article -> {
