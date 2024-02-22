@@ -8,6 +8,5 @@ import org.springframework.data.domain.Slice;
 
 public interface ArticleRepositoryCustom {
 
-//    @EntityGraph(attributePaths = "member")
     Slice<Article> findAllByDormitoryType(ArticleDormitoryType dormitoryType, ArticleRequest request, Pageable pageable);
 }
