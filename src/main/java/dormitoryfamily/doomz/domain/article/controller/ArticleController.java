@@ -93,7 +93,24 @@ public class ArticleController {
         Member member = new Member();
         member.setId(1L);
 
-        ArticleListResponseDto responseDto = articleService.findAllArticles(member, dormitoryType, request, pageable);
+        ArticleListResponseDto responseDto =
+                articleService.findAllArticles(member, dormitoryType, request, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/dormitories/{dormitoryType}/board-type/{boardType}/articles")
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticlesWithBoardType(
+            @PathVariable String dormitoryType,
+            @PathVariable String boardType,
+            @ModelAttribute ArticleRequest request,
+            Pageable pageable
+    ) {
+        // 삭제 예정
+        Member member = new Member();
+        member.setId(1L);
+
+        ArticleListResponseDto responseDto =
+                articleService.findAllArticles(member, dormitoryType, boardType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

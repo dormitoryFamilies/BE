@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
+import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.util.SortType;
 import jakarta.persistence.EntityManager;
@@ -26,13 +27,14 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public Slice<Article> findAllByDormitoryType(ArticleDormitoryType dormitoryType, ArticleRequest request, Pageable pageable) {
+    public Slice<Article> findAllByDormitoryTypeAndBoardType(ArticleDormitoryType dormitoryType, BoardType boardType, ArticleRequest request, Pageable pageable) {
 
         List<Article> content = queryFactory
                 .selectFrom(article)
                 .where(
                         dormitoryTypeEq(dormitoryType),
-                        articleStatus(request)
+                        articleStatus(request),
+                        boardTypeEx(boardType)
                 )
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
@@ -46,7 +48,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
             content.remove(content.size() - 1);
         }
 
-        return new SliceImpl<Article>(content, pageable, hasNext);
+        return new SliceImpl<>(content, pageable, hasNext);
     }
 
     private BooleanExpression dormitoryTypeEq(ArticleDormitoryType dormitoryType) {
@@ -60,6 +62,13 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
         StatusType statusType = StatusType.fromDescription(request.status());
         if (request.status() != null) {
             return article.status.eq(statusType);
+        }
+        return null;
+    }
+
+    private BooleanExpression boardTypeEx(BoardType boardType) {
+        if (boardType != null) {
+            return article.boardType.eq(boardType);
         }
         return null;
     }
