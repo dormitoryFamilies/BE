@@ -9,6 +9,7 @@ import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDt
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.ArticleImage;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
+import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
@@ -66,6 +67,10 @@ public class ArticleService {
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
+    private boolean checkIfArticleIsWished(Article article, Member loginMember) {
+        return wishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
+    }
+
     public void updateArticle(Member loginMember, Long articleId, ArticleRequestDto requestDto) {
         Article article = getArticleById(articleId);
         isWriter(loginMember, article.getMember());
@@ -104,19 +109,33 @@ public class ArticleService {
             Pageable pageable
     ) {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
-        Slice<Article> articles = articleRepository.findAllByDormitoryType(dormitoryType, request, pageable);
 
-        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+        Slice<Article> articles = articleRepository
+                .findAllByDormitoryTypeAndBoardType(dormitoryType, null, request, pageable);
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+    }
+
+    private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
+        return articles.stream()
                 .map(article -> {
                     boolean isWished = checkIfArticleIsWished(article, loginMember);
                     return SimpleArticleResponseDto.fromEntity(article, isWished);
                 })
                 .toList();
-
-        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
     }
 
-    private boolean checkIfArticleIsWished(Article article, Member loginMember) {
-        return wishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
+    public ArticleListResponseDto findAllArticles(
+            Member loginMember,
+            String articleDormitoryType,
+            String articleBoardType,
+            ArticleRequest request,
+            Pageable pageable
+    ) {
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+        BoardType boardType = BoardType.fromDescription(articleBoardType);
+
+        Slice<Article> articles = articleRepository
+                .findAllByDormitoryTypeAndBoardType(dormitoryType, boardType, request, pageable);
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 }
