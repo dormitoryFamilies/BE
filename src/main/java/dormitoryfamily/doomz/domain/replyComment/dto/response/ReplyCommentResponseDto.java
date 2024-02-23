@@ -7,7 +7,7 @@ import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public record ReplyCommentResponseDto (
+public record ReplyCommentResponseDto(
         Long replyCommentId,
         Long memberId,
         String profileUrl,
@@ -19,21 +19,21 @@ public record ReplyCommentResponseDto (
         String content,
         boolean isWriter
 ) {
-        public static ReplyCommentResponseDto fromEntity(Member loginMember, ReplyComment replyComment) {
-                return new ReplyCommentResponseDto(
-                        replyComment.getId(),
-                        replyComment.getMember().getId(),
-                        replyComment.getMember().getProfileUrl(),
-                        replyComment.getMember().getNickname(),
-                        replyComment.getCreatedAt(),
-                        replyComment.getContent(),
-                        isArticleWriter(loginMember,replyComment.getComment().getMember())
-                );
-        }
+    public static ReplyCommentResponseDto fromEntity(Member loginMember, ReplyComment replyComment) {
+        return new ReplyCommentResponseDto(
+                replyComment.getId(),
+                replyComment.getMember().getId(),
+                replyComment.getMember().getProfileUrl(),
+                replyComment.getMember().getNickname(),
+                replyComment.getCreatedAt(),
+                replyComment.getContent(),
+                isArticleWriter(loginMember, replyComment.getComment().getMember())
+        );
+    }
 
-        private static boolean isArticleWriter(Member loginMember, Member articleWriter) {
-                return Objects.equals(loginMember.getId(), articleWriter.getId());
-        }
+    private static boolean isArticleWriter(Member loginMember, Member articleWriter) {
+        return Objects.equals(loginMember.getId(), articleWriter.getId());
+    }
 }
 
 
