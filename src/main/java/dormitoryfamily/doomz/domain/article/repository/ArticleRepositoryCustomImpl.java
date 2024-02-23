@@ -102,10 +102,15 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .where(builder)
                 .orderBy(article.createdAt.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = content.size() > pageable.getPageSize();
+        boolean hasNext = false;
+
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(content.size() - 1);
+        }
 
         return new SliceImpl<>(content, pageable, hasNext);
     }
