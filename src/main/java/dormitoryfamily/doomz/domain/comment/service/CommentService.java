@@ -62,7 +62,7 @@ public class CommentService {
         comment.getArticle().decreaseCommentCount();
     }
 
-    private void checkAlreadyDeleted(Comment comment){
+    private void checkAlreadyDeleted(Comment comment) {
         if (comment.isDeleted()) {
             throw new CommentIsDeletedException();
         }
@@ -74,18 +74,18 @@ public class CommentService {
         }
     }
 
-    private Article getArticleById(Long articleId){
+    private Article getArticleById(Long articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
-    private Comment getCommentById(Long commentId){
+    private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotExistsException::new);
     }
 
-    public void decideCommentDeletion(Comment comment){;
-        if(comment.isDeleted()&&!hasReplyComment(comment.getId())){
+    public void decideCommentDeletion(Comment comment) {
+        if (comment.isDeleted() && !hasReplyComment(comment.getId())) {
             commentRepository.delete(comment);
         }
     }
