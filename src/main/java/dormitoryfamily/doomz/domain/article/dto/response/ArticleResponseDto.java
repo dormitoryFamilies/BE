@@ -23,8 +23,10 @@ public record ArticleResponseDto(
         int wishCount,
         boolean isWished,
         String status,
+
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH-mm-ss")
         LocalDateTime createdAt,
+
         List<String> imagesUrls
 ) {
     public static ArticleResponseDto fromEntity(Member loginMember, Article article, boolean isWished, List<ArticleImage> articleImages) {
