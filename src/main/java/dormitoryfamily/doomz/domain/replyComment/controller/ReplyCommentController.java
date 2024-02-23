@@ -5,6 +5,7 @@ import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentR
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;
 import dormitoryfamily.doomz.domain.replyComment.service.ReplyCommentService;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class ReplyCommentController {
     @PostMapping("/comments/{commentId}/replyComments")
     public ResponseEntity<ResponseDto<CreateReplyCommentResponseDto>> saveReplyComment(
             @PathVariable Long commentId,
-            @RequestBody CreateReplyCommentRequestDto requestDto
+            @RequestBody @Valid CreateReplyCommentRequestDto requestDto
     ) {
         // 삭제 예정
         Member member = new Member();
