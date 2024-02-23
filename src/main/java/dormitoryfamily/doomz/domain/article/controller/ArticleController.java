@@ -2,6 +2,7 @@ package dormitoryfamily.doomz.domain.article.controller;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleSearchRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
@@ -115,16 +116,16 @@ public class ArticleController {
     }
 
     @GetMapping("/dormitories/{dormitoryType}/articles/search")
-    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticles(
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> searchArticles(
             @PathVariable String dormitoryType,
-            @RequestParam String q,
+            @ModelAttribute @Valid ArticleSearchRequestDto requestDto,
             Pageable pageable
     ) {
         // 삭제 예정
         Member member = new Member();
         member.setId(1L);
 
-        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, q, pageable);
+        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, requestDto.q(), pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

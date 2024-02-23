@@ -83,15 +83,12 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
         QArticle article = QArticle.article;
 
         BooleanBuilder builder = new BooleanBuilder();
-        builder.and(article.dormitoryType.eq(dormitoryType));
-
-        if (StringUtils.hasText(keyword)) {
-            builder.andAnyOf(
-                    article.title.containsIgnoreCase(keyword),
-                    article.content.containsIgnoreCase(keyword),
-                    article.tags.containsIgnoreCase(keyword)
-            );
-        }
+        builder.and(article.dormitoryType.eq(dormitoryType))
+                .andAnyOf(
+                        article.title.containsIgnoreCase(keyword),
+                        article.content.containsIgnoreCase(keyword),
+                        article.tags.containsIgnoreCase(keyword)
+                );
 
         if (!builder.hasValue()) {
             return new SliceImpl<>(Collections.emptyList());
@@ -114,5 +111,4 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
         return new SliceImpl<>(content, pageable, hasNext);
     }
-
 }
