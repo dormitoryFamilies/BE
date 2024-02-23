@@ -90,10 +90,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                         article.tags.containsIgnoreCase(keyword)
                 );
 
-        if (!builder.hasValue()) {
-            return new SliceImpl<>(Collections.emptyList());
-        }
-
         List<Article> content = queryFactory
                 .selectFrom(article)
                 .where(builder)
