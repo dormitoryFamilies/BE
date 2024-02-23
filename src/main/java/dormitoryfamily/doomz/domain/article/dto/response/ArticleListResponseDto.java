@@ -7,7 +7,7 @@ import java.util.List;
 
 public record ArticleListResponseDto(
     int nowPageNumber,
-    boolean isLsat,
+    boolean isLast,
     List<SimpleArticleResponseDto> articles
 ) {
     public static ArticleListResponseDto fromResponseDtos(
