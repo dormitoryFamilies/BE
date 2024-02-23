@@ -56,8 +56,8 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     private BooleanExpression articleStatus(ArticleRequest request) {
-        StatusType statusType = StatusType.fromDescription(request.status());
         if (request.status() != null) {
+            StatusType statusType = StatusType.fromDescription(request.status());
             return article.status.eq(statusType);
         }
         return null;
