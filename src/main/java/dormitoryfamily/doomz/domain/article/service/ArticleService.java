@@ -142,8 +142,8 @@ public class ArticleService {
     public ArticleListResponseDto searchArticles(Member loginMember,
                                                  String articleDormitoryType,
                                                  String keyword,
-                                                 Pageable pageable)
-    {
+                                                 Pageable pageable
+    ) {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, keyword, pageable);
 
