@@ -2,6 +2,7 @@ package dormitoryfamily.doomz.domain.article.service;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleSearchRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
@@ -141,11 +142,11 @@ public class ArticleService {
 
     public ArticleListResponseDto searchArticles(Member loginMember,
                                                  String articleDormitoryType,
-                                                 String keyword,
+                                                 ArticleSearchRequestDto requestDto,
                                                  Pageable pageable
     ) {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
-        Slice<Article> articles = articleRepository.searchArticles(dormitoryType, keyword, pageable);
+        Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);
 
         List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
                 .map(article -> {
