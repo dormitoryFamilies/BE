@@ -79,8 +79,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     @Override
     public Slice<Article> searchArticles(ArticleDormitoryType dormitoryType, String keyword, Pageable pageable) {
-        QArticle article = QArticle.article;
-
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(article.dormitoryType.eq(dormitoryType))
                 .andAnyOf(
