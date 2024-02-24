@@ -125,7 +125,7 @@ public class ArticleController {
         Member member = new Member();
         member.setId(1L);
 
-        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, requestDto.q(), pageable);
+        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
