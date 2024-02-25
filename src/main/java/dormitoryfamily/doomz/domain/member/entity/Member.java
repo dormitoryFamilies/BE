@@ -11,7 +11,9 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//setter와 기본생성자 임시 허용
+@Setter
+@NoArgsConstructor
 public class Member {
 
     @Id
