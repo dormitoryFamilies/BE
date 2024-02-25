@@ -23,6 +23,8 @@ public enum ErrorCode {
     INVALID_MEMBER_ACCESS(HttpStatus.NOT_FOUND, "해당 게시글에 대한 권한이 없습니다."),
     GENDER_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST,"해당 성별은 존재하지 않습니다."),
     COLLEGE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 단과대는 존재하지 않습니다."),
+    DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
+    COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
 
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 댓글입니다."),

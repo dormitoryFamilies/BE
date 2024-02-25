@@ -36,5 +36,4 @@ public enum CollegeType {
         }
         throw new InvalidCollegeTypeException();
     }
-
 }
