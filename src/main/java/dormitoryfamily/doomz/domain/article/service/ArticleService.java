@@ -146,15 +146,8 @@ public class ArticleService {
                                                  Pageable pageable
     ) {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);
-
-        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
-                .map(article -> {
-                    boolean isWished = checkIfArticleIsWished(article, loginMember);
-                    return SimpleArticleResponseDto.fromEntity(article, isWished);
-                })
-                .toList();
-
-        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 }
