@@ -6,17 +6,16 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.entity.Article;
-import dormitoryfamily.doomz.domain.article.entity.QArticle;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.util.SortType;
+import dormitoryfamily.doomz.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.util.Collections;
 import java.util.List;
 
 import static dormitoryfamily.doomz.domain.article.entity.QArticle.article;
@@ -36,6 +35,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                         articleStatus(request),
                         boardTypeEx(boardType)
                 )
+                .orderBy(article.createdAt.desc())
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -75,6 +75,41 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     private OrderSpecifier<?>[] getOrderByExpression(String sortType) {
         return SortType.fromString(sortType).getOrderSpecifiers();
+    }
+
+    @Override
+    public Slice<Article> findMyArticleByDormitoryTypeAndBoardType(Member member,
+                                                                   ArticleDormitoryType dormitoryType,
+                                                                   BoardType boardType,
+                                                                   Pageable pageable
+    ) {
+        List<Article> content = queryFactory
+                .selectFrom(article)
+                .where(
+                        writerEq(member),
+                        dormitoryTypeEq(dormitoryType),
+                        boardTypeEx(boardType)
+                )
+                .orderBy(article.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(content.size() - 1);
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    private BooleanExpression writerEq(Member member) {
+        if (member != null) {
+            return article.member.eq(member);
+        }
+        return null;
     }
 
     @Override
