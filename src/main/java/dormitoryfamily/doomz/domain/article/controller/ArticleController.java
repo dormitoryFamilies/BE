@@ -128,4 +128,18 @@ public class ArticleController {
         ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/mypage/myArticles")
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
+            @RequestParam String dormitoryType,
+            @RequestParam(required = false) String boardType,
+            Pageable pageable
+    ){
+        //삭제 예정
+        Member member = new Member();
+        member.setId(2L);
+
+        ArticleListResponseDto responseDto = articleService.findMyArticles(member, dormitoryType, boardType, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }

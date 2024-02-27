@@ -140,6 +140,23 @@ public class ArticleService {
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 
+    public ArticleListResponseDto findMyArticles(Member loginMember,
+                                                 String articleDormitoryType,
+                                                 String articleBoardType,
+                                                 Pageable pageable
+    ) {
+       ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+
+        BoardType boardType = null;
+        if(articleBoardType!=null){
+            boardType = BoardType.fromDescription(articleBoardType);
+        }
+
+        Slice<Article> articles = articleRepository
+                .findMyArticleByDormitoryTypeAndBoardType(loginMember,dormitoryType, boardType, pageable);
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+    }
+
     public ArticleListResponseDto searchArticles(Member loginMember,
                                                  String articleDormitoryType,
                                                  ArticleSearchRequestDto requestDto,
@@ -150,4 +167,5 @@ public class ArticleService {
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
+
 }
