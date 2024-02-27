@@ -26,7 +26,10 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<Article> findAllByDormitoryTypeAndBoardType(ArticleDormitoryType dormitoryType, BoardType boardType, ArticleRequest request, Pageable pageable) {
+    public Slice<Article> findAllByDormitoryTypeAndBoardType(ArticleDormitoryType dormitoryType,
+                                                             BoardType boardType,
+                                                             ArticleRequest request,
+                                                             Pageable pageable) {
 
         List<Article> content = queryFactory
                 .selectFrom(article)
@@ -41,14 +44,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
-
-        if (content.size() > pageable.getPageSize()) {
-            hasNext = true;
-            content.remove(content.size() - 1);
-        }
-
-        return new SliceImpl<>(content, pageable, hasNext);
+        return createSlice(content, pageable);
     }
 
     private BooleanExpression dormitoryTypeEq(ArticleDormitoryType dormitoryType) {
@@ -77,6 +73,17 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
         return SortType.fromString(sortType).getOrderSpecifiers();
     }
 
+    private Slice<Article> createSlice(List<Article> content, Pageable pageable) {
+        boolean hasNext = false;
+
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(content.size() - 1);
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
     @Override
     public Slice<Article> findMyArticleByDormitoryTypeAndBoardType(Member member,
                                                                    ArticleDormitoryType dormitoryType,
@@ -95,14 +102,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
-
-        if (content.size() > pageable.getPageSize()) {
-            hasNext = true;
-            content.remove(content.size() - 1);
-        }
-
-        return new SliceImpl<>(content, pageable, hasNext);
+        return createSlice(content, pageable);
     }
 
     private BooleanExpression writerEq(Member member) {
@@ -130,13 +130,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
-
-        if (content.size() > pageable.getPageSize()) {
-            hasNext = true;
-            content.remove(content.size() - 1);
-        }
-
-        return new SliceImpl<>(content, pageable, hasNext);
+        return createSlice(content, pageable);
     }
 }
