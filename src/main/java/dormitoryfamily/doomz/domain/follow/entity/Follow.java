@@ -4,6 +4,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,14 @@ public class Follow extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "following_id")
     private Member following;
+
+    @Builder
+    public Follow(Member follower, Member following) {
+        this.follower = follower;
+        this.following = following;
+    }
+
+    public static Follow createFollow(Member follower, Member following){
+       return Follow.builder().follower(follower).following(following).build();
+    }
 }
