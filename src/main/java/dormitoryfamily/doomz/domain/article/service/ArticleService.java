@@ -145,16 +145,24 @@ public class ArticleService {
                                                  String articleBoardType,
                                                  Pageable pageable
     ) {
-       ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         BoardType boardType = null;
-        if(articleBoardType!=null){
+        if (articleBoardType != null) {
             boardType = BoardType.fromDescription(articleBoardType);
         }
 
         Slice<Article> articles = articleRepository
-                .findMyArticleByDormitoryTypeAndBoardType(loginMember,dormitoryType, boardType, pageable);
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+                .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, pageable);
+
+        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+                .map(article -> {
+                    boolean isWished = checkIfArticleIsWished(article, loginMember);
+                    return SimpleArticleResponseDto.fromEntityWithMember(article, loginMember, isWished);
+                })
+                .toList();
+
+        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
     }
 
     public ArticleListResponseDto searchArticles(Member loginMember,
@@ -167,5 +175,4 @@ public class ArticleService {
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
-
 }
