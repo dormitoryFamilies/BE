@@ -17,6 +17,7 @@ import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
+import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -117,12 +118,19 @@ public class ArticleService {
     }
 
     private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
+        List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
+
         return articles.stream()
                 .map(article -> {
-                    boolean isWished = checkIfArticleIsWished(article, loginMember);
+                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
                     return SimpleArticleResponseDto.fromEntity(article, isWished);
                 })
                 .toList();
+    }
+
+    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<Wish> memberWishes) {
+        return memberWishes.stream()
+                .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
 
     public ArticleListResponseDto findAllArticles(
@@ -154,15 +162,18 @@ public class ArticleService {
 
         Slice<Article> articles = articleRepository
                 .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, pageable);
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtosWithMember(loginMember, articles));
+    }
 
-        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+    private List<SimpleArticleResponseDto> getSimpleArticleResponseDtosWithMember(Member loginMember, Slice<Article> articles) {
+        List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
+
+        return articles.stream()
                 .map(article -> {
-                    boolean isWished = checkIfArticleIsWished(article, loginMember);
+                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
                     return SimpleArticleResponseDto.fromEntityWithMember(article, loginMember, isWished);
                 })
                 .toList();
-
-        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
     }
 
     public ArticleListResponseDto searchArticles(Member loginMember,
