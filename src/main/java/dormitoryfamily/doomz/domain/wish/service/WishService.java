@@ -41,7 +41,7 @@ public class WishService {
 
     public WishMemberListResponseDto getWishMembers(Long articleId){
         getArticleById(articleId);
-        List<Wish> wishes = wishRepository.findByArticleId(articleId);
+        List<Wish> wishes = wishRepository.findAllByArticleId(articleId);
         List<WishMemberResponseDto> wishMemberResponseDtos = wishes.stream()
                 .map(wish -> WishMemberResponseDto.fromMember(wish.getMember())).collect(toList());
         return WishMemberListResponseDto.toDto(wishMemberResponseDtos);
@@ -74,7 +74,7 @@ public class WishService {
 
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        List<Wish> myWishes = wishRepository.findWishesByMemberId(loginmember.getId());
+        List<Wish> myWishes = wishRepository.findAllByMemberId(loginmember.getId());
 
         List<Long> articleIds = myWishes.stream()
                 .map(wish -> wish.getArticle().getId())
@@ -85,8 +85,7 @@ public class WishService {
 
         List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
                 .map(article -> {
-                    boolean isWished = true;
-                    return SimpleArticleResponseDto.fromEntity(article, isWished);
+                    return SimpleArticleResponseDto.fromEntity(article, true);
                 })
                 .toList();
 
