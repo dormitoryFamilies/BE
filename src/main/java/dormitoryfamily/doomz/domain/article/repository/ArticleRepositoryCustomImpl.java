@@ -113,6 +113,26 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
+    public Slice<Article> findAllByIdInAndDormitoryTypeAndBoardType(List<Long> articleIds,
+                                                                    ArticleDormitoryType dormitoryType,
+                                                                    BoardType boardType,
+                                                                    Pageable pageable) {
+        List<Article> content = queryFactory
+                .selectFrom(article)
+                .where(
+                        article.id.in(articleIds),
+                        dormitoryTypeEq(dormitoryType),
+                        boardTypeEx(boardType)
+                )
+                .orderBy(article.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        return createSlice(content, pageable);
+    }
+
+    @Override
     public Slice<Article> searchArticles(ArticleDormitoryType dormitoryType, String keyword, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(article.dormitoryType.eq(dormitoryType))
