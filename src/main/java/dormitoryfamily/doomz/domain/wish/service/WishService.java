@@ -1,6 +1,9 @@
 package dormitoryfamily.doomz.domain.wish.service;
 
+import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
+import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
+import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
@@ -12,6 +15,8 @@ import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,5 +68,28 @@ public class WishService {
     private Wish getWishByMemberIdAndArticleId(Long memberId, Long articleId){
         return wishRepository.findByMemberIdAndArticleId(memberId, articleId)
                 .orElseThrow(NotWishedArticleException::new);
+    }
+
+    public ArticleListResponseDto findMyArticleWishes(Member loginmember, String articleDormitoryType, Pageable pageable ) {
+
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+
+        List<Wish> myWishes = wishRepository.findWishesByMemberId(loginmember.getId());
+
+        List<Long> articleIds = myWishes.stream()
+                .map(wish -> wish.getArticle().getId())
+                .toList();
+
+        Slice<Article> articles = articleRepository
+                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, null, pageable);
+
+        List<SimpleArticleResponseDto> articleResponseDtos = articles.stream()
+                .map(article -> {
+                    boolean isWished = true;
+                    return SimpleArticleResponseDto.fromEntity(article, isWished);
+                })
+                .toList();
+
+        return ArticleListResponseDto.fromResponseDtos(articles, articleResponseDtos);
     }
 }
