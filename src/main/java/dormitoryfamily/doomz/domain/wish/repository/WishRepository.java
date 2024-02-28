@@ -8,13 +8,11 @@ import java.util.Optional;
 
 public interface WishRepository extends JpaRepository<Wish, Long> {
 
-    List<Wish> findByArticleId(Long articleId);
+    List<Wish> findAllByArticleId(Long articleId);
 
     boolean existsByMemberIdAndArticleId(Long memberId, Long articleId);
 
     Optional<Wish> findByMemberIdAndArticleId(Long memberId, Long articleId);
-
-    List<Wish> findWishesByMemberId(Long memberId);
 
     List<Wish> findAllByMemberId(Long memberId);
 }
