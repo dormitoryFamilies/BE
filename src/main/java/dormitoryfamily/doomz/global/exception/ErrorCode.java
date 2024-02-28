@@ -38,6 +38,9 @@ public enum ErrorCode {
     ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
     ARTICLE_IS_NOT_WISHED(HttpStatus.CONFLICT, "찜하지 않은 게시글입니다."),
 
+    //follow
+    ALREADY_FOLLOW_MEMBER(HttpStatus.CONFLICT, "이미 팔로우하고 있는 회원입니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 

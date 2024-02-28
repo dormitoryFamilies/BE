@@ -19,7 +19,7 @@ public class FollowController {
             @PathVariable Long memberId
     ){
         Member loginMember = new Member();
-        loginMember.setId(1L);
+        loginMember.setId(5L);
 
         followService.saveFollow(loginMember, memberId);
         return ResponseEntity.ok(ResponseDto.created());
