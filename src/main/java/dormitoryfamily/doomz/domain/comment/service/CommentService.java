@@ -1,6 +1,10 @@
 package dormitoryfamily.doomz.domain.comment.service;
 
+import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
+import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
+import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
+import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
@@ -14,13 +18,20 @@ import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
+import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
+import dormitoryfamily.doomz.domain.wish.entity.Wish;
+import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,6 +43,7 @@ public class CommentService {
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final ReplyCommentRepository replyCommentRepository;
+    private final WishRepository wishRepository;
 
     public CreateCommentResponseDto saveComment(Long articleId, Member loginMember, CreateCommentRequestDto requestDto) {
         Article article = getArticleById(articleId);
@@ -92,6 +104,50 @@ public class CommentService {
 
     private boolean hasReplyComment(Long commentId) {
         return replyCommentRepository.existsByCommentId(commentId);
+    }
+
+    public ArticleListResponseDto findMyComments(Member loginMember, String articleDormitoryType, String articleBoardType, Pageable pageable ) {
+        ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+
+        BoardType boardType = null;
+        if (articleBoardType != null) {
+            boardType = BoardType.fromDescription(articleBoardType);
+        }
+
+        List<Comment> myComments = commentRepository.findAllByMemberId(loginMember.getId());
+        List<ReplyComment> myReplyComments = replyCommentRepository.findAllByMemberId(loginMember.getId());
+
+        List<Long> articleIds = getArticleIds(myComments, myReplyComments);
+
+        Slice<Article> articles = articleRepository
+                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, boardType, pageable);
+
+        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+    }
+
+    private List<Long> getArticleIds(List<Comment> comments, List<ReplyComment> replyComments) {
+        return Stream.concat(
+                        comments.stream().map(comment -> comment.getArticle().getId()),
+                        replyComments.stream().map(replyComment -> replyComment.getComment().getArticle().getId())
+                )
+                .distinct()
+                .toList();
+    }
+
+    private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
+        List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
+
+        return articles.stream()
+                .map(article -> {
+                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
+                    return SimpleArticleResponseDto.fromEntity(article, isWished);
+                })
+                .toList();
+    }
+
+    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<Wish> memberWishes) {
+        return memberWishes.stream()
+                .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
 }
 
