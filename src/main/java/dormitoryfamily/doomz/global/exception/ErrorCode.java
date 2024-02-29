@@ -40,7 +40,8 @@ public enum ErrorCode {
 
     //follow
     ALREADY_FOLLOW_MEMBER(HttpStatus.CONFLICT, "이미 팔로우하고 있는 회원입니다."),
-
+    CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다.")
+    ,
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
