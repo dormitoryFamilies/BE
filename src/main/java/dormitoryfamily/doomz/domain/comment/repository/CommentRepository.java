@@ -10,4 +10,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = "replyComments", type = EntityGraph.EntityGraphType.FETCH)
     List<Comment> findAllByArticleIdOrderByCreatedAtAsc(Long articleId);
+
+    List<Comment> findAllByMemberId(Long id);
+
 }
