@@ -5,12 +5,17 @@ import dormitoryfamily.doomz.domain.follow.exception.AlreadyFollowingException;
 import dormitoryfamily.doomz.domain.follow.exception.CannotFollowYourselfException;
 import dormitoryfamily.doomz.domain.follow.exception.NotFollowingMemberException;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +61,12 @@ public class FollowService {
     private Follow getFollowByFollowerAndFollowing(Member follower, Member following) {
         return followRepository.findByFollowerAndFollowing(follower, following)
                 .orElseThrow(NotFollowingMemberException::new);
+    }
+
+    public MemberProfileListResponseDto getMyFollowingMemberList(Member loginMember) {
+        List<Follow> followingMembers = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember);
+        List<MemberProfileResponseDto> memberProfiles = followingMembers.stream()
+                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing())).toList();
+        return MemberProfileListResponseDto.toDto(memberProfiles);
     }
 }

@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.follow.controller;
 
 import dormitoryfamily.doomz.domain.follow.service.FollowService;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -10,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/follow/{memberId}")
+@RequestMapping("/api/members")
 public class FollowController {
 
     private final FollowService followService;
 
-    @PostMapping()
+    @PostMapping("/{memberId}/follows")
     public ResponseEntity<ResponseDto<Void>> saveFollow(
             @PathVariable Long memberId
     ){
@@ -26,7 +27,7 @@ public class FollowController {
         return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{memberId}/follows")
     public ResponseEntity<ResponseDto<Void>> cancelFollow(
             @PathVariable Long memberId
     ){
@@ -35,5 +36,14 @@ public class FollowController {
 
         followService.removeFollow(loginMember, memberId);
         return ResponseEntity.ok(ResponseDto.created());
+    }
+
+    @GetMapping("/follows")
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowingMembers(){
+        Member loginMember = new Member();
+        loginMember.setId(1L);
+
+        MemberProfileListResponseDto responseDto = followService.getMyFollowingMemberList(loginMember);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
