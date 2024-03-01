@@ -137,7 +137,7 @@ public class ArticleController {
     ){
         //삭제 예정
         Member member = new Member();
-        member.setId(2L);
+        member.setId(1L);
 
         ArticleListResponseDto responseDto = articleService.findMyArticles(member, dormitoryType, boardType, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
