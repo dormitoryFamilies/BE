@@ -129,7 +129,7 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/mypage/myArticles")
+    @GetMapping("/my/articles")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
             @RequestParam(required = false) String boardType,
