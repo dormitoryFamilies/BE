@@ -57,7 +57,7 @@ public class CommentController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/mypage/myComments")
+    @GetMapping("/my/comments")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
             @RequestParam(required = false) String boardType,
