@@ -51,7 +51,7 @@ public class WishController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/mypage/articleWishes")
+    @GetMapping("/my/wishes")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
             Pageable pageable
