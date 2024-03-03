@@ -41,7 +41,7 @@ public class WishService {
 
     public WishMemberListResponseDto getWishMembers(Long articleId) {
         getArticleById(articleId);
-        List<Wish> wishes = wishRepository.findAllByArticleId(articleId);
+        List<Wish> wishes = wishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);
         List<WishMemberResponseDto> wishMemberResponseDtos = wishes.stream()
                 .map(wish -> WishMemberResponseDto.fromMember(wish.getMember())).collect(toList());
         return WishMemberListResponseDto.toDto(wishMemberResponseDtos);
