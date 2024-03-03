@@ -25,7 +25,7 @@ public class WishController {
     ){
         // 삭제 예정
         Member member = new Member();
-        member.setId(1L);
+        member.setId(3L);
 
         wishService.saveWish(member, articleId);
         return ResponseEntity.ok(ResponseDto.created());
