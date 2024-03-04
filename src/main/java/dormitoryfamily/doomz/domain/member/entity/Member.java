@@ -25,6 +25,8 @@ public class Member extends BaseTimeEntity {
     private String name;
     private String nickname;
     private String studentNumber;
+    private String email; //OAuth 가입 여부 확인
+    private String authority;
 
     @Enumerated(EnumType.STRING)
     private CollegeType collegeType;
@@ -43,9 +45,12 @@ public class Member extends BaseTimeEntity {
     private String profileUrl;
     private String studentCardImageUrl;
 
+    @Builder
     public Member(String name,
                   String nickname,
                   String studentNumber,
+                  String email,
+                  String authority,
                   CollegeType collegeType,
                   DepartmentType departmentType,
                   MemberDormitoryType dormitoryType,
@@ -56,6 +61,8 @@ public class Member extends BaseTimeEntity {
         this.name = name;
         this.nickname = nickname;
         this.studentNumber = studentNumber;
+        this.email = email;
+        this.authority = authority;
         this.collegeType = collegeType;
         this.departmentType = departmentType;
         this.dormitoryType = dormitoryType;

@@ -8,6 +8,8 @@ spring:
     import: optional:file:.env[.properties]
   profiles:
     active: ${PROFILE}
+  jwt:
+    secret: ${SPRING_JWT_SECRET}
 
     servlet:
       multipart:

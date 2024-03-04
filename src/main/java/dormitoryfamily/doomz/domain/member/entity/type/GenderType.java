@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public enum GenderType {
 
-    MALE("남자"),
-    FEMALE("여자");
+    MALE("남성"),
+    FEMALE("여성");
 
     private final String description;
 
