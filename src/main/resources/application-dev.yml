@@ -18,6 +18,11 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
 cloud:
   aws:
     s3:

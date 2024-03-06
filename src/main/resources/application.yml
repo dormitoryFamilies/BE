@@ -18,7 +18,6 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 200
-
 cloud:
   aws:
     credentials:
