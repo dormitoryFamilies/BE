@@ -68,9 +68,7 @@ public class SecurityConfig {
         //oauth2 로그인
         http.oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
-                .successHandler(oAuth2LoginSuccessHandler)
-                .defaultSuccessUrl("/"));
-
+                .successHandler(oAuth2LoginSuccessHandler));
 
         // 세션 stateless 설정
         http.sessionManagement((session) -> session
