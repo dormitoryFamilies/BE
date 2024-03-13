@@ -37,9 +37,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             }
         }
 
-        System.out.println("jwt = " + jwt);
-
-        if (jwt != null && jwtUtil.isExpired(jwt)) {
+        if (jwt == null || jwtUtil.isExpired(jwt)) {
             chain.doFilter(request, response);
             return;
         }
