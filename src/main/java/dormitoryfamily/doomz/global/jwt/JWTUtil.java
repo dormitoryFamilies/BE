@@ -15,7 +15,7 @@ public class JWTUtil {
         Pair<String, Key> key = JWTKey.getRandomKey();
 
         return Jwts.builder()
-                .claim("email", member.getEmail())
+                .subject(member.getEmail())
 //                .claim("role", member.getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발생 시간
                 .expiration(new Date(System.currentTimeMillis() + JWTProperties.ACCESS_TOKEN_EXPIRATION_TIME)) // 토큰 만료 시간
