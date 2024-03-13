@@ -26,15 +26,15 @@ public class JWTUtil {
                 .compact();
     }
 
-//    public Boolean isExpired(String token) {
-//        return Jwts.parser()
-//                .setSigningKeyResolver(SigningKeyResolver.instance)
-//                .build()
-//                .parseSignedClaims(token)
-//                .getPayload()
-//                .getExpiration()
-//                .before(new Date());
-//    }
+    public Boolean isExpired(String token) {
+        return Jwts.parser()
+                .setSigningKeyResolver(SigningKeyResolver.instance)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new Date());
+    }
 
     public String getEmail(String token) {
         // jwtToken에서 email을 찾습니다.
