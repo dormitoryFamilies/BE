@@ -45,7 +45,6 @@ jobs:
           mkdir deploy
           cp ./appspec.yml ./deploy/
           cp ./Dockerfile ./deploy/
-          cp ./docker-compose.yml ./deploy/
           cp ./scripts/*.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           cp ./.env ./deploy/
