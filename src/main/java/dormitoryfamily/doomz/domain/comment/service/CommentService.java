@@ -5,8 +5,8 @@ import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDt
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
-import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
+import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CommentListResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CommentResponseDto;
@@ -16,12 +16,12 @@ import dormitoryfamily.doomz.domain.comment.exception.CommentIsDeletedException;
 import dormitoryfamily.doomz.domain.comment.exception.CommentNotExistsException;
 import dormitoryfamily.doomz.domain.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -45,7 +44,8 @@ public class CommentService {
     private final ReplyCommentRepository replyCommentRepository;
     private final WishRepository wishRepository;
 
-    public CreateCommentResponseDto saveComment(Long articleId, Member loginMember, CreateCommentRequestDto requestDto) {
+    public CreateCommentResponseDto saveComment(Long articleId, PrincipalDetails principalDetails, CreateCommentRequestDto requestDto) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         Comment comment = CreateCommentRequestDto.toEntity(loginMember, article, requestDto);
         commentRepository.save(comment);
@@ -53,7 +53,8 @@ public class CommentService {
         return CreateCommentResponseDto.fromEntity(comment);
     }
 
-    public CommentListResponseDto getCommentList(Long articleId, Member loginMember) {
+    public CommentListResponseDto getCommentList(Long articleId, PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
         List<CommentResponseDto> commentResponseDto = comments.stream()
@@ -62,7 +63,8 @@ public class CommentService {
         return CommentListResponseDto.toDto(article.getCommentCount(), commentResponseDto);
     }
 
-    public void removeComment(Member loginMember, Long commentId) {
+    public void removeComment(PrincipalDetails principalDetails, Long commentId) {
+        Member loginMember = principalDetails.getMember();
         Comment comment = getCommentById(commentId);
         checkAlreadyDeleted(comment);
         isWriter(loginMember, comment.getMember());
@@ -106,7 +108,8 @@ public class CommentService {
         return replyCommentRepository.existsByCommentId(commentId);
     }
 
-    public ArticleListResponseDto findMyComments(Member loginMember, String articleDormitoryType, String articleBoardType, Pageable pageable ) {
+    public ArticleListResponseDto findMyComments(PrincipalDetails principalDetails, String articleDormitoryType, String articleBoardType, Pageable pageable ) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         BoardType boardType = null;
