@@ -27,11 +27,11 @@ public enum ErrorCode {
     COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
 
     // comment
-    COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 댓글입니다."),
+    COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     COMMENT_IS_DELETED(HttpStatus.BAD_REQUEST, "삭제된 댓글입니다."),
 
     //replyComment
-    REPLY_COMMENT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 대댓글입니다."),
+    REPLY_COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 대댓글입니다."),
 
     //wish
     ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
