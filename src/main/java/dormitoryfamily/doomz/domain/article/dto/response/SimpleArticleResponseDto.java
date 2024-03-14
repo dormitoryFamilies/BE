@@ -13,7 +13,7 @@ public record SimpleArticleResponseDto(
         String boardType,
         String title,
         String content,
-        int CommentCount,
+        int commentCount,
         int viewCount,
         int wishCount,
         boolean isWished,
