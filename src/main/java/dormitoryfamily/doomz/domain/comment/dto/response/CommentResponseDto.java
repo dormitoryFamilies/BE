@@ -15,7 +15,7 @@ public record CommentResponseDto (
         Long commentId,
         Long memberId,
         String profileUrl,
-        String nickname,
+        String nickName,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH-mm-ss")
         LocalDateTime createdAt,
