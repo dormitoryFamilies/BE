@@ -6,7 +6,10 @@ import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
 import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
