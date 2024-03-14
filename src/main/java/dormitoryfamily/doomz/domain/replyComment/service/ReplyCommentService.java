@@ -12,6 +12,7 @@ import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyComment
 import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
 import dormitoryfamily.doomz.domain.replyComment.exception.ReplyCommentNotExistsException;
 import dormitoryfamily.doomz.domain.replyComment.repository.ReplyCommentRepository;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,10 @@ public class ReplyCommentService {
     private final ReplyCommentRepository replyCommentRepository;
     private final CommentService commentService;
 
-    public CreateReplyCommentResponseDto saveReplyComment(Member loginMember,
+    public CreateReplyCommentResponseDto saveReplyComment(PrincipalDetails principalDetails,
                                                           Long commentId,
                                                           CreateReplyCommentRequestDto requestDto) {
+        Member loginMember = principalDetails.getMember();
         Comment comment = getCommentById(commentId);
         checkCommentIsDeleted(comment);
         ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(loginMember, comment, requestDto);
@@ -49,7 +51,8 @@ public class ReplyCommentService {
         }
     }
 
-    public void removeReplyComment(Member loginMember, Long replyCommentId) {
+    public void removeReplyComment(PrincipalDetails principalDetails, Long replyCommentId) {
+        Member loginMember = principalDetails.getMember();
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
         isWriter(loginMember, replyComment.getMember());
         replyCommentRepository.delete(replyComment);
