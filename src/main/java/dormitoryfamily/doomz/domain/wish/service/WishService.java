@@ -13,6 +13,7 @@ import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +32,11 @@ public class WishService {
     private final ArticleRepository articleRepository;
     private final WishRepository wishRepository;
 
-    public void saveWish(Member member, Long articleId) {
+    public void saveWish(PrincipalDetails principalDetails, Long articleId) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        checkArticleIsNotWished(member.getId(), articleId);
-        Wish wish = Wish.createWish(member, article);
+        checkArticleIsNotWished(loginMember.getId(), articleId);
+        Wish wish = Wish.createWish(loginMember, article);
         wishRepository.save(wish);
         article.increaseWishCount();
     }
@@ -47,9 +49,10 @@ public class WishService {
         return WishMemberListResponseDto.toDto(wishMemberResponseDtos);
     }
 
-    public void removeWish(Member member, Long articleId) {
+    public void removeWish(PrincipalDetails principalDetails, Long articleId) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        Wish wish = getWishByMemberIdAndArticleId(member.getId(), articleId);
+        Wish wish = getWishByMemberIdAndArticleId(loginMember.getId(), articleId);
         wishRepository.delete(wish);
         article.decreaseWishCount();
     }
@@ -70,10 +73,11 @@ public class WishService {
                 .orElseThrow(NotWishedArticleException::new);
     }
 
-    public ArticleListResponseDto findMyArticleWishes(Member loginmember, String articleDormitoryType, Pageable pageable) {
+    public ArticleListResponseDto findMyArticleWishes(PrincipalDetails principalDetails, String articleDormitoryType, Pageable pageable) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        List<Wish> myWishes = wishRepository.findAllByMemberId(loginmember.getId());
+        List<Wish> myWishes = wishRepository.findAllByMemberId(loginMember.getId());
         List<Long> articleIds = getArticleIds(myWishes);
 
         Slice<Article> articles = articleRepository

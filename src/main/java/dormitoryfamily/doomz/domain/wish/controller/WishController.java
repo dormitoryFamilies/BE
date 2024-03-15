@@ -1,13 +1,14 @@
 package dormitoryfamily.doomz.domain.wish.controller;
 
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
-import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
 import dormitoryfamily.doomz.domain.wish.service.WishService;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -21,13 +22,11 @@ public class WishController {
 
     @PostMapping("/articles/{articleId}/wishes")
     public ResponseEntity<ResponseDto<Void>> saveWish(
-            @PathVariable Long articleId
-    ){
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+            ){
 
-        wishService.saveWish(member, articleId);
+        wishService.saveWish(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.created());
     }
 
@@ -41,26 +40,22 @@ public class WishController {
 
     @DeleteMapping("/articles/{articleId}/wishes")
     public ResponseEntity<ResponseDto<Void>> cancelWish(
-            @PathVariable Long articleId
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        wishService.removeWish(member, articleId);
+        wishService.removeWish(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @GetMapping("/my/wishes")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        //삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        ArticleListResponseDto responseDto = wishService.findMyArticleWishes(member, dormitoryType, pageable);
+        ArticleListResponseDto responseDto = wishService.findMyArticleWishes(principalDetails, dormitoryType, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
