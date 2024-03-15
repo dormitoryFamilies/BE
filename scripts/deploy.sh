@@ -2,6 +2,8 @@
 
 APP_NAME=doomz
 
+cd /home/ubuntu/app
+
 echo "> Stopping all services using Docker Compose"
 docker-compose down
 
