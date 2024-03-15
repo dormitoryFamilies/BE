@@ -11,7 +11,7 @@ echo "> Removing previous Docker image: $APP_NAME"
 docker rmi -f "$APP_NAME"
 
 echo "> Building doomz service using Docker Compose"
-docker-compose -f docker-compose.yml build "$APP_NAME"
+docker-compose -f docker-compose.yml build "$APP_NAME" "$APP_NAME"
 
 echo "> Starting all services using Docker Compose"
 docker-compose up -d
