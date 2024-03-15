@@ -57,7 +57,6 @@ public class SecurityConfig {
         http.rememberMe(AbstractHttpConfigurer::disable);
 
         // JWT 필터 추가
-//        http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(jwtAuthorizationFilter, OAuth2LoginAuthenticationFilter.class);
 
         // 경로별 인가 작업

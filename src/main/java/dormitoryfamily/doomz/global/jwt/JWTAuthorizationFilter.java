@@ -27,6 +27,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        log.info("====== JWTAuthorizationFilter ======");
         String jwt = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -41,6 +42,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
+
+        log.info("jwt ={}", jwt);
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authentication = getUserAuthentication(jwt);
