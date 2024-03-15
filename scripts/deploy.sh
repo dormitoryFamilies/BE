@@ -2,25 +2,14 @@
 
 APP_NAME=doomz
 
-echo "> Check the currently running container"
-CONTAINER_ID=$(docker ps -aqf "name=$APP_NAME")
+echo "> Stopping all services using Docker Compose"
+docker-compose down
 
-if [ -z "$CONTAINER_ID" ];
-then
-  echo "> No such container is running."
-else
-  echo "> Stop and remove container: $CONTAINER_ID"
-  docker stop "$CONTAINER_ID"
-  docker rm "$CONTAINER_ID"
-fi
+echo "> Removing previous Docker image: $APP_NAME"
+docker rmi -f "$APP_NAME"
 
-echo "> Remove previous Docker image"
-docker rmi "$APP_NAME"
+echo "> Building doomz service using Docker Compose"
+docker-compose -f docker-compose.yml build "$APP_NAME"
 
-cd /home/ubuntu/app
-
-echo "> Build Docker image"
-docker build -t "$APP_NAME" .
-
-echo "> Run the Docker container"
-docker run -d -p 8080:8080 --name "$APP_NAME" "$APP_NAME"
+echo "> Starting all services using Docker Compose"
+docker-compose up -d
