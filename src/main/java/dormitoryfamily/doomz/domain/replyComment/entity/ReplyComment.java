@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.replyComment.entity;
 
-import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;

@@ -1,13 +1,14 @@
 package dormitoryfamily.doomz.domain.replyComment.controller;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.replyComment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.replyComment.dto.response.CreateReplyCommentResponseDto;
 import dormitoryfamily.doomz.domain.replyComment.service.ReplyCommentService;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,25 +21,21 @@ public class ReplyCommentController {
     @PostMapping("/comments/{commentId}/replyComments")
     public ResponseEntity<ResponseDto<CreateReplyCommentResponseDto>> saveReplyComment(
             @PathVariable Long commentId,
-            @RequestBody @Valid CreateReplyCommentRequestDto requestDto
+            @RequestBody @Valid CreateReplyCommentRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        CreateReplyCommentResponseDto responseDto = replyCommentService.saveReplyComment(member, commentId, requestDto);
+        CreateReplyCommentResponseDto responseDto = replyCommentService.saveReplyComment(principalDetails, commentId, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
     @DeleteMapping("/replyComments/{replyCommentId}")
     public ResponseEntity<ResponseDto<Void>> deleteComment(
-            @PathVariable Long replyCommentId
+            @PathVariable Long replyCommentId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        replyCommentService.removeReplyComment(member, replyCommentId);
+        replyCommentService.removeReplyComment(principalDetails, replyCommentId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 }

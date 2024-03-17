@@ -7,12 +7,13 @@ import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.service.ArticleService;
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,63 +25,52 @@ public class ArticleController {
 
     @PostMapping("/articles")
     public ResponseEntity<ResponseDto<CreateArticleResponseDto>> register(
-            @RequestBody @Valid ArticleRequestDto requestDto
+            @RequestBody @Valid ArticleRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
-
-        CreateArticleResponseDto responseDto = articleService.save(member, requestDto);
+        CreateArticleResponseDto responseDto = articleService.save(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
     @GetMapping("/articles/{articleId}")
     public ResponseEntity<ResponseDto<ArticleResponseDto>> findArticle(
-            @PathVariable Long articleId
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        ArticleResponseDto responseDto = articleService.findArticle(member, articleId);
+        ArticleResponseDto responseDto = articleService.findArticle(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
     @PutMapping("/articles/{articleId}")
     public ResponseEntity<ResponseDto<Void>> modifyArticle(
             @PathVariable Long articleId,
-            @RequestBody @Valid ArticleRequestDto requestDto
+            @RequestBody @Valid ArticleRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        articleService.updateArticle(member, articleId, requestDto);
+        articleService.updateArticle(principalDetails, articleId, requestDto);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @DeleteMapping("/articles/{articleId}")
     public ResponseEntity<ResponseDto<Void>> removeArticle(
-            @PathVariable Long articleId
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        articleService.deleteArticle(member, articleId);
+        articleService.deleteArticle(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @PutMapping("/articles/{articleId}/status")
     public ResponseEntity<ResponseDto<Void>> changeStatus(
             @PathVariable Long articleId,
-            @RequestParam String status
+            @RequestParam String status,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        articleService.changeStatus(member, articleId, status);
+        articleService.changeStatus(principalDetails, articleId, status);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -88,14 +78,12 @@ public class ArticleController {
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticles(
             @PathVariable String dormitoryType,
             @ModelAttribute ArticleRequest request,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
         ArticleListResponseDto responseDto =
-                articleService.findAllArticles(member, dormitoryType, request, pageable);
+                articleService.findAllArticles(principalDetails, dormitoryType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -104,14 +92,12 @@ public class ArticleController {
             @PathVariable String dormitoryType,
             @PathVariable String boardType,
             @ModelAttribute ArticleRequest request,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
         ArticleListResponseDto responseDto =
-                articleService.findAllArticles(member, dormitoryType, boardType, request, pageable);
+                articleService.findAllArticles(principalDetails, dormitoryType, boardType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -119,13 +105,11 @@ public class ArticleController {
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> searchArticles(
             @PathVariable String dormitoryType,
             @ModelAttribute @Valid ArticleSearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        ArticleListResponseDto responseDto = articleService.searchArticles(member, dormitoryType, requestDto, pageable);
+        ArticleListResponseDto responseDto = articleService.searchArticles(principalDetails, dormitoryType, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -133,13 +117,11 @@ public class ArticleController {
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
             @RequestParam(required = false) String boardType,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
-    ){
-        //삭제 예정
-        Member member = new Member();
-        member.setId(1L);
+    ) {
 
-        ArticleListResponseDto responseDto = articleService.findMyArticles(member, dormitoryType, boardType, pageable);
+        ArticleListResponseDto responseDto = articleService.findMyArticles(principalDetails, dormitoryType, boardType, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

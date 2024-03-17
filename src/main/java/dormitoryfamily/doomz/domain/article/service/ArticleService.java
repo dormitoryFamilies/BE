@@ -19,6 +19,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -37,7 +38,8 @@ public class ArticleService {
     private final ArticleImageRepository articleImageRepository;
     private final WishRepository wishRepository;
 
-    public CreateArticleResponseDto save(Member loginMember, ArticleRequestDto requestDto) {
+    public CreateArticleResponseDto save(PrincipalDetails principalDetails, ArticleRequestDto requestDto) {
+        Member loginMember = principalDetails.getMember();
         Article article = ArticleRequestDto.toEntity(loginMember, requestDto);
 
         articleRepository.save(article);
@@ -55,7 +57,8 @@ public class ArticleService {
         }
     }
 
-    public ArticleResponseDto findArticle(Member loginMember, Long articleId) {
+    public ArticleResponseDto findArticle(PrincipalDetails principalDetails, Long articleId) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         List<ArticleImage> articleImages = articleImageRepository.findByArticleId(articleId);
         boolean isWished = checkIfArticleIsWished(article, loginMember);
@@ -73,7 +76,8 @@ public class ArticleService {
         return wishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
     }
 
-    public void updateArticle(Member loginMember, Long articleId, ArticleRequestDto requestDto) {
+    public void updateArticle(PrincipalDetails principalDetails, Long articleId, ArticleRequestDto requestDto) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         isWriter(loginMember, article.getMember());
 
@@ -89,14 +93,16 @@ public class ArticleService {
         }
     }
 
-    public void deleteArticle(Member loginMember, Long articleId) {
+    public void deleteArticle(PrincipalDetails principalDetails, Long articleId) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         isWriter(loginMember, article.getMember());
 
         articleRepository.delete(article);
     }
 
-    public void changeStatus(Member loginMember, Long articleId, String status) {
+    public void changeStatus(PrincipalDetails principalDetails, Long articleId, String status) {
+        Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
         isWriter(loginMember, article.getMember());
 
@@ -104,12 +110,12 @@ public class ArticleService {
         article.changeStatus(statusType);
     }
 
-    public ArticleListResponseDto findAllArticles(
-            Member loginMember,
-            String articleDormitoryType,
-            ArticleRequest request,
-            Pageable pageable
+    public ArticleListResponseDto findAllArticles(PrincipalDetails principalDetails,
+                                                  String articleDormitoryType,
+                                                  ArticleRequest request,
+                                                  Pageable pageable
     ) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         Slice<Article> articles = articleRepository
@@ -133,13 +139,13 @@ public class ArticleService {
                 .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
 
-    public ArticleListResponseDto findAllArticles(
-            Member loginMember,
-            String articleDormitoryType,
-            String articleBoardType,
-            ArticleRequest request,
-            Pageable pageable
+    public ArticleListResponseDto findAllArticles(PrincipalDetails principalDetails,
+                                                  String articleDormitoryType,
+                                                  String articleBoardType,
+                                                  ArticleRequest request,
+                                                  Pageable pageable
     ) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
         BoardType boardType = BoardType.fromDescription(articleBoardType);
 
@@ -148,11 +154,12 @@ public class ArticleService {
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 
-    public ArticleListResponseDto findMyArticles(Member loginMember,
+    public ArticleListResponseDto findMyArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
                                                  String articleBoardType,
                                                  Pageable pageable
     ) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         BoardType boardType = null;
@@ -176,11 +183,12 @@ public class ArticleService {
                 .toList();
     }
 
-    public ArticleListResponseDto searchArticles(Member loginMember,
+    public ArticleListResponseDto searchArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
                                                  ArticleSearchRequestDto requestDto,
                                                  Pageable pageable
     ) {
+        Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);

@@ -6,7 +6,10 @@ import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
 import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -25,6 +28,7 @@ public class Member extends BaseTimeEntity {
     private String name;
     private String nickname;
     private String studentNumber;
+    private String email; //OAuth 로그인 여부 확인용
 
     @Enumerated(EnumType.STRING)
     private CollegeType collegeType;
@@ -43,8 +47,10 @@ public class Member extends BaseTimeEntity {
     private String profileUrl;
     private String studentCardImageUrl;
 
+    @Builder
     public Member(String name,
                   String nickname,
+                  String email,
                   String studentNumber,
                   CollegeType collegeType,
                   DepartmentType departmentType,
@@ -54,6 +60,7 @@ public class Member extends BaseTimeEntity {
                   String profileUrl,
                   String studentCardImageUrl) {
         this.name = name;
+        this.email = email;
         this.nickname = nickname;
         this.studentNumber = studentNumber;
         this.collegeType = collegeType;

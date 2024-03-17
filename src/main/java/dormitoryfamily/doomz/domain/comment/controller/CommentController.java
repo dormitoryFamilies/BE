@@ -5,12 +5,13 @@ import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CommentListResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CreateCommentResponseDto;
 import dormitoryfamily.doomz.domain.comment.service.CommentService;
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,37 +24,31 @@ public class CommentController {
     @PostMapping("/articles/{articleId}/comments")
     public ResponseEntity<ResponseDto<CreateCommentResponseDto>> saveComment(
             @PathVariable Long articleId,
-            @RequestBody @Valid CreateCommentRequestDto requestDto
-    ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
+            @RequestBody @Valid CreateCommentRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+            ) {
 
-        CreateCommentResponseDto responseDto = commentService.saveComment(articleId, member, requestDto);
+        CreateCommentResponseDto responseDto = commentService.saveComment(articleId, principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
     @GetMapping("/articles/{articleId}/comments")
     public ResponseEntity<ResponseDto<CommentListResponseDto>> getComments(
-            @PathVariable Long articleId
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        //삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        CommentListResponseDto responseDto= commentService.getCommentList(articleId, member);
+        CommentListResponseDto responseDto= commentService.getCommentList(articleId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<ResponseDto<Void>> deleteComment(
-            @PathVariable Long commentId
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        // 삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        commentService.removeComment(member, commentId);
+        commentService.removeComment(principalDetails, commentId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -61,13 +56,11 @@ public class CommentController {
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
             @RequestParam String dormitoryType,
             @RequestParam(required = false) String boardType,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        //삭제 예정
-        Member member = new Member();
-        member.setId(1L);
 
-        ArticleListResponseDto responseDto = commentService.findMyComments(member, dormitoryType, boardType, pageable);
+        ArticleListResponseDto responseDto = commentService.findMyComments(principalDetails, dormitoryType, boardType, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
