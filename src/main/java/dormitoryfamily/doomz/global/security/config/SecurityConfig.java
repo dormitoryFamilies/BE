@@ -66,6 +66,7 @@ public class SecurityConfig {
                 .requestMatchers("/","/stomp/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .requestMatchers("/").permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .requestMatchers("/api/reissue").permitAll()
                 .anyRequest().authenticated());
 
