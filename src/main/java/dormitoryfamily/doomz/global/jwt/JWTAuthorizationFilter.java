@@ -29,14 +29,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.info("====== JWTAuthorizationFilter ======");
         String jwt = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("Authorization")) {
-                    jwt = cookie.getValue();
-                }
-            }
+
+        String headerAuth = request.getHeader("Authorization");
+        if (headerAuth != null) {
+            jwt = headerAuth.substring(7);
         }
+
+        System.out.println("headerAuth = " + headerAuth);
+        System.out.println("jwt = " + jwt);
 
         if (jwt == null || jwtUtil.isExpired(jwt)) {
             chain.doFilter(request, response);
