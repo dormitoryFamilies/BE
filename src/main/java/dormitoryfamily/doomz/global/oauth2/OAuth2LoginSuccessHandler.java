@@ -29,8 +29,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String token = jwtUtil.createToken(principalDetails.getMember());
         System.out.println("token = " + token);
 
-        response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:8080/");
+        response.addHeader("Authorization", "Bearer " + token);
+        response.sendRedirect("http://43.202.254.127:8080/");
     }
 
     private Cookie createCookie(String key, String value) {

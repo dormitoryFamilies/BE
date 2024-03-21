@@ -28,6 +28,7 @@ public class ArticleController {
             @RequestBody @Valid ArticleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
+
         CreateArticleResponseDto responseDto = articleService.save(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
