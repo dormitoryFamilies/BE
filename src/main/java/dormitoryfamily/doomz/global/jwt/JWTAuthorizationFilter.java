@@ -30,19 +30,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         log.info("====== JWTAuthorizationFilter ======");
         String jwt = null;
 
-        String headerAuth = request.getHeader("Authorization");
-        if (headerAuth != null) {
-            jwt = headerAuth.substring(7);
-        }
+        String headerAuth = request.getHeader(JWTProperties.HEADER_STRING);
 
-        System.out.println("headerAuth = " + headerAuth);
-        System.out.println("jwt = " + jwt);
-
-        if (jwt == null || jwtUtil.isExpired(jwt)) {
+        if (headerAuth == null || !headerAuth.startsWith("Bearer") || jwtUtil.isExpired(jwt)) {
             chain.doFilter(request, response);
             return;
         }
 
+        jwt = headerAuth.replace(JWTProperties.TOKEN_PREFIX, "");
         log.info("jwt ={}", jwt);
 
         //스프링 시큐리티 인증 토큰 생성
