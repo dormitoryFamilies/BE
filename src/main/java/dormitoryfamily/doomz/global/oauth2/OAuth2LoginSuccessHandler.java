@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.global.oauth2;
 
+import dormitoryfamily.doomz.global.jwt.JWTProperties;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.servlet.ServletException;
@@ -29,7 +30,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String token = jwtUtil.createToken(principalDetails.getMember());
         System.out.println("token = " + token);
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader(JWTProperties.HEADER_STRING, JWTProperties.TOKEN_PREFIX + token);
         response.sendRedirect("http://43.202.254.127:8080/");
     }
 
