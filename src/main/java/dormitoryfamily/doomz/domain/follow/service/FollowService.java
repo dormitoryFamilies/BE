@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +26,14 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     public void saveFollow(PrincipalDetails principalDetails, Long followingMemberId) {
-        Member loginMember = principalDetails.getMember();
+        Member loginMember = getFollowingMemberById(principalDetails.getMember().getId());
         Member followingMember = getFollowingMemberById(followingMemberId);
         checkIfCannotFollowYourself(loginMember.getId(), followingMemberId);
         checkIfAlreadyFollowing(loginMember, followingMember);
         Follow follow = Follow.createFollow(loginMember, followingMember);
         followRepository.save(follow);
         loginMember.increaseFollowingCount();
+        followingMember.increaseFollowerCount();
     }
 
     private Member getFollowingMemberById(Long memberId) {
@@ -54,11 +54,12 @@ public class FollowService {
     }
 
     public void removeFollow(PrincipalDetails principalDetails, Long followingMemberId) {
-        Member loginMember = principalDetails.getMember();
+        Member loginMember = getFollowingMemberById(principalDetails.getMember().getId());
         Member followingMember = getFollowingMemberById(followingMemberId);
         Follow follow = getFollowByFollowerAndFollowing(loginMember, followingMember);
         followRepository.delete(follow);
         loginMember.decreaseFollowingCount();
+        followingMember.decreaseFollowerCount();
     }
 
     private Follow getFollowByFollowerAndFollowing(Member follower, Member following) {

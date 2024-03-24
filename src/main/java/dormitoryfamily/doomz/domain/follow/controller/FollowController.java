@@ -2,8 +2,6 @@ package dormitoryfamily.doomz.domain.follow.controller;
 
 import dormitoryfamily.doomz.domain.follow.service.FollowService;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
