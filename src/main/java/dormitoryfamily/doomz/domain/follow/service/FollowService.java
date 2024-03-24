@@ -26,45 +26,49 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     public void saveFollow(PrincipalDetails principalDetails, Long followingMemberId) {
-        Member loginMember = getFollowingMemberById(principalDetails.getMember().getId());
-        Member followingMember = getFollowingMemberById(followingMemberId);
-        checkIfCannotFollowYourself(loginMember.getId(), followingMemberId);
-        checkIfAlreadyFollowing(loginMember, followingMember);
+        Member loginMember = getMemberById(principalDetails.getMember().getId());
+        Member followingMember = getMemberById(followingMemberId);
+        validateFollowRequest(loginMember, followingMember);
         Follow follow = Follow.createFollow(loginMember, followingMember);
-        followRepository.save(follow);
-        loginMember.increaseFollowingCount();
-        followingMember.increaseFollowerCount();
+        saveFollowAndIncreaseCounts(loginMember, followingMember, follow);
     }
 
-    private Member getFollowingMemberById(Long memberId) {
+    private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
     }
 
-    private void checkIfCannotFollowYourself(Long loginMemberId, Long followingMemberId) {
-        if (loginMemberId.equals(followingMemberId)) {
+    private void validateFollowRequest(Member loginMember, Member followingMember) {
+        if (loginMember.getId().equals(followingMember.getId())) {
             throw new CannotFollowYourselfException();
         }
-    }
-
-    private void checkIfAlreadyFollowing(Member loginMember, Member followingMember) {
         if (followRepository.existsByFollowerAndFollowing(loginMember, followingMember)) {
             throw new AlreadyFollowingException();
         }
     }
 
+    private void saveFollowAndIncreaseCounts(Member loginMember, Member followingMember, Follow follow) {
+        followRepository.save(follow);
+        loginMember.increaseFollowingCount();
+        followingMember.increaseFollowerCount();
+    }
+
     public void removeFollow(PrincipalDetails principalDetails, Long followingMemberId) {
-        Member loginMember = getFollowingMemberById(principalDetails.getMember().getId());
-        Member followingMember = getFollowingMemberById(followingMemberId);
+        Member loginMember = getMemberById(principalDetails.getMember().getId());
+        Member followingMember = getMemberById(followingMemberId);
         Follow follow = getFollowByFollowerAndFollowing(loginMember, followingMember);
-        followRepository.delete(follow);
-        loginMember.decreaseFollowingCount();
-        followingMember.decreaseFollowerCount();
+        deleteFollowAndDecreaseCounts(loginMember, followingMember, follow);
     }
 
     private Follow getFollowByFollowerAndFollowing(Member follower, Member following) {
         return followRepository.findByFollowerAndFollowing(follower, following)
                 .orElseThrow(NotFollowingMemberException::new);
+    }
+
+    private void deleteFollowAndDecreaseCounts(Member loginMember, Member followingMember, Follow follow) {
+        followRepository.delete(follow);
+        loginMember.decreaseFollowingCount();
+        followingMember.decreaseFollowerCount();
     }
 
     public MemberProfileListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails) {
