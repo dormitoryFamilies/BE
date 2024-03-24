@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.spi.LoginModule;
 import java.util.List;
 
 @Service
@@ -73,9 +74,17 @@ public class FollowService {
 
     public MemberProfileListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        List<Follow> followingMembers = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember);
-        List<MemberProfileResponseDto> memberProfiles = followingMembers.stream()
+        List<Follow> followings = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember);
+        List<MemberProfileResponseDto> memberProfiles = followings.stream()
                 .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing())).toList();
+        return MemberProfileListResponseDto.toDto(memberProfiles);
+    }
+
+    public MemberProfileListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        List<Follow> followers = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember);
+        List<MemberProfileResponseDto> memberProfiles = followers.stream()
+                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollower())).toList();
         return MemberProfileListResponseDto.toDto(memberProfiles);
     }
 }

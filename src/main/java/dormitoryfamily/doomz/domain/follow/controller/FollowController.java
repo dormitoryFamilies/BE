@@ -41,4 +41,12 @@ public class FollowController {
         MemberProfileListResponseDto responseDto = followService.getMyFollowingMemberList(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/followers")
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowerMembers(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        MemberProfileListResponseDto responseDto = followService.getMyFollowerMemberList(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }
