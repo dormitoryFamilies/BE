@@ -10,6 +10,7 @@ import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,14 @@ public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    public void saveFollow(Member loginMember, Long followingMemberId) {
+    public void saveFollow(PrincipalDetails principalDetails, Long followingMemberId) {
+        Member loginMember = principalDetails.getMember();
         Member followingMember = getFollowingMemberById(followingMemberId);
         checkIfCannotFollowYourself(loginMember.getId(), followingMemberId);
         checkIfAlreadyFollowing(loginMember, followingMember);
         Follow follow = Follow.createFollow(loginMember, followingMember);
         followRepository.save(follow);
-        //loginMember.increaseFollowingCount();
+        loginMember.increaseFollowingCount();
     }
 
     private Member getFollowingMemberById(Long memberId) {
@@ -51,11 +53,12 @@ public class FollowService {
         }
     }
 
-    public void removeFollow(Member loginMember, Long followingMemberId) {
+    public void removeFollow(PrincipalDetails principalDetails, Long followingMemberId) {
+        Member loginMember = principalDetails.getMember();
         Member followingMember = getFollowingMemberById(followingMemberId);
         Follow follow = getFollowByFollowerAndFollowing(loginMember, followingMember);
         followRepository.delete(follow);
-       //loginMember.decreaseFollowingCount();
+        loginMember.decreaseFollowingCount();
     }
 
     private Follow getFollowByFollowerAndFollowing(Member follower, Member following) {
@@ -63,7 +66,8 @@ public class FollowService {
                 .orElseThrow(NotFollowingMemberException::new);
     }
 
-    public MemberProfileListResponseDto getMyFollowingMemberList(Member loginMember) {
+    public MemberProfileListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
         List<Follow> followingMembers = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember);
         List<MemberProfileResponseDto> memberProfiles = followingMembers.stream()
                 .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing())).toList();
