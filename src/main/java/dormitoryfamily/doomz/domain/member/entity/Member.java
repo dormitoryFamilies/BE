@@ -81,11 +81,11 @@ public class Member extends BaseTimeEntity {
     }
 
     public void increaseFollowingCount(){
-        followingCount += 1;
+        this.followingCount += 1;
     }
 
     public void decreaseFollowingCount(){
-        followingCount -= 1;
+        this.followingCount -= 1;
     }
 
     public void increaseFollowerCount(){
