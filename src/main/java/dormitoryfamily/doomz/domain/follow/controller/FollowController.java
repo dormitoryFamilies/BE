@@ -31,7 +31,7 @@ public class FollowController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
         followService.removeFollow(principalDetails, memberId);
-        return ResponseEntity.ok(ResponseDto.created());
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @GetMapping("/followings")
