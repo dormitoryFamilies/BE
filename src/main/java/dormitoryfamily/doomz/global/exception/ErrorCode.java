@@ -21,6 +21,7 @@ public enum ErrorCode {
 
     // Member
     INVALID_MEMBER_ACCESS(HttpStatus.NOT_FOUND, "해당 게시글에 대한 권한이 없습니다."),
+    MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."),
     GENDER_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST,"해당 성별은 존재하지 않습니다."),
     COLLEGE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 단과대는 존재하지 않습니다."),
     DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
@@ -36,6 +37,11 @@ public enum ErrorCode {
     //wish
     ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
     ARTICLE_IS_NOT_WISHED(HttpStatus.CONFLICT, "찜하지 않은 게시글입니다."),
+
+    //follow
+    ALREADY_FOLLOW_MEMBER(HttpStatus.CONFLICT, "이미 팔로우하고 있는 회원입니다."),
+    CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
+    MEMBER_IN_NOT_FOLLOWED(HttpStatus.CONFLICT, "팔로우하고 있지 않은 회원입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
