@@ -37,6 +37,12 @@ public enum ErrorCode {
     ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
     ARTICLE_IS_NOT_WISHED(HttpStatus.CONFLICT, "찜하지 않은 게시글입니다."),
 
+    //token
+    REFRESH_TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "리프레시 토큰이 존재하지 않습니다."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 만료되었습니다."),
+    INVALID_TOKEN_CATEGORY(HttpStatus.BAD_REQUEST, "유효한 토큰 카테고리가 아닙니다."),
+    NOT_SAVED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰이 DB에 저장되어 있지 않습니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
