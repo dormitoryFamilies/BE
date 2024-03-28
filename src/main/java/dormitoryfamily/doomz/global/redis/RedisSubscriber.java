@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.global.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -25,9 +24,9 @@ public class RedisSubscriber implements MessageListener {
 
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
-            ChatDto chatDto = objectMapper.readValue(publishMessage, ChatDto.class);
+            ChatData chatData = objectMapper.readValue(publishMessage, ChatData.class);
 
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatDto.roomUUID(), chatDto);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatData.roomUUID(), chatData);
 
         } catch (Exception e) {
             log.error(e.getMessage());
