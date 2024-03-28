@@ -1,6 +1,8 @@
 package dormitoryfamily.doomz.global.oauth2;
 
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
+import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
+import dormitoryfamily.doomz.global.jwt.refresh.repository.RefreshTokenRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -32,6 +35,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // 토큰 생성
         String accessToken = jwtUtil.createToken(CATEGORY_ACCESS, email, ACCESS_TOKEN_EXPIRATION_TIME);
         String refreshToken = jwtUtil.createToken(CATEGORY_REFRESH, email, REFRESH_TOKEN_EXPIRATION_TIME);
+
+        // 리프레시 토큰 레디스에 저장
+        saveNewRefreshToken(email, refreshToken);
         System.out.println("accessToken = " + accessToken);
         System.out.println("refreshToken = " + refreshToken);
 
@@ -42,5 +48,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.sendRedirect("http://43.202.254.127:8080/");
     }
 
+    private void saveNewRefreshToken(String email, String refresh) {
 
+        RefreshTokenEntity refreshToken = new RefreshTokenEntity(email, refresh);
+        refreshTokenRepository.save(refreshToken);
+    }
 }
