@@ -54,6 +54,12 @@ public enum ErrorCode {
     CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
     CHAT_SINGLE_CONTENT_REQUIRED(HttpStatus.CONFLICT, "메시지 또는 이미지 URL 중 하나만 존재해야 합니다."),
 
+    //token
+    REFRESH_TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "리프레시 토큰이 존재하지 않습니다."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 만료되었습니다."),
+    INVALID_TOKEN_CATEGORY(HttpStatus.BAD_REQUEST, "유효한 토큰 카테고리가 아닙니다."),
+    NOT_SAVED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰이 DB에 저장되어 있지 않습니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
