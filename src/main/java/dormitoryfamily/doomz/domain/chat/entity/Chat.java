@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.entity;
 
 import dormitoryfamily.doomz.domain.chat.entity.type.VisibleStatus;
+import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -31,5 +32,9 @@ public class Chat extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private VisibleStatus visible;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
+    private ChatRoom chatRoom;
 
 }
