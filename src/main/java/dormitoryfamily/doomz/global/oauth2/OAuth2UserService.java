@@ -32,7 +32,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         //첫 로그인이라면
         if (user.isEmpty()) {
-            System.out.println("첫 로그인이라서 DB에 저장할꺼야");
             Member newUser = Member.builder()
                     .name(kakaoMemberResponse.getName())
                     .email(kakaoMemberResponse.getEmail())
@@ -45,7 +44,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             return new PrincipalDetails(newUser);
         }
 
-        System.out.println("이미 가입했었던 유저네!");
         return new PrincipalDetails(user.get());
     }
 }
