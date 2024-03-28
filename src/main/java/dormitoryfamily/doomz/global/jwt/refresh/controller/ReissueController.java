@@ -1,5 +1,6 @@
-package dormitoryfamily.doomz.global.jwt;
+package dormitoryfamily.doomz.global.jwt.refresh.controller;
 
+import dormitoryfamily.doomz.global.jwt.refresh.service.ReissueService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
