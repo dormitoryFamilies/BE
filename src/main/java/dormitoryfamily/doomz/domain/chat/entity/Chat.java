@@ -28,7 +28,7 @@ public class Chat extends BaseTimeEntity {
 
     private String imageUrl;
 
-    private boolean read;
+    private boolean isRead;
 
     @Enumerated(EnumType.STRING)
     private VisibleStatus visible;
@@ -36,5 +36,4 @@ public class Chat extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
     private ChatRoom chatRoom;
-
 }
