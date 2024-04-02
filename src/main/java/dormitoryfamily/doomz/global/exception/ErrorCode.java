@@ -43,6 +43,9 @@ public enum ErrorCode {
     CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
     MEMBER_IN_NOT_FOLLOWED(HttpStatus.CONFLICT, "팔로우하고 있지 않은 회원입니다."),
 
+    //chatRoom
+    CANNOT_CHAT_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
