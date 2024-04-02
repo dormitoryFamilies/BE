@@ -41,11 +41,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, ChatData> redisTemplateForChatDto(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, ChatData> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, ChatEntity> redisTemplateForChatDto(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatEntity> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatData.class)); // ChatDto 클래스를 직렬화
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatEntity.class)); // ChatDto 클래스를 직렬화
         return redisTemplate;
     }
 }

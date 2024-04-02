@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class RedisPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, ChatData chatData) {
-        redisTemplate.convertAndSend(topic.getTopic(), chatData);
+    public void publish(ChannelTopic topic, ChatEntity chatEntity) {
+        redisTemplate.convertAndSend(topic.getTopic(), chatEntity);
     }
 }
