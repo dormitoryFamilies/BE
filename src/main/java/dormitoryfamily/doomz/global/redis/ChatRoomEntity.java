@@ -1,10 +1,12 @@
 package dormitoryfamily.doomz.global.redis;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 
-import static ch.qos.logback.core.joran.JoranConstants.NULL;
+import java.io.Serializable;
 
-public record ChatRoomData (
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record ChatRoomEntity(
         Long id,
         String roomUUID,
         Long senderId,
@@ -13,10 +15,10 @@ public record ChatRoomData (
         Long receiverId,
         int senderUnreadCount,
         boolean receiverIsDeleted,
-        String latestText){
+        String latestText) implements Serializable {
 
-    public static ChatRoomData create(ChatRoom chatRoom){
-        return new ChatRoomData(
+    public static ChatRoomEntity create(ChatRoom chatRoom){
+        return new ChatRoomEntity(
                 chatRoom.getId(),
                 chatRoom.getRoomUUID(),
                 chatRoom.getSender().getId(),
@@ -25,7 +27,7 @@ public record ChatRoomData (
                 chatRoom.getReceiver().getId(),
                 chatRoom.getReceiverUnreadCount(),
                 chatRoom.isReceiverIsDeleted(),
-                NULL
+                null
         );
     }
 }
