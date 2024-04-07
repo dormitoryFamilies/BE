@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.chatRoom.entity;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -30,15 +31,16 @@ public class ChatRoom extends BaseTimeEntity {
     @JoinColumn(name = "sender_id")
     private Member sender;  //최초에 채팅으 보낸 사람
 
-    private int senderUnreadCount;
-    private boolean senderIsDeleted;
-
     @ManyToOne
     @JoinColumn(name = "reciever_id")
     private Member receiver;  //최초에 채팅을 받은 사람
 
+    private int senderUnreadCount;
+
     private int receiverUnreadCount;
-    private boolean receiverIsDeleted;
+
+    @Enumerated(EnumType.STRING)
+    private ChatRoomStatus chatRoomStatus;
 
     private String latestText;
 
@@ -48,43 +50,38 @@ public class ChatRoom extends BaseTimeEntity {
     @Builder
     public ChatRoom(String roomUUID,
                     Member sender,
-                    int senderUnreadCount,
-                    boolean senderIsDeleted,
                     Member receiver,
+                    int senderUnreadCount,
                     int receiverUnreadCount,
-                    boolean receiverIsDeleted) {
+                    ChatRoomStatus chatRoomStatus
+    ) {
         this.roomUUID = roomUUID;
         this.sender = sender;
-        this.senderUnreadCount = senderUnreadCount;
-        this.senderIsDeleted = senderIsDeleted;
         this.receiver = receiver;
+        this.senderUnreadCount = senderUnreadCount;
         this.receiverUnreadCount = receiverUnreadCount;
-        this.receiverIsDeleted = receiverIsDeleted;
+        this.chatRoomStatus = chatRoomStatus;
     }
 
-    public static ChatRoom create(Member sender, Member receiver){
+    public static ChatRoom create(Member sender, Member receiver) {
         return ChatRoom.builder()
                 .roomUUID(UUID.randomUUID().toString())
                 .sender(sender)
-                .senderUnreadCount(0)
-                .senderIsDeleted(false)
                 .receiver(receiver)
+                .senderUnreadCount(0)
                 .receiverUnreadCount(0)
-                .receiverIsDeleted(false)
+                .chatRoomStatus(ChatRoomStatus.BOTH)
                 .build();
     }
 
-    public void deleteSender(){
-        this.senderIsDeleted = true;
+    public void deleteSender() {
         this.senderUnreadCount = 0;
+        this.chatRoomStatus = ChatRoomStatus.ONLY_RECEIVER;
     }
 
-    public void deleteReceiver(){
-        this.receiverIsDeleted = true;
+    public void deleteReceiver() {
         this.receiverUnreadCount = 0;
-    }
-
-    public void removeChat(List<Chat> chatToDelete){
-
+        this.chatRoomStatus = ChatRoomStatus.ONLY_SENDER;
     }
 }
+
