@@ -45,6 +45,8 @@ public enum ErrorCode {
 
     //chatRoom
     CANNOT_CHAT_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
+    CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 채팅방입니다."),
+    ALREADY_CHAT_ROOM_LEFT(HttpStatus.CONFLICT, "이미 나간 채팅방입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

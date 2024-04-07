@@ -24,4 +24,13 @@ public class ChatRoomController {
         CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
+
+    @DeleteMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto<Void>> deleteRoom(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails)
+    {
+        chatRoomService.deleteChatRoom(memberId, principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }
