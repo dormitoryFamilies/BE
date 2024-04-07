@@ -36,4 +36,8 @@ public class Chat extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
     private ChatRoom chatRoom;
+
+    public void changeVisible(VisibleStatus visible){
+        this.visible=visible;
+    }
 }
