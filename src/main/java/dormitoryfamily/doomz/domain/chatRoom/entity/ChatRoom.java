@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.entity;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -43,7 +42,7 @@ public class ChatRoom extends BaseTimeEntity {
 
     private String latestText;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chat> chatList = new ArrayList<>();
 
     @Builder
@@ -75,4 +74,17 @@ public class ChatRoom extends BaseTimeEntity {
                 .build();
     }
 
+    public void deleteSender(){
+        this.senderIsDeleted = true;
+        this.senderUnreadCount = 0;
+    }
+
+    public void deleteReceiver(){
+        this.receiverIsDeleted = true;
+        this.receiverUnreadCount = 0;
+    }
+
+    public void removeChat(List<Chat> chatToDelete){
+
+    }
 }
