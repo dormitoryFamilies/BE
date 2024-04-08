@@ -1,17 +1,19 @@
 package dormitoryfamily.doomz.domain.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import dormitoryfamily.doomz.domain.chat.entity.type.VisibleStatus;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Chat extends BaseTimeEntity {
 
     @Id
@@ -22,7 +24,7 @@ public class Chat extends BaseTimeEntity {
     @Column(name = "room_uuid")
     private String roomUUID;
 
-    private boolean isFromSender;
+    private Long senderId;
 
     private String message;
 
@@ -33,9 +35,21 @@ public class Chat extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private VisibleStatus visible;
 
+    private String sentTime;
+
     @ManyToOne
     @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
     private ChatRoom chatRoom;
+
+    @Builder
+    public Chat(String roomUUID, Long senderId, String message, String imageUrl, boolean isRead, VisibleStatus visible) {
+        this.roomUUID = roomUUID;
+        this.senderId = senderId;
+        this.message = message;
+        this.imageUrl = imageUrl;
+        this.isRead = isRead;
+        this.visible = visible;
+    }
 
     public void changeVisible(VisibleStatus visible){
         this.visible=visible;

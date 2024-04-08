@@ -9,10 +9,12 @@ import dormitoryfamily.doomz.global.redis.ChatEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static dormitoryfamily.doomz.domain.chat.entity.type.VisibleStatus.*;
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType.*;
@@ -48,5 +50,15 @@ public class ChatService {
             chatRepository.bulkUpdateChatVisibility(chatsToUpdateToOnlySender, ONLY_RECEIVER_VISIBLE);
             //redis에서도 변경
         }
+    }
+
+    public void saveChat(ChatEntity chatEntity) {
+
+        Chat chat = ChatEntity.toEntity(chatEntity);
+        chatRepository.save(chat);
+
+        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(Chat.class));
+        redisTemplateMessage.opsForList().rightPush(chatEntity.roomUUID(), chatEntity);
+        redisTemplateMessage.expire(chatEntity.roomUUID(), 1, TimeUnit.MINUTES);
     }
 }

@@ -1,12 +1,8 @@
 package dormitoryfamily.doomz.domain.chatRoom.service;
 
-import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
-import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
@@ -140,5 +136,19 @@ public class ChatRoomService {
     private void deleteChatRoom(ChatRoom chatRoom) {
         chatRoomRepository.delete(chatRoom);
         opsHashChatRoom.delete(Chat_Rooms, chatRoom.getRoomUUID());
+    }
+
+    public void enterChatRoom(String roomUUID) {
+        ChannelTopic topic = topics.get(roomUUID);
+
+        if (topic == null) {
+            topic = new ChannelTopic(roomUUID);
+            redisMessageListener.addMessageListener(redisSubscriber, topic);
+            topics.put(roomUUID, topic);
+        }
+    }
+
+    public ChannelTopic getTopic(String roomUUID) {
+        return topics.get(roomUUID);
     }
 }
