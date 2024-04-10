@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
@@ -18,4 +19,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Modifying
     @Query("DELETE FROM Chat c WHERE c IN :chatsToDelete")
     void bulkDeleteChats(@Param("chatsToDelete") List<Chat> chatsToDelete);
+
+    Chat findTopByRoomUUIDOrderByCreatedAtDesc(String roomUUID);
 }
