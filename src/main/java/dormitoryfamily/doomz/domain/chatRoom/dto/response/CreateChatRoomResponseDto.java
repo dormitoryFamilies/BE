@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.chatRoom.dto.response;
 
-import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 
 public record CreateChatRoomResponseDto (
@@ -11,4 +10,3 @@ public record CreateChatRoomResponseDto (
         return new CreateChatRoomResponseDto(chatRoom.getId(), chatRoom.getRoomUUID());
     }
 }
-;
