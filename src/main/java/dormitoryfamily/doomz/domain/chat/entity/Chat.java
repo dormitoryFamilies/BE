@@ -35,8 +35,6 @@ public class Chat extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private VisibleStatus visible;
 
-    private String sentTime;
-
     @ManyToOne
     @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
     private ChatRoom chatRoom;

@@ -1,8 +1,13 @@
 package dormitoryfamily.doomz.domain.chatRoom.service;
 
+import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
+import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
@@ -24,8 +29,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType.*;
 
@@ -35,6 +42,7 @@ import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType.*
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
     private final ChatService chatService;
 
@@ -54,15 +62,14 @@ public class ChatRoomService {
     }
 
     public CreateChatRoomResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
-        Member loginMember  = principalDetails.getMember();
+        Member loginMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
         checkSenderReceiverDistinct(loginMember, chatMember);
         Optional<ChatRoom> chatRoom = chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember);
 
-        if(chatRoom.isPresent()){
+        if (chatRoom.isPresent()) {
             return CreateChatRoomResponseDto.fromEntity(chatRoom.get());
-        }
-        else {
+        } else {
 
             ChatRoom createdchatRoom = ChatRoom.create(loginMember, chatMember);
             ChatRoom savedChatRoom = chatRoomRepository.save(createdchatRoom);
@@ -80,14 +87,14 @@ public class ChatRoomService {
                 .orElseThrow(MemberNotExistsException::new);
     }
 
-    private void checkSenderReceiverDistinct(Member loginMember, Member chatMember){
+    private void checkSenderReceiverDistinct(Member loginMember, Member chatMember) {
         if (loginMember.getId().equals(chatMember.getId())) {
             throw new CannotChatYourselfException();
         }
     }
 
     public void deleteChatRoom(Long memberId, PrincipalDetails principalDetails) {
-        Member loginMember  = principalDetails.getMember();
+        Member loginMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
         ChatRoom chatRoom = getChatRoomBySenderAndReceiver(loginMember, chatMember);
         deleteChatRoomProcess(chatRoom, loginMember);
@@ -151,4 +158,22 @@ public class ChatRoomService {
     public ChannelTopic getTopic(String roomUUID) {
         return topics.get(roomUUID);
     }
+
+    public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember);
+        List<ChatRoomResponseDto> responseDtos = chatRooms.stream()
+                .map(chatRoom -> {
+                    Chat lastChat = chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(chatRoom.getRoomUUID());
+                    if (chatRoom.getSender().getId().equals(loginMember.getId())) {
+                        return ChatRoomResponseDto.fromEntityWhenSender(chatRoom, lastChat);
+                    } else {
+                        return ChatRoomResponseDto.fromEntityWhenReceiver(chatRoom, lastChat);
+                    }
+                })
+                .collect(Collectors.toList());
+        return ChatRoomListResponseDto.toDto(responseDtos);
+    }
 }
+
+
