@@ -81,5 +81,9 @@ public class ChatRoom extends BaseTimeEntity {
         this.receiverUnreadCount = 0;
         this.chatRoomStatus = ChatRoomStatus.ONLY_SENDER;
     }
+
+    public void changeChatRoomStatus(ChatRoomStatus chatRoomStatus){
+        this.chatRoomStatus = chatRoomStatus;
+    }
 }
 

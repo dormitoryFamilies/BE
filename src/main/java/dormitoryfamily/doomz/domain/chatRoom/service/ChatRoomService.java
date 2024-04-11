@@ -7,7 +7,6 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDt
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
-import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
@@ -65,21 +64,19 @@ public class ChatRoomService {
         Member loginMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
         checkSenderReceiverDistinct(loginMember, chatMember);
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember);
 
-        if (chatRoom.isPresent()) {
-            return CreateChatRoomResponseDto.fromEntity(chatRoom.get());
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember);
+
+        if (existingChatRoom.isPresent()) {
+            ChatRoom room = existingChatRoom.get();
+            updateChatRoomStatusIfNeeded(room, loginMember);
+            return CreateChatRoomResponseDto.fromEntity(room);
         } else {
-
-            ChatRoom createdchatRoom = ChatRoom.create(loginMember, chatMember);
-            ChatRoom savedChatRoom = chatRoomRepository.save(createdchatRoom);
-
-            ChatRoomEntity chatRoomEntity = ChatRoomEntity.create(savedChatRoom);
-            opsHashChatRoom.put(Chat_Rooms, chatRoomEntity.roomUUID(), chatRoomEntity);
-
+            ChatRoom createdChatRoom = ChatRoom.create(loginMember, chatMember);
+            ChatRoom savedChatRoom = chatRoomRepository.save(createdChatRoom);
+            saveChatRoomToRedis(savedChatRoom);
             return CreateChatRoomResponseDto.fromEntity(savedChatRoom);
         }
-
     }
 
     private Member getMemberById(Long memberId) {
@@ -90,6 +87,21 @@ public class ChatRoomService {
     private void checkSenderReceiverDistinct(Member loginMember, Member chatMember) {
         if (loginMember.getId().equals(chatMember.getId())) {
             throw new CannotChatYourselfException();
+        }
+    }
+
+    private void saveChatRoomToRedis(ChatRoom chatRoom) {
+        ChatRoomEntity chatRoomEntity = ChatRoomEntity.create(chatRoom);
+        opsHashChatRoom.put(Chat_Rooms, chatRoomEntity.roomUUID(), chatRoomEntity);
+    }
+
+    private void updateChatRoomStatusIfNeeded(ChatRoom room, Member loginMember) {
+        boolean isSender = room.getSender().getId().equals(loginMember.getId());
+        boolean isReceiver = room.getReceiver().getId().equals(loginMember.getId());
+        if ((isSender && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_RECEIVER)) ||
+                (isReceiver && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_SENDER))) {
+            room.changeChatRoomStatus(ChatRoomStatus.BOTH);
+            saveChatRoomToRedis(room);
         }
     }
 
