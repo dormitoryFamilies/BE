@@ -17,6 +17,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("SELECT cr FROM ChatRoom cr " +
             "WHERE (cr.sender = :member AND cr.chatRoomStatus != 'ONLY_RECEIVER')"+
             "OR (cr.receiver = :member AND cr.chatRoomStatus != 'ONLY_SENDER') ")
+
     List<ChatRoom> findAllByMember(Member member);
 }
 
