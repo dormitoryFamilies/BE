@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType.*;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -65,10 +63,10 @@ public class ChatRoomService {
         Member chatMember = getMemberById(memberId);
         checkSenderReceiverDistinct(loginMember, chatMember);
 
-        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember);
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember);
 
-        if (existingChatRoom.isPresent()) {
-            ChatRoom room = existingChatRoom.get();
+        if (chatRoom.isPresent()) {
+            ChatRoom room = chatRoom.get();
             updateChatRoomStatusIfNeeded(room, loginMember);
             return CreateChatRoomResponseDto.fromEntity(room);
         } else {
@@ -91,7 +89,7 @@ public class ChatRoomService {
     }
 
     private void saveChatRoomToRedis(ChatRoom chatRoom) {
-        ChatRoomEntity chatRoomEntity = ChatRoomEntity.create(chatRoom);
+        ChatRoomEntity chatRoomEntity = ChatRoomEntity.fromEntity(chatRoom);
         opsHashChatRoom.put(Chat_Rooms, chatRoomEntity.roomUUID(), chatRoomEntity);
     }
 
@@ -129,7 +127,7 @@ public class ChatRoomService {
             } else if (isReceiverDeleted) {
                 deleteChatRoom(chatRoom);
             } else {
-                changeChatStatusAndDeleteSender(chatRoom);
+                changeChatStatusAndClearChatIfNeed(chatRoom, true);
             }
         } else {
             if (isReceiverDeleted) {
@@ -137,19 +135,26 @@ public class ChatRoomService {
             } else if (isSenderDeleted) {
                 deleteChatRoom(chatRoom);
             } else {
-                changeChatStatusAndDeleteReceiver(chatRoom);
+                changeChatStatusAndClearChatIfNeed(chatRoom, false);
             }
         }
     }
 
-    private void changeChatStatusAndDeleteSender(ChatRoom chatRoom) {
-        chatService.changeChatStatus(chatRoom, SENDER);
-        chatRoom.deleteSender();
-    }
-
-    private void changeChatStatusAndDeleteReceiver(ChatRoom chatRoom) {
-        chatService.changeChatStatus(chatRoom, RECEIVER);
-        chatRoom.deleteReceiver();
+    private  void changeChatStatusAndClearChatIfNeed(ChatRoom chatRoom, boolean isSender){
+        Chat lastChat = chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(chatRoom.getRoomUUID());
+        if(isSender){
+            if(chatRoom.getLastSenderOnlyChatId() != null){
+                chatService.clearChat(chatRoom.getLastSenderOnlyChatId(), chatRoom.getRoomUUID());
+            }
+            chatRoom.deleteSender(lastChat.getId());
+        }
+        else{
+            if(chatRoom.getLastReceiverOnlyChatId()!=null){
+                chatService.clearChat(chatRoom.getLastReceiverOnlyChatId(), chatRoom.getRoomUUID());
+            }
+            chatRoom.deleteReceiver(lastChat.getId());
+        }
+        saveChatRoomToRedis(chatRoom);
     }
 
     private void deleteChatRoom(ChatRoom chatRoom) {

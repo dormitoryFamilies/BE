@@ -2,7 +2,6 @@ package dormitoryfamily.doomz.global.redis;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chat.entity.type.VisibleStatus;
 
 import java.io.Serializable;
 
@@ -21,8 +20,6 @@ public record ChatEntity(
                 .senderId(chatEntity.senderId())
                 .message(chatEntity.message())
                 .imageUrl(chatEntity.imageUrl())
-                .isRead(false)
-                .visible(VisibleStatus.BOTH_VISIBLE)
                 .build();
     }
 }

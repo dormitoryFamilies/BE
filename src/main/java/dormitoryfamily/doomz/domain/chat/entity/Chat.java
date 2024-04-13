@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.chat.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import dormitoryfamily.doomz.domain.chat.entity.type.VisibleStatus;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -30,26 +29,19 @@ public class Chat extends BaseTimeEntity {
 
     private String imageUrl;
 
-    private boolean isRead;
-
-    @Enumerated(EnumType.STRING)
-    private VisibleStatus visible;
-
     @ManyToOne
-    @JoinColumn(name = "chat_room_Id", referencedColumnName = "room_uuid", insertable = false, updatable = false)
+    @JoinColumn(name = "chat_room_Id", insertable = false, updatable = false)
     private ChatRoom chatRoom;
 
     @Builder
-    public Chat(String roomUUID, Long senderId, String message, String imageUrl, boolean isRead, VisibleStatus visible) {
+    public Chat(String roomUUID,
+                Long senderId,
+                String message,
+                String imageUrl,
+                boolean isRead) {
         this.roomUUID = roomUUID;
         this.senderId = senderId;
         this.message = message;
         this.imageUrl = imageUrl;
-        this.isRead = isRead;
-        this.visible = visible;
-    }
-
-    public void changeVisible(VisibleStatus visible){
-        this.visible=visible;
     }
 }
