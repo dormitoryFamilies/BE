@@ -16,7 +16,7 @@ import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
-import dormitoryfamily.doomz.global.redis.ChatRoomEntity;
+import dormitoryfamily.doomz.domain.chatRoom.dto.ChatRoomDto;
 import dormitoryfamily.doomz.global.redis.RedisSubscriber;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.annotation.PostConstruct;
@@ -49,7 +49,7 @@ public class ChatRoomService {
 
     private static final String Chat_Rooms = "CHAT_ROOM";
     private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, String, ChatRoomEntity> opsHashChatRoom;
+    private HashOperations<String, String, ChatRoomDto> opsHashChatRoom;
 
     private Map<String, ChannelTopic> topics;
 
@@ -90,8 +90,8 @@ public class ChatRoomService {
     }
 
     private void saveChatRoomToRedis(ChatRoom chatRoom) {
-        ChatRoomEntity chatRoomEntity = ChatRoomEntity.fromEntity(chatRoom);
-        opsHashChatRoom.put(Chat_Rooms, chatRoomEntity.roomUUID(), chatRoomEntity);
+        ChatRoomDto chatRoomDto = ChatRoomDto.fromEntity(chatRoom);
+        opsHashChatRoom.put(Chat_Rooms, chatRoomDto.getRoomUUID(), chatRoomDto);
     }
 
     private void updateChatRoomStatusIfNeeded(ChatRoom room, Member loginMember) {

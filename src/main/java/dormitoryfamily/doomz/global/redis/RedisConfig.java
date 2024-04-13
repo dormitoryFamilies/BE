@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.global.redis;
 
+import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +42,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, ChatEntity> redisTemplateMessage(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, ChatEntity> redisTemplateMessage = new RedisTemplate<>();
+    public RedisTemplate<String, ChatDto> redisTemplateMessage(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatDto> redisTemplateMessage = new RedisTemplate<>();
         redisTemplateMessage.setConnectionFactory(connectionFactory);
         redisTemplateMessage.setKeySerializer(new StringRedisSerializer());
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
