@@ -49,7 +49,7 @@ public enum ErrorCode {
     ALREADY_CHAT_ROOM_LEFT(HttpStatus.CONFLICT, "이미 나간 채팅방입니다."),
 
     //chat
-    CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 채팅방에 채팅이 존재하지 않습니다."),
+    CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
