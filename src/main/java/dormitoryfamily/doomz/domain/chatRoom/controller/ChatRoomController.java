@@ -27,12 +27,12 @@ public class ChatRoomController {
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
-    @DeleteMapping("/members/{memberId}")
+    @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ResponseDto<Void>> deleteRoom(
-            @PathVariable Long memberId,
+            @PathVariable Long roomId,
             @AuthenticationPrincipal PrincipalDetails principalDetails)
     {
-        chatRoomService.deleteChatRoom(memberId, principalDetails);
+        chatRoomService.deleteChatRoom(roomId, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
