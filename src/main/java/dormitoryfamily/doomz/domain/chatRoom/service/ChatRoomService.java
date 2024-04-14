@@ -193,6 +193,23 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
         return ChatRoomListResponseDto.toDto(responseDtos);
     }
+
+    public void exitChatRoom(PrincipalDetails principalDetails, Long roomId) {
+        Member loginMember = principalDetails.getMember();
+        ChatRoom chatRoom = getChatRoomById(roomId);
+
+        if(chatRoom.getSender().getId().equals(loginMember.getId())){
+            chatRoom.setSenderStatusOut();
+        }
+        else{
+            chatRoom.setReceiverStatusOut();
+        }
+    }
+
+    private ChatRoom getChatRoomById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(ChatRoomNotExistsException::new);
+    }
 }
 
 

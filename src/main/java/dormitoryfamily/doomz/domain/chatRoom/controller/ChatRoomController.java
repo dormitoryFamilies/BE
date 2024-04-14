@@ -8,6 +8,7 @@ import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,5 +42,14 @@ public class ChatRoomController {
     {
         ChatRoomListResponseDto responseDto = chatRoomService.findAllChatRooms(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @PatchMapping("/rooms/{roomId}")
+    public ResponseEntity<ResponseDto<Void>> exitChatRoom(
+            @PathVariable Long roomId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+      chatRoomService.exitChatRoom(principalDetails, roomId);
+      return ResponseEntity.ok(ResponseDto.ok());
     }
 }
