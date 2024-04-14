@@ -16,12 +16,8 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
 
 @Service
 @RequiredArgsConstructor
@@ -43,45 +39,60 @@ public class ChatService {
     }
 
     public void clearChat(Long lastChatId, String roomUUID) {
-       chatRepository.deleteChatsLessThanChatId(lastChatId);
-       redisTemplateMessage.delete(roomUUID);  //다시 db에서 불러오기 위해 전체 삭제
+        chatRepository.deleteChatsLessThanChatId(lastChatId);
+        redisTemplateMessage.delete(roomUUID);  //다시 db에서 불러오기 위해 전체 삭제
     }
 
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
         String roomUUID = chatRoom.getRoomUUID();
-        List<ChatDto> chatList = new LinkedList<>();
-        try {
-            chatList = redisTemplateMessage.opsForList().range(roomUUID, 0, 99);
 
-            // 4. Redis 에서 가져온 메시지가 없다면, DB 에서 메시지 100개 가져오기
-            if (chatList == null || chatList.isEmpty()) {
-                List<Chat> dbChatList = chatRepository.findAllByRoomUUID(roomUUID);
+        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
 
-                for (Chat chat : dbChatList) {
-                    ChatDto chatDto = ChatDto.fromEntity(chat);
-                    chatList.add(chatDto);
-                    redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));      // 직렬화
-                    redisTemplateMessage.opsForList().rightPush(roomUUID, chatDto);                                // redis 저장
-                }
-            }
+        List<ChatDto> chatList = redisTemplateMessage.opsForList().range(roomUUID, 0, -1);
 
-            boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-            if (isSender && chatRoom.getLastReceiverOnlyChatId() != null) {
-                chatList.removeIf(chatDto -> chatDto.getChatId() <= chatRoom.getLastReceiverOnlyChatId());
-            } else if (!isSender && chatRoom.getLastSenderOnlyChatId() != null) {
-                chatList.removeIf(chatDto -> chatDto.getChatId() <= chatRoom.getLastReceiverOnlyChatId());
-            }
-            return ChatListResponseDto.toDto(chatList);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (chatList.isEmpty()) {
+            chatList = getChatListFromDatabase(roomUUID);
         }
+
+        filterChatListByUser(chatList, chatRoom, isSender);
+        updateChatMemberStatus(chatRoom, isSender);
+
         return ChatListResponseDto.toDto(chatList);
+    }
+
+    private void updateChatMemberStatus(ChatRoom chatRoom, boolean isSender) {
+        if (isSender) {
+            chatRoom.setSenderStatusIn();
+        } else {
+            chatRoom.setReceiverStatusIn();
+        }
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(ChatRoomNotExistsException::new);
+    }
+
+    private List<ChatDto> getChatListFromDatabase(String roomUUID) {
+        List<Chat> dbChatList = chatRepository.findAllByRoomUUID(roomUUID);
+        List<ChatDto> chatList = new ArrayList<>();
+
+        for (Chat chat : dbChatList) {
+            ChatDto chatDto = ChatDto.fromEntity(chat);
+            chatList.add(chatDto);
+            redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
+            redisTemplateMessage.opsForList().rightPush(roomUUID, chatDto);
+        }
+        return chatList;
+    }
+
+    private void filterChatListByUser(List<ChatDto> chatList, ChatRoom chatRoom, boolean isSender) {
+        Long lastChatId = isSender ? chatRoom.getLastReceiverOnlyChatId() : chatRoom.getLastSenderOnlyChatId();
+
+        if (lastChatId != null) {
+            chatList.removeIf(chatDto -> chatDto.getChatId() <= lastChatId);
+        }
     }
 }
