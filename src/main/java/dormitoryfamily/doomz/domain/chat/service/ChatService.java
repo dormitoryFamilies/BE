@@ -57,12 +57,12 @@ public class ChatService {
         }
 
         filterChatListByUser(chatList, chatRoom, isSender);
-        updateChatMemberStatus(chatRoom, isSender);
+        setChatMemberStatusIn(chatRoom, isSender);
 
         return ChatListResponseDto.toDto(chatList);
     }
 
-    private void updateChatMemberStatus(ChatRoom chatRoom, boolean isSender) {
+    private void setChatMemberStatusIn(ChatRoom chatRoom, boolean isSender) {
         if (isSender) {
             chatRoom.setSenderStatusIn();
         } else {
