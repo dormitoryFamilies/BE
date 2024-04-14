@@ -76,7 +76,7 @@ public class ChatService {
     }
 
     private List<ChatDto> getChatListFromDatabase(String roomUUID) {
-        List<Chat> dbChatList = chatRepository.findAllByRoomUUID(roomUUID);
+        List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
         List<ChatDto> chatList = new ArrayList<>();
 
         for (Chat chat : dbChatList) {

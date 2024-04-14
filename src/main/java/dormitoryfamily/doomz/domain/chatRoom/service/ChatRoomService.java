@@ -164,7 +164,7 @@ public class ChatRoomService {
     }
 
     private Chat getLastChatByRoomUUID(String roomUUID) {
-        return chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
+        return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
     }
 
     private void deleteChatRoom(ChatRoom chatRoom) {

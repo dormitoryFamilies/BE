@@ -54,7 +54,7 @@ public class ChatDto implements Serializable {
     public static ChatDto fromEntity(Chat chat){
         return ChatDto.builder()
                 .chatId(chat.getId())
-                .roomUUID(chat.getRoomUUID())
+                .roomUUID(chat.getChatRoom().getRoomUUID())
                 .senderId(chat.getSenderId())
                 .message(chat.getMessage())
                 .imageUrl(chat.getImageUrl())
