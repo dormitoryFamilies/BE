@@ -20,9 +20,6 @@ public class Chat extends BaseTimeEntity {
     @Column(name = "chat_id")
     private Long id;
 
-    @Column(name = "room_uuid")
-    private String roomUUID;
-
     private Long senderId;
 
     private String message;
@@ -30,7 +27,7 @@ public class Chat extends BaseTimeEntity {
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "chat_room_Id", insertable = false, updatable = false)
+    @JoinColumn(name = "room_uuid", referencedColumnName = "room_uuid", insertable = false, updatable = false)
     private ChatRoom chatRoom;
 
     @Builder
@@ -38,7 +35,6 @@ public class Chat extends BaseTimeEntity {
                 Long senderId,
                 String message,
                 String imageUrl) {
-        this.roomUUID = roomUUID;
         this.senderId = senderId;
         this.message = message;
         this.imageUrl = imageUrl;

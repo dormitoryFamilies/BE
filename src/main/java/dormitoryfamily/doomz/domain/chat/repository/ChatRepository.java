@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    Optional<Chat> findTopByRoomUUIDOrderByCreatedAtDesc(String roomUUID);
+    Optional<Chat> findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(String roomUUID);
 
-    List<Chat> findAllByRoomUUID(String roomUUID);
+    List<Chat> findAllByChatRoomRoomUUID(String roomUUID);
 
     @Transactional
     @Modifying
