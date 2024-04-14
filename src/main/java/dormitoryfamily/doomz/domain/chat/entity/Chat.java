@@ -37,8 +37,7 @@ public class Chat extends BaseTimeEntity {
     public Chat(String roomUUID,
                 Long senderId,
                 String message,
-                String imageUrl,
-                boolean isRead) {
+                String imageUrl) {
         this.roomUUID = roomUUID;
         this.senderId = senderId;
         this.message = message;

@@ -64,6 +64,9 @@ dependencies {
 
 	// dotenv-java
 	implementation 'io.github.cdimascio:java-dotenv:+'
+
+	//jackson-datatype-jsr310
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 }
 
 tasks.named('test') {
