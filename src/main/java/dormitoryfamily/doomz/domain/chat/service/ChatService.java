@@ -49,6 +49,7 @@ public class ChatService {
         String roomUUID = chatRoom.getRoomUUID();
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
+        updateChaMemberStatusAndUnreadCount(chatRoom, isSender);
 
         List<ChatDto> chatList = redisTemplateMessage.opsForList().range(roomUUID, 0, -1);
 
@@ -57,22 +58,23 @@ public class ChatService {
         }
 
         filterChatListByUser(chatList, chatRoom, isSender);
-        setChatMemberStatusIn(chatRoom, isSender);
 
         return ChatListResponseDto.toDto(chatList);
-    }
-
-    private void setChatMemberStatusIn(ChatRoom chatRoom, boolean isSender) {
-        if (isSender) {
-            chatRoom.setSenderStatusIn();
-        } else {
-            chatRoom.setReceiverStatusIn();
-        }
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(ChatRoomNotExistsException::new);
+    }
+
+    private void updateChaMemberStatusAndUnreadCount(ChatRoom chatRoom, boolean isSender) {
+        if (isSender) {
+            chatRoom.setSenderStatusIn();
+            chatRoom.resetSenderUnreadCount();
+        } else {
+            chatRoom.setReceiverStatusIn();
+            chatRoom.resetReceiverUnreadCount();
+        }
     }
 
     private List<ChatDto> getChatListFromDatabase(String roomUUID) {
