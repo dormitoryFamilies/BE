@@ -120,6 +120,22 @@ public class ChatRoom extends BaseTimeEntity {
         this.receiverStatus = OUT;
     }
 
+    public void increaseSenderUnreadCount(){
+        this.senderUnreadCount +=1;
+    }
+
+    public void increaseReceiverUnreadCount(){
+        this.receiverUnreadCount +=1;
+    }
+
+    public void resetSenderUnreadCount(){
+        this.senderUnreadCount = 0;
+    }
+
+    public void resetReceiverUnreadCount(){
+        this.receiverUnreadCount = 0;
+    }
+
     @PrePersist
     private void init() {
        this.chatRoomStatus = BOTH;

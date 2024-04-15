@@ -18,5 +18,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "WHERE (cr.sender = :member AND cr.chatRoomStatus != 'ONLY_RECEIVER')"+
             "OR (cr.receiver = :member AND cr.chatRoomStatus != 'ONLY_SENDER') ")
     List<ChatRoom> findAllByMember(Member member);
+
+    Optional<ChatRoom> findByRoomUUID(String roomUUID);
 }
 

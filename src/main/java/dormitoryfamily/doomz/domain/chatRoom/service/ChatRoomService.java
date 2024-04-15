@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.service;
 
+import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.exception.ChatNotExistsException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
@@ -30,6 +31,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -189,7 +192,13 @@ public class ChatRoomService {
     public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember);
-        List<ChatRoomResponseDto> responseDtos = chatRooms.stream()
+        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(chatRooms, loginMember);
+        responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
+        return ChatRoomListResponseDto.toDto(responseDtos);
+    }
+
+    private List<ChatRoomResponseDto> createChatRoomResponseDtos(List<ChatRoom> chatRooms, Member loginMember) {
+        return chatRooms.stream()
                 .map(chatRoom -> {
                     Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
                     if (chatRoom.getSender().getId().equals(loginMember.getId())) {
@@ -199,14 +208,39 @@ public class ChatRoomService {
                     }
                 })
                 .collect(Collectors.toList());
-        responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
-        return ChatRoomListResponseDto.toDto(responseDtos);
     }
 
     public void exitChatRoom(PrincipalDetails principalDetails, Long roomId) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
         setChatMemberStatusOut(chatRoom, loginMember);
+    }
+
+    public void updateUnreadCount(ChatDto chatDto) {
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatDto.getRoomUUID());
+
+        if (chatDto.getSenderId().equals(chatRoom.getSender().getId())) {
+            updateReceiverUnreadCount(chatRoom);
+        } else {
+            updateSenderUnreadCount(chatRoom);
+        }
+    }
+
+    private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
+        return chatRoomRepository.findByRoomUUID(roomUUID)
+                .orElseThrow(ChatRoomNotExistsException::new);
+    }
+
+    private void updateReceiverUnreadCount(ChatRoom chatRoom) {
+        if (chatRoom.getReceiverStatus() == OUT) {
+            chatRoom.increaseReceiverUnreadCount();
+        }
+    }
+
+    private void updateSenderUnreadCount(ChatRoom chatRoom) {
+        if (chatRoom.getSenderStatus() == OUT) {
+            chatRoom.increaseSenderUnreadCount();
+        }
     }
 }
 

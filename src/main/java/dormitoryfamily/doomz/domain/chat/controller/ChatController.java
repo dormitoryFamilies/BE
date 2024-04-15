@@ -30,6 +30,7 @@ public class ChatController {
         chatRoomService.enterChatRoom(chatDto.getRoomUUID());
         redisPublisher.publish(chatRoomService.getTopic(chatDto.getRoomUUID()), chatDto);
         chatService.saveChat(chatDto);
+        chatRoomService.updateUnreadCount(chatDto);
     }
 
     @GetMapping("/rooms/{roomId}")
