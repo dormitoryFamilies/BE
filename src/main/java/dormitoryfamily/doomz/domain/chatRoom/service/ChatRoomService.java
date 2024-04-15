@@ -199,6 +199,7 @@ public class ChatRoomService {
                     }
                 })
                 .collect(Collectors.toList());
+        responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
         return ChatRoomListResponseDto.toDto(responseDtos);
     }
 
