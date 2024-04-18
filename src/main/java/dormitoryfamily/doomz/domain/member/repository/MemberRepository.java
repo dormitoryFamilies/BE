@@ -15,4 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE LOWER(m.nickname) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "AND m.id NOT IN (SELECT f.following.id FROM Follow f WHERE f.follower.id = :followerId)")
     List<Member> findMembersExcludingFollowed(Long followerId, String keyword);
+
+    boolean existsByNickname(String nickname);
 }
