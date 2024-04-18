@@ -25,6 +25,7 @@ public enum ErrorCode {
     COLLEGE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 단과대는 존재하지 않습니다."),
     DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
     COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
+    NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
 
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
