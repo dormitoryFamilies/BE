@@ -23,9 +23,18 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public MemberProfileResponseDto getMemberProfile(Long memberId){
+    public NicknameCheckResponseDto checkNickname(String nickname) {
+        boolean isDuplicated = memberRepository.existsByNickname(nickname);
+        if (isDuplicated) {
+            throw new NicknameDuplicatedException();
+        }
+
+        return new NicknameCheckResponseDto(isDuplicated);
+    }
+
+    public MemberProfileResponseDto getMemberProfile(Long memberId) {
         Member member = getMemberById(memberId);
-        return  MemberProfileResponseDto.fromEntity(member);
+        return MemberProfileResponseDto.fromEntity(member);
     }
 
     private Member getMemberById(Long memberId) {
