@@ -1,6 +1,8 @@
 package dormitoryfamily.doomz.global.exception;
 
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -58,6 +61,22 @@ public class GlobalExceptionRestAdvice {
                 .collect(Collectors.toList());
 
         String errorMessage = String.join(" | ", fieldErrors);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ResponseDto.errorWithMessage(HttpStatus.BAD_REQUEST, errorMessage));
+    }
+
+    //@Validate 검증 예외 처리
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleConstraintViolationException(ConstraintViolationException e) {
+
+        Set<ConstraintViolation<?>> constraintViolations = e.getConstraintViolations();
+
+        List<String> errors = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList());
+
+        String errorMessage = String.join(" | ", errors);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ResponseDto.errorWithMessage(HttpStatus.BAD_REQUEST, errorMessage));
