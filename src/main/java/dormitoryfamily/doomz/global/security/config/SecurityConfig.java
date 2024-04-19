@@ -36,6 +36,7 @@ public class SecurityConfig {
                     configuration.applyPermitDefaultValues();
                     configuration.addAllowedOriginPattern("");
                     configuration.addAllowedOriginPattern("http://localhost:3000");
+                    configuration.addAllowedOriginPattern("https://apic.app");  //채팅 테스트를 위해 허용
                     configuration.addAllowedOriginPattern("http://43.202.254.127:8080/");
                     configuration.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"));
@@ -62,7 +63,7 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/").permitAll()
+                .requestMatchers("/","/stomp/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated());
 
