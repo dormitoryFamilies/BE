@@ -29,13 +29,19 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
 
     public void saveChat(ChatDto chatDto) {
-        Chat chat = ChatDto.toEntity(chatDto);
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatDto.getRoomUUID());
+        Chat chat = ChatDto.toEntity(chatDto, chatRoom);
         Chat savedChat = chatRepository.save(chat);
         chatDto.setChatIdAndSentTime(savedChat.getId(), savedChat.getCreatedAt());
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
         redisTemplateMessage.opsForList().rightPush(chatDto.getRoomUUID(), chatDto);
         redisTemplateMessage.expire(chatDto.getRoomUUID(), 1, TimeUnit.MINUTES);
+    }
+
+    private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
+        return chatRoomRepository.findByRoomUUID(roomUUID)
+                .orElseThrow(ChatRoomNotExistsException::new);
     }
 
     public void clearChat(Long lastChatId, String roomUUID) {
