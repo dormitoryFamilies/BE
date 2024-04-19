@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,12 +43,12 @@ public class ChatDto implements Serializable {
         this.sentTime = sentTime;
     }
 
-    public static Chat toEntity(ChatDto chatDto){
+    public static Chat toEntity(ChatDto chatDto, ChatRoom chatRoom){
         return Chat.builder()
-                .roomUUID(chatDto.getRoomUUID())
                 .senderId(chatDto.getSenderId())
                 .message(chatDto.getMessage())
                 .imageUrl(chatDto.getImageUrl())
+                .chatRoom(chatRoom)
                 .build();
     }
 
