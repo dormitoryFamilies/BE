@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.global.redis;
+package dormitoryfamily.doomz.global.chat;
 
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import org.springframework.beans.factory.annotation.Value;

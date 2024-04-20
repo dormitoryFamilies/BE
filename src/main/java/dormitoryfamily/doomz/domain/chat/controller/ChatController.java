@@ -4,7 +4,8 @@ import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
-import dormitoryfamily.doomz.global.redis.RedisPublisher;
+import dormitoryfamily.doomz.global.chat.ChatMessage;
+import dormitoryfamily.doomz.global.chat.RedisPublisher;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,11 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/message")
-    public void message(ChatDto chatDto) {
-        chatRoomService.enterChatRoom(chatDto.getRoomUUID());
-        redisPublisher.publish(chatRoomService.getTopic(chatDto.getRoomUUID()), chatDto);
-        chatService.saveChat(chatDto);
-        chatRoomService.updateUnreadCount(chatDto);
+    public void message(ChatMessage chatMessage) {
+        chatRoomService.enterChatRoom(chatMessage.getRoomUUID());
+        redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);
+        chatService.saveChat(chatMessage);
+        chatRoomService.updateUnreadCount(chatMessage);
     }
 
     @GetMapping("/rooms/{roomId}")
