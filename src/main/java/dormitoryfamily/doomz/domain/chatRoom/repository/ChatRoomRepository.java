@@ -7,7 +7,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
@@ -22,5 +21,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "WHERE (cr.sender = :member AND cr.chatRoomStatus != 'ONLY_RECEIVER')"+
             "OR (cr.receiver = :member AND cr.chatRoomStatus != 'ONLY_SENDER') ")
     Slice<ChatRoom> findAllByMember(Member member, Pageable pageable);
+
+    @Query("SELECT COALESCE(SUM(CASE WHEN cr.receiver = :member AND cr.chatRoomStatus != 'ONLY_SENDER' THEN cr.receiverUnreadCount ELSE 0 END), 0) + " +
+            "COALESCE(SUM(CASE WHEN cr.sender = :member AND cr.chatRoomStatus != 'ONLY_RECEIVER' THEN cr.senderUnreadCount ELSE 0 END), 0) " +
+            "FROM ChatRoom cr")
+    Integer findTotalUnreadCountForMember(Member member);
 }
 

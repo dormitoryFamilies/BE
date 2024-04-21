@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.controller;
 
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
@@ -7,10 +8,8 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -55,5 +54,13 @@ public class ChatRoomController {
     ){
       chatRoomService.exitChatRoom(principalDetails, roomId);
       return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @GetMapping("/rooms/unread")
+    public ResponseEntity<ResponseDto<UnreadChatCountResponseDto>> countTotalUnreadChat(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        UnreadChatCountResponseDto responseDto = chatRoomService.countTotalUnreadChat(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
