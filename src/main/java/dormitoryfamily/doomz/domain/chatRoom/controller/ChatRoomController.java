@@ -6,6 +6,8 @@ import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
@@ -38,9 +40,11 @@ public class ChatRoomController {
 
     @GetMapping("/rooms")
     public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> findAllChatRooms(
-            @AuthenticationPrincipal PrincipalDetails principalDetails)
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
+    )
     {
-        ChatRoomListResponseDto responseDto = chatRoomService.findAllChatRooms(principalDetails);
+        ChatRoomListResponseDto responseDto = chatRoomService.findAllChatRooms(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
