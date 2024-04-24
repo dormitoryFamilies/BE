@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.chatRoom.controller;
 
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
+import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyInChatRoomException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -32,6 +33,15 @@ public class ChatRoomControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleAlreadyChatRoomLeftException(AlreadyChatRoomLeftException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleAlreadyInChatRoomException(AlreadyInChatRoomException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity

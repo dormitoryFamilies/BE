@@ -11,6 +11,7 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountRespons
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
+import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyInChatRoomException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
@@ -33,6 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus.*;
+import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +65,7 @@ public class ChatRoomService {
 
         if (chatRoom.isPresent()) {
             ChatRoom room = chatRoom.get();
-            updateChatRoomStatusIfNeeded(room, loginMember);
+            updateChatRoomStatus(room, loginMember);
             return CreateChatRoomResponseDto.fromEntity(room);
         } else {
             ChatRoom createdChatRoom = ChatRoom.create(loginMember, chatMember);
@@ -83,12 +85,14 @@ public class ChatRoomService {
         }
     }
 
-    private void updateChatRoomStatusIfNeeded(ChatRoom room, Member loginMember) {
+    private void updateChatRoomStatus(ChatRoom room, Member loginMember) {
+        ChatRoomStatus roomStatus = room.getChatRoomStatus();
         boolean isSender = room.getSender().getId().equals(loginMember.getId());
-        boolean isReceiver = room.getReceiver().getId().equals(loginMember.getId());
-        if ((isSender && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_RECEIVER)) ||
-                (isReceiver && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_SENDER))) {
-            room.changeChatRoomStatus(ChatRoomStatus.BOTH);
+
+        if ((isSender && roomStatus.equals(ONLY_RECEIVER)) || (!isSender && roomStatus.equals(ONLY_SENDER))) {
+            room.changeChatRoomStatus(BOTH);
+        } else {
+            throw new AlreadyInChatRoomException();
         }
     }
 
@@ -107,8 +111,8 @@ public class ChatRoomService {
     private void deleteChatRoomProcess(ChatRoom chatRoom, Member loginMember) {
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-        boolean isSenderDeleted = chatRoom.getChatRoomStatus().equals(ChatRoomStatus.ONLY_RECEIVER);
-        boolean isReceiverDeleted = chatRoom.getChatRoomStatus().equals(ChatRoomStatus.ONLY_SENDER);
+        boolean isSenderDeleted = chatRoom.getChatRoomStatus().equals(ONLY_RECEIVER);
+        boolean isReceiverDeleted = chatRoom.getChatRoomStatus().equals(ONLY_SENDER);
 
         if (isSender) {
             if (isSenderDeleted) {

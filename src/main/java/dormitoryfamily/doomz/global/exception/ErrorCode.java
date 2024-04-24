@@ -47,6 +47,7 @@ public enum ErrorCode {
     CANNOT_CHAT_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
     CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 채팅방입니다."),
     ALREADY_CHAT_ROOM_LEFT(HttpStatus.CONFLICT, "이미 나간 채팅방입니다."),
+    ALREADY_IN_CHAT_ROOM(HttpStatus.CONFLICT, "이미 채팅방에 입장한 상태입니다"),
 
     //chat
     CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
