@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.article.entity.type;
 
-import dormitoryfamily.doomz.domain.article.exception.InvalidDormitoryTypeException;
+import dormitoryfamily.doomz.global.exception.InvalidDormitoryTypeException;
 import lombok.Getter;
 
 @Getter
