@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.article.controller;
 
 import dormitoryfamily.doomz.domain.article.exception.*;
+import dormitoryfamily.doomz.global.exception.InvalidDormitoryTypeException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
