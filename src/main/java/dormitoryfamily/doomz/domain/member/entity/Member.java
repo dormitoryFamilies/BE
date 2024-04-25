@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.member.entity;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
 import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
 import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
@@ -11,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 
@@ -20,7 +20,6 @@ import java.time.LocalDate;
 //setter와 기본생성자 임시 허용
 @Setter
 @NoArgsConstructor
-@Slf4j
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -51,6 +50,9 @@ public class Member extends BaseTimeEntity {
     private String studentCardImageUrl;
     private Integer followingCount;
     private Integer followerCount;
+    private boolean isSignUp;
+    private boolean isAuthenticated;
+    private String authority;
 
     @Builder
     public Member(String name,
@@ -65,7 +67,8 @@ public class Member extends BaseTimeEntity {
                   String profileUrl,
                   String studentCardImageUrl,
                   Integer followingCount,
-                  Integer followerCount) {
+                  Integer followerCount,
+                  String authority) {
         this.name = name;
         this.email = email;
         this.nickname = nickname;
@@ -77,6 +80,19 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
+        this.isSignUp = isSignUp;
+        this.isAuthenticated = isAuthenticated;
+        this.authority = authority;
+    }
+
+    public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
+        this.nickname = requestDto.nickname();
+        this.studentCardImageUrl = requestDto.studentCardImageUrl();
+        this.collegeType = CollegeType.fromDescription(requestDto.collegeType());
+        this.departmentType = DepartmentType.fromDescription(requestDto.departmentType(), collegeType);
+        this.studentNumber = requestDto.studentNumber();
+        this.dormitoryType = MemberDormitoryType.fromName(requestDto.dormitoryType());
+        this.isSignUp = true;
         this.followingCount = followingCount;
         this.followerCount = followerCount;
     }
