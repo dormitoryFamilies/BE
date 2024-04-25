@@ -63,4 +63,13 @@ public class MemberControllerAdvice {
                 .status(status)
                 .body(ResponseDto.errorWithMessage(status, e.getMessage()));
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleMemberNotFoundException(MemberNotFoundException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage()));
+    }
 }

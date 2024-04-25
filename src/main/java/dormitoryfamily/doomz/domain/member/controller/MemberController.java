@@ -1,18 +1,19 @@
 package dormitoryfamily.doomz.domain.member.controller;
 
+import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.NicknameCheckResponseDto;
 import dormitoryfamily.doomz.domain.member.service.MemberService;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,14 +37,13 @@ public class MemberController {
                 ResponseDto.okWithData(memberService.checkNickname(nickname)));
     }
 
-    // 화원 가입
-//    @PostMapping("/member/signUp")
-//    public ResponseEntity<ResponseDto<Void>> signUp(
-//            @RequestBody @Valid MemberSignUpRequestDto requestDto,
-//            @AuthenticationPrincipal PrincipalDetails principalDetails
-//    ) {
-//
-//
-//    }
+    @PutMapping("/members/initial-profiles")
+    public ResponseEntity<ResponseDto<Void>> setUpProfile(
+            @RequestBody @Valid MemberSetUpProfileRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
 
+        memberService.setUpProfile(requestDto, principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }

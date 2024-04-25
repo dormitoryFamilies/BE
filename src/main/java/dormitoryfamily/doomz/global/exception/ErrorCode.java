@@ -12,8 +12,10 @@ public enum ErrorCode {
     FILE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "삭제할 파일이 저장 공간에 존재하지 않습니다."),
     MAX_SIZE_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "허용 용량을 초과한 파일입니다."),
 
+    // Dormitory
+    DORMITORY_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기숙사 유형이 존재하지 않습니다."),
+
     // Article
-    ARTICLE_DORMITORY_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기숙사 유형이 존재하지 않습니다."),
     BOARD_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시판 유형이 존재하지 않습니다."),
     STATUS_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 게시글 상태는 존재하지 않습니다"),
     ARTICLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "해당 게시글은 존재하지 않습니다."),
@@ -26,6 +28,7 @@ public enum ErrorCode {
     DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
     COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
+    MEMBER_NOT_EXISTS(HttpStatus.NOT_FOUND, "해당 회원은 존재하지 않습니다."),
 
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
