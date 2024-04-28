@@ -1,10 +1,7 @@
 package dormitoryfamily.doomz.domain.member.entity;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
-import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
-import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
-import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
-import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
+import dormitoryfamily.doomz.domain.member.entity.type.*;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -16,8 +13,6 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-//setter와 기본생성자 임시 허용
-@Setter
 @NoArgsConstructor
 public class Member extends BaseTimeEntity {
 
@@ -45,11 +40,11 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GenderType genderType;
 
+    @Enumerated(EnumType.STRING)
+    private RoleType authority;
+
     private String profileUrl;
     private String studentCardImageUrl;
-    private boolean isSignUp;
-    private boolean isAuthenticated;
-    private String authority;
 
     @Builder
     public Member(String name,
@@ -62,8 +57,7 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
-                  String studentCardImageUrl,
-                  String authority) {
+                  String studentCardImageUrl) {
         this.name = name;
         this.email = email;
         this.nickname = nickname;
@@ -75,9 +69,7 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
-        this.isSignUp = isSignUp;
-        this.isAuthenticated = isAuthenticated;
-        this.authority = authority;
+        this.authority = RoleType.ROLE_VISITOR;
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
@@ -87,6 +79,6 @@ public class Member extends BaseTimeEntity {
         this.departmentType = DepartmentType.fromDescription(requestDto.departmentType(), collegeType);
         this.studentNumber = requestDto.studentNumber();
         this.dormitoryType = MemberDormitoryType.fromName(requestDto.dormitoryType());
-        this.isSignUp = true;
+        this.authority = RoleType.ROLE_MEMBER;
     }
 }

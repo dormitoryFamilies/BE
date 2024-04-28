@@ -62,7 +62,7 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/").permitAll()
+                .requestMatchers("/", "/api/members/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .requestMatchers("/api/reissue").permitAll()
                 .anyRequest().authenticated());
