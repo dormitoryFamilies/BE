@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.global.oauth2;
 
+import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
 import dormitoryfamily.doomz.global.jwt.refresh.repository.RefreshTokenRepository;
@@ -30,14 +31,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         log.info("====== OAuth2LoginSuccessHandler ======");
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        String email = principalDetails.getEmail();
+        Member member = principalDetails.getMember();
 
         // 토큰 생성
-        String accessToken = jwtUtil.createToken(CATEGORY_ACCESS, email, ACCESS_TOKEN_EXPIRATION_TIME);
-        String refreshToken = jwtUtil.createToken(CATEGORY_REFRESH, email, REFRESH_TOKEN_EXPIRATION_TIME);
+        String accessToken = jwtUtil.createToken(CATEGORY_ACCESS, member, ACCESS_TOKEN_EXPIRATION_TIME);
+        String refreshToken = jwtUtil.createToken(CATEGORY_REFRESH, member, REFRESH_TOKEN_EXPIRATION_TIME);
 
         // 리프레시 토큰 레디스에 저장
-        saveNewRefreshToken(email, refreshToken);
+        saveNewRefreshToken(member.getEmail(), refreshToken);
         System.out.println("accessToken = " + accessToken);
         System.out.println("refreshToken = " + refreshToken);
 
