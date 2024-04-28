@@ -2,10 +2,7 @@ package dormitoryfamily.doomz.domain.member.entity;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
-import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
-import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
-import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
-import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
+import dormitoryfamily.doomz.domain.member.entity.type.*;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -46,6 +43,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GenderType genderType;
 
+    @Enumerated(EnumType.STRING)
+    private RoleType authority;
+
     private String profileUrl;
     private String studentCardImageUrl;
     private Integer followingCount;
@@ -65,6 +65,7 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
+                  String studentCardImageUrl) {
                   String studentCardImageUrl,
                   String authority
                   String studentCardImageUrl,
@@ -81,9 +82,7 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
-        this.isSignUp = isSignUp;
-        this.isAuthenticated = isAuthenticated;
-        this.authority = authority;
+        this.authority = RoleType.ROLE_VISITOR;
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
@@ -112,6 +111,7 @@ public class Member extends BaseTimeEntity {
 
     public void decreaseFollowerCount(){
         this.followerCount -= 1;
+        this.authority = RoleType.ROLE_MEMBER;
     }
 
     public void updateProfile(MyProfileModifyRequestDto requestDto){

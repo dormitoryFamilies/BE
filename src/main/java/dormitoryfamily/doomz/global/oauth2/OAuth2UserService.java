@@ -38,7 +38,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                     .birthDate(kakaoMemberResponse.getBirthDate())
                     .profileUrl(kakaoMemberResponse.getProfileImage())
                     .genderType(kakaoMemberResponse.getGender())
-                    .authority("ROLE_USER")
                     .build();
 
             memberRepository.save(newUser);

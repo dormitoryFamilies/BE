@@ -11,13 +11,13 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    public String createToken(String category, String email, int expiredMs) {
+    public String createToken(String category, Member member, int expiredMs) {
         Pair<String, Key> key = JWTKey.getRandomKey();
 
         return Jwts.builder()
-                .subject(email)
+                .subject(member.getEmail())
                 .claim("category", category) // JWT 카테고리
-//                .claim("role", member.getAuthority())
+                .claim("role", member.getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발생 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 토큰 만료 시간
                 .header()
@@ -48,7 +48,7 @@ public class JWTUtil {
     }
 
     public String getCategory(String token) {
-        // jwtToken에서 email을 찾습니다.
+        // jwtToken에서 카테고리을 찾습니다.
         return Jwts.parser()
                 .setSigningKeyResolver(SigningKeyResolver.instance)
                 .build()
