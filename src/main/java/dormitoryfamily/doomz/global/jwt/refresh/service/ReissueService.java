@@ -1,5 +1,8 @@
 package dormitoryfamily.doomz.global.jwt.refresh.service;
 
+import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
 import dormitoryfamily.doomz.global.jwt.refresh.exception.InvalidTokenCategoryException;
@@ -25,6 +28,7 @@ public class ReissueService {
 
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 
@@ -58,8 +62,10 @@ public class ReissueService {
             throw new NotSavedRefreshTokenException();
         }
 
-        String newAccess = jwtUtil.createToken(CATEGORY_ACCESS, jwtUtil.getEmail(refresh), ACCESS_TOKEN_EXPIRATION_TIME);
-        String newRefresh = jwtUtil.createToken(CATEGORY_REFRESH, jwtUtil.getEmail(refresh), REFRESH_TOKEN_EXPIRATION_TIME);
+        Member member = findMemberByEmail(email);
+
+        String newAccess = jwtUtil.createToken(CATEGORY_ACCESS, member, ACCESS_TOKEN_EXPIRATION_TIME);
+        String newRefresh = jwtUtil.createToken(CATEGORY_REFRESH, member, REFRESH_TOKEN_EXPIRATION_TIME);
 
         // 기존 리프레시 토큰 레디스에서 삭제
         removeOldRefreshToken(email);
@@ -80,5 +86,10 @@ public class ReissueService {
     private void saveNewRefreshToken(String email, String refresh) {
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(email, refresh);
         refreshTokenRepository.save(refreshToken);
+    }
+
+    private Member findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(MemberNotFoundException::new);
     }
 }
