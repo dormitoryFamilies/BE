@@ -14,16 +14,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -42,7 +40,10 @@ public class ChatService {
         chatRepository.save(chat);
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
-        redisTemplateMessage.opsForList().rightPush(chatMessage.getRoomUUID(), chatDto);
+        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
+        zSetOps.add(chatMessage.getRoomUUID(), chatDto, chat.getCreatedAt().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
+        System.out.println("===============================================================");
+        System.out.println( chat.getCreatedAt().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
         redisTemplateMessage.expire(chatMessage.getRoomUUID(), 1, TimeUnit.MINUTES);
     }
 
@@ -63,29 +64,34 @@ public class ChatService {
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
         updateChaMemberStatusAndUnreadCount(chatRoom, isSender);
-
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber();
 
         Long lastChatId = isSender ? chatRoom.getLastReceiverOnlyChatId() : chatRoom.getLastSenderOnlyChatId();
 
-        ListOperations<String, ChatDto> listOps = redisTemplateMessage.opsForList();
+        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
 
-        // Redis에 저장된 채팅 개수 확인
-        Long listSize = listOps.size(roomUUID);
+        double startScore = LocalDateTime.now().minusMinutes(5000).toEpochSecond(ZoneOffset.UTC);
+        double endScore = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 
-        // 페이징에 필요한 시작 인덱스와 종료 인덱스 계산
-        int startIndex = (int) Math.max(listSize - (pageNumber + 1) * pageSize, 0);
-        int endIndex = (int) Math.max(listSize - pageNumber * pageSize - 1, 0);
 
-        List<ChatDto> chatList = listOps.range(roomUUID, startIndex, endIndex);
+        Long count = zSetOps.count(roomUUID, startScore, endScore);
 
-        if(!chatList.isEmpty() && startIndex==0 && endIndex ==0){
+        System.out.println(count);
+        // ZSet에서 Score 범위로 채팅 조회
+        long offset = Math.max(count - (pageNumber + 1) * pageSize, 0);
+        long remainingCount = count - (pageSize * pageNumber);
+        if(remainingCount<0){
             return ChatListResponseDto.toDto(pageNumber, true, Collections.emptyList());
         }
+        int size = (int) Math.min(remainingCount, pageSize);
+
+        Set<ChatDto> chatSet = zSetOps.rangeByScore(roomUUID, startScore, endScore, offset, size);
+
+        List<ChatDto> chatList = new ArrayList<>(chatSet);
 
         // 마지막 페이지 여부 확인
-        boolean isLast = endIndex == listSize - 1;
+        boolean isLast = chatList.isEmpty() || chatList.size() < pageSize;
 
         if (chatList.isEmpty()) {
             // Redis에 저장된 데이터가 없을 경우 DB에서 데이터 조회
@@ -100,9 +106,7 @@ public class ChatService {
             List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
             for (Chat chat : dbChatList) {
                 ChatDto chatDto = ChatDto.fromEntity(chat);
-                chatList.add(chatDto);
-                redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
-                redisTemplateMessage.opsForList().rightPush(roomUUID, chatDto);
+                zSetOps.add(roomUUID, chatDto, chatDto.sentTime().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
             }
 
             // 마지막 페이지 여부와 현재 페이지 번호 설정
@@ -113,8 +117,6 @@ public class ChatService {
         // ChatListResponseDto 생성 및 반환
         return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
     }
-
-
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
@@ -130,7 +132,5 @@ public class ChatService {
             chatRoom.resetReceiverUnreadCount();
         }
     }
-
 }
-
 
