@@ -30,6 +30,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -86,12 +87,15 @@ public class ChatRoomService {
     }
 
     private void updateChatRoomStatus(ChatRoom room, Member loginMember) {
-        ChatRoomStatus roomStatus = room.getChatRoomStatus();
         boolean isSender = room.getSender().getId().equals(loginMember.getId());
 
-        if ((isSender && roomStatus.equals(ONLY_RECEIVER)) || (!isSender && roomStatus.equals(ONLY_SENDER))) {
-            room.changeChatRoomStatus(BOTH);
-        } else {
+        if(isSender && room.getSenderEnteredAt()==null){
+            room.setSenderEnteredAt(LocalDateTime.now());
+        }
+        else if(!isSender && room.getReceiverEnteredAt()==null){
+            room.setReceiverEnteredAt(LocalDateTime.now());
+        }
+        else{
             throw new AlreadyInChatRoomException();
         }
     }
@@ -111,8 +115,8 @@ public class ChatRoomService {
     private void deleteChatRoomProcess(ChatRoom chatRoom, Member loginMember) {
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-        boolean isSenderDeleted = chatRoom.getChatRoomStatus().equals(ONLY_RECEIVER);
-        boolean isReceiverDeleted = chatRoom.getChatRoomStatus().equals(ONLY_SENDER);
+        boolean isSenderDeleted = chatRoom.getSenderEnteredAt() == null;
+        boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
 
         if (isSender) {
             if (isSenderDeleted) {
@@ -142,18 +146,15 @@ public class ChatRoomService {
     }
 
     private  void changeChatStatusAndClearChatIfNeed(ChatRoom chatRoom, boolean isSender){
-        Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
         if(isSender){
-            if(chatRoom.getLastSenderOnlyChatId() != null){
-                chatService.clearChat(chatRoom.getLastSenderOnlyChatId(), chatRoom.getRoomUUID());
-            }
-            chatRoom.deleteSender(lastChat.getId());
+            chatRoom.resetSenderUnreadCount();
+            chatRoom.setSenderEnteredAt(null);
+            chatService.clearChatIfNeed(chatRoom.getReceiverEnteredAt(), chatRoom.getRoomUUID());
         }
         else{
-            if(chatRoom.getLastReceiverOnlyChatId()!=null){
-                chatService.clearChat(chatRoom.getLastReceiverOnlyChatId(), chatRoom.getRoomUUID());
-            }
-            chatRoom.deleteReceiver(lastChat.getId());
+            chatRoom.resetReceiverUnreadCount();
+            chatRoom.setReceiverEnteredAt(null);
+            chatService.clearChatIfNeed(chatRoom.getSenderEnteredAt(), chatRoom.getRoomUUID());
         }
     }
 
