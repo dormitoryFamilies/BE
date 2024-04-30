@@ -5,6 +5,7 @@ import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
+import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
@@ -42,8 +43,6 @@ public class ChatService {
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
         ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
         zSetOps.add(chatMessage.getRoomUUID(), chatDto, chat.getCreatedAt().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
-        System.out.println("===============================================================");
-        System.out.println( chat.getCreatedAt().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
         redisTemplateMessage.expire(chatMessage.getRoomUUID(), 1, TimeUnit.MINUTES);
     }
 
@@ -52,9 +51,9 @@ public class ChatService {
                 .orElseThrow(ChatRoomNotExistsException::new);
     }
 
-    public void clearChat(Long lastChatId, String roomUUID) {
-        chatRepository.deleteChatsLessThanChatId(lastChatId);
-        redisTemplateMessage.delete(roomUUID);  //다시 db에서 불러오기 위해 전체 삭제
+    public void clearChatIfNeed(LocalDateTime enteredAt, String roomUUID) {
+        chatRepository.deleteByCreatedAtBefore(enteredAt);
+        redisTemplateMessage.delete(roomUUID);
     }
 
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId, Pageable pageable) {
@@ -63,15 +62,23 @@ public class ChatService {
         String roomUUID = chatRoom.getRoomUUID();
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
+
+        if ((isSender && chatRoom.getSenderEnteredAt() == null) || (!isSender && chatRoom.getReceiverEnteredAt() == null)) {
+            throw new AlreadyChatRoomLeftException();
+        }
         updateChaMemberStatusAndUnreadCount(chatRoom, isSender);
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber();
 
-        Long lastChatId = isSender ? chatRoom.getLastReceiverOnlyChatId() : chatRoom.getLastSenderOnlyChatId();
-
         ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
 
-        double startScore = LocalDateTime.now().minusMinutes(5000).toEpochSecond(ZoneOffset.UTC);
+        double startScore;
+        if (isSender){
+            startScore = chatRoom.getSenderEnteredAt().toEpochSecond(ZoneOffset.UTC);
+        }
+        else{
+            startScore = chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
+        }
         double endScore = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 
 
@@ -92,15 +99,15 @@ public class ChatService {
 
         // 마지막 페이지 여부 확인
         boolean isLast = chatList.isEmpty() || chatList.size() < pageSize;
-
+        Slice<Chat> chats;
         if (chatList.isEmpty()) {
-            // Redis에 저장된 데이터가 없을 경우 DB에서 데이터 조회
-            Slice<Chat> chats;
-            if (lastChatId != null) {
-                chats = chatRepository.findAllByChatRoomRoomUUID(roomUUID, lastChatId, pageable);
-            } else {
-                chats = chatRepository.findAllByChatRoomRoomUUID(roomUUID, pageable);
+            if (isSender) {
+                chats = chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getSenderEnteredAt() , pageable);
             }
+            else{
+                chats = chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getReceiverEnteredAt() , pageable);
+            }
+            chatList =chats.stream().map(ChatDto::fromEntity).toList();
 
             // DB에서 조회한 데이터를 Redis에 저장하고 chatList에 추가
             List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
@@ -132,5 +139,6 @@ public class ChatService {
             chatRoom.resetReceiverUnreadCount();
         }
     }
+
 }
 
