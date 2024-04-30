@@ -8,6 +8,7 @@ import dormitoryfamily.doomz.global.chat.RedisPublisher;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,9 +37,10 @@ public class ChatController {
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<ResponseDto<ChatListResponseDto>> findAllChatHistory(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @PathVariable Long roomId
+            @PathVariable Long roomId,
+            Pageable pageable
     ){
-        ChatListResponseDto responseDto = chatService.findAllChatHistory(principalDetails, roomId);
+        ChatListResponseDto responseDto = chatService.findAllChatHistory(principalDetails, roomId, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
