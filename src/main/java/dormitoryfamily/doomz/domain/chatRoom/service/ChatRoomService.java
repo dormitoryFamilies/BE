@@ -9,13 +9,13 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
-import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyInChatRoomException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
@@ -30,12 +30,10 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus.*;
-import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -66,12 +64,12 @@ public class ChatRoomService {
 
         if (chatRoom.isPresent()) {
             ChatRoom room = chatRoom.get();
-            updateChatRoomStatus(room, loginMember);
+            updateChatRoomEntryStatus(room, loginMember);
             return CreateChatRoomResponseDto.fromEntity(room);
         } else {
-            ChatRoom createdChatRoom = ChatRoom.create(loginMember, chatMember);
-            ChatRoom savedChatRoom = chatRoomRepository.save(createdChatRoom);
-            return CreateChatRoomResponseDto.fromEntity(savedChatRoom);
+            ChatRoom room = ChatRoom.create(loginMember, chatMember);
+            chatRoomRepository.save(room);
+            return CreateChatRoomResponseDto.fromEntity(room);
         }
     }
 
@@ -86,83 +84,19 @@ public class ChatRoomService {
         }
     }
 
-    private void updateChatRoomStatus(ChatRoom room, Member loginMember) {
-        boolean isSender = room.getSender().getId().equals(loginMember.getId());
+    private void updateChatRoomEntryStatus(ChatRoom chatRoom, Member loginMember) {
+        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
 
-        if(isSender && room.getSenderEnteredAt()==null){
-            room.setSenderEnteredAt(LocalDateTime.now());
-        }
-        else if(!isSender && room.getReceiverEnteredAt()==null){
-            room.setReceiverEnteredAt(LocalDateTime.now());
-        }
-        else{
+        if (isSender && chatRoom.getSenderEnteredAt() == null) {
+            chatRoom.reEnterSender();
+        } else if (!isSender && chatRoom.getReceiverEnteredAt() == null) {
+            chatRoom.reEnterReceiver();
+        } else {
             throw new AlreadyInChatRoomException();
         }
     }
 
-    public void deleteChatRoom(Long roomId, PrincipalDetails principalDetails) {
-        Member loginMember = principalDetails.getMember();
-        ChatRoom chatRoom = getChatRoomById(roomId);
-        deleteChatRoomProcess(chatRoom, loginMember);
-        setChatMemberStatusOut(chatRoom, loginMember);
-    }
-
-    private ChatRoom getChatRoomById(Long chatRoomId) {
-        return chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(ChatRoomNotExistsException::new);
-    }
-
-    private void deleteChatRoomProcess(ChatRoom chatRoom, Member loginMember) {
-
-        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-        boolean isSenderDeleted = chatRoom.getSenderEnteredAt() == null;
-        boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
-
-        if (isSender) {
-            if (isSenderDeleted) {
-                throw new AlreadyChatRoomLeftException();
-            } else if (isReceiverDeleted) {
-                chatRoomRepository.delete(chatRoom);
-            } else {
-                changeChatStatusAndClearChatIfNeed(chatRoom, true);
-            }
-        } else {
-            if (isReceiverDeleted) {
-                throw new AlreadyChatRoomLeftException();
-            } else if (isSenderDeleted) {
-                chatRoomRepository.delete(chatRoom);
-            } else {
-                changeChatStatusAndClearChatIfNeed(chatRoom, false);
-            }
-        }
-    }
-
-    private void setChatMemberStatusOut(ChatRoom chatRoom, Member loginMember) {
-        if (chatRoom.getSender().getId().equals(loginMember.getId())) {
-            chatRoom.setSenderStatusOut();
-        } else {
-            chatRoom.setReceiverStatusOut();
-        }
-    }
-
-    private  void changeChatStatusAndClearChatIfNeed(ChatRoom chatRoom, boolean isSender){
-        if(isSender){
-            chatRoom.resetSenderUnreadCount();
-            chatRoom.setSenderEnteredAt(null);
-            chatService.clearChatIfNeed(chatRoom.getReceiverEnteredAt(), chatRoom.getRoomUUID());
-        }
-        else{
-            chatRoom.resetReceiverUnreadCount();
-            chatRoom.setReceiverEnteredAt(null);
-            chatService.clearChatIfNeed(chatRoom.getSenderEnteredAt(), chatRoom.getRoomUUID());
-        }
-    }
-
-    private Chat getLastChatByRoomUUID(String roomUUID) {
-        return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
-    }
-
-    public void enterChatRoom(String roomUUID) {
+    public void joinChatRoom(String roomUUID) {
         ChannelTopic topic = topics.get(roomUUID);
 
         if (topic == null) {
@@ -176,11 +110,76 @@ public class ChatRoomService {
         return topics.get(roomUUID);
     }
 
+    public void updateUnreadCount(ChatMessage chatMessage) {
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
+
+        if (chatMessage.getSenderId().equals(chatRoom.getSender().getId())) {
+            updateReceiverUnreadCount(chatRoom);
+        } else {
+            updateSenderUnreadCount(chatRoom);
+        }
+    }
+
+    private void updateReceiverUnreadCount(ChatRoom chatRoom) {
+        if (chatRoom.getReceiverStatus() == OUT) {
+            chatRoom.increaseReceiverUnreadCount();
+        }
+    }
+
+    private void updateSenderUnreadCount(ChatRoom chatRoom) {
+        if (chatRoom.getSenderStatus() == OUT) {
+            chatRoom.increaseSenderUnreadCount();
+        }
+    }
+
+    public void deleteChatRoom(Long roomId, PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        ChatRoom chatRoom = getChatRoomById(roomId);
+        checkMemberAccess(chatRoom, loginMember);
+
+        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
+        boolean isSenderDeleted = chatRoom.getSenderEnteredAt() == null;
+        boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
+
+        checkIfRoomAlreadyLeft(isSender, isSenderDeleted, isReceiverDeleted);
+        deleteOrChangeChatRoomStatus(chatRoom, loginMember, isSender, isSenderDeleted, isReceiverDeleted);
+    }
+
+    private ChatRoom getChatRoomById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(ChatRoomNotExistsException::new);
+    }
+
+    private void checkMemberAccess(ChatRoom chatRoom, Member loginMember) {
+        if (!chatRoom.getSender().getId().equals(loginMember.getId()) &&
+                !chatRoom.getReceiver().getId().equals(loginMember.getId())) {
+            throw new InvalidMemberAccessException();
+        }
+    }
+
+    private void checkIfRoomAlreadyLeft(boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
+        if ((isSender && isSenderDeleted) || (!isSender && isReceiverDeleted)) {
+            throw new AlreadyChatRoomLeftException();
+        }
+    }
+
+    private void deleteOrChangeChatRoomStatus(ChatRoom chatRoom, Member loginMember, boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
+        if (isSenderDeleted || isReceiverDeleted) {
+            chatRoomRepository.delete(chatRoom);
+        } else {
+            if (isSender) {
+                chatRoom.deleteSender();
+            } else {
+                chatRoom.deleteReceiver();
+            }
+            chatService.clearChatIfNeed(isSender ? chatRoom.getReceiverEnteredAt() : chatRoom.getSenderEnteredAt(), chatRoom.getRoomUUID());
+        }
+    }
+
     public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         Slice<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember, pageable);
-        List<ChatRoom> rooms = chatRooms.stream().toList();
-        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(rooms, loginMember);
+        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
         return ChatRoomListResponseDto.toDto(chatRooms, responseDtos);
     }
@@ -198,37 +197,27 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    private Chat getLastChatByRoomUUID(String roomUUID) {
+        return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
+    }
+
     public void exitChatRoom(PrincipalDetails principalDetails, Long roomId) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
         setChatMemberStatusOut(chatRoom, loginMember);
     }
 
-    public void updateUnreadCount(ChatMessage chatMessage) {
-        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
-
-        if (chatMessage.getSenderId().equals(chatRoom.getSender().getId())) {
-            updateReceiverUnreadCount(chatRoom);
+    private void setChatMemberStatusOut(ChatRoom chatRoom, Member loginMember) {
+        if (chatRoom.getSender().getId().equals(loginMember.getId())) {
+            chatRoom.setSenderStatusOut();
         } else {
-            updateSenderUnreadCount(chatRoom);
+            chatRoom.setReceiverStatusOut();
         }
     }
 
     private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
         return chatRoomRepository.findByRoomUUID(roomUUID)
                 .orElseThrow(ChatRoomNotExistsException::new);
-    }
-
-    private void updateReceiverUnreadCount(ChatRoom chatRoom) {
-        if (chatRoom.getReceiverStatus() == OUT) {
-            chatRoom.increaseReceiverUnreadCount();
-        }
-    }
-
-    private void updateSenderUnreadCount(ChatRoom chatRoom) {
-        if (chatRoom.getSenderStatus() == OUT) {
-            chatRoom.increaseSenderUnreadCount();
-        }
     }
 
     public UnreadChatCountResponseDto countTotalUnreadChat(PrincipalDetails principalDetails) {

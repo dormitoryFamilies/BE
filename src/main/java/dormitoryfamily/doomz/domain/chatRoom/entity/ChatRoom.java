@@ -84,52 +84,58 @@ public class ChatRoom extends BaseTimeEntity {
                 .build();
     }
 
-    public void setSenderEnteredAt(LocalDateTime senderEnteredAt) {
-        this.senderEnteredAt = senderEnteredAt;
+    public void reEnterSender() {
+        this.senderEnteredAt = LocalDateTime.now();
     }
 
-    public void setReceiverEnteredAt(LocalDateTime receiverEnteredAt) {
-        this.receiverEnteredAt = receiverEnteredAt;
+    public void reEnterReceiver() {
+        this.receiverEnteredAt = LocalDateTime.now();
     }
 
-    public void setSenderStatusIn(){
-        this.senderStatus  = IN;
+    public void senderInChatRoom(){
+        this.senderUnreadCount = 0;
+        this.senderStatus = IN;
     }
 
-    public void setSenderStatusOut(){
-        this.senderStatus  = OUT;
-    }
-
-    public void setReceiverStatusIn(){
+    public void receiverInChatRoom(){
+        this.receiverUnreadCount = 0;
         this.receiverStatus = IN;
     }
 
-    public void setReceiverStatusOut(){
+    public void setSenderStatusOut() {
+        this.senderStatus = OUT;
+    }
+
+    public void setReceiverStatusOut() {
         this.receiverStatus = OUT;
     }
 
-    public void increaseSenderUnreadCount(){
-        this.senderUnreadCount +=1;
+    public void increaseSenderUnreadCount() {
+        this.senderUnreadCount += 1;
     }
 
-    public void increaseReceiverUnreadCount(){
-        this.receiverUnreadCount +=1;
+    public void increaseReceiverUnreadCount() {
+        this.receiverUnreadCount += 1;
     }
 
-    public void resetSenderUnreadCount(){
+    public void deleteSender() {
         this.senderUnreadCount = 0;
+        this.senderEnteredAt = null;
+        this.senderStatus = OUT;
     }
 
-    public void resetReceiverUnreadCount(){
+    public void deleteReceiver() {
         this.receiverUnreadCount = 0;
+        this.receiverEnteredAt = null;
+        this.receiverStatus = OUT;
     }
 
     @PrePersist
     private void init() {
-       this.senderUnreadCount = 0;
-       this.receiverUnreadCount = 0;
-       this.senderStatus = OUT;
-       this.receiverStatus = OUT;
+        this.senderUnreadCount = 0;
+        this.receiverUnreadCount = 0;
+        this.senderStatus = OUT;
+        this.receiverStatus = OUT;
     }
 }
 
