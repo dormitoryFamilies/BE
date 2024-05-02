@@ -9,6 +9,7 @@ import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftExcept
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +39,13 @@ public class ChatService {
     public void saveChat(ChatMessage chatMessage) {
         ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
         Chat chat = ChatMessage.toEntity(chatMessage, chatRoom);
-        ChatDto chatDto = ChatDto.fromEntity(chat);
         chatRepository.save(chat);
+        ChatDto chatDto = ChatDto.fromEntity(chat);
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
         ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
-        zSetOps.add(chatMessage.getRoomUUID(), chatDto, chat.getCreatedAt().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
-        redisTemplateMessage.expire(chatMessage.getRoomUUID(), 1, TimeUnit.MINUTES);
+        zSetOps.add(chatMessage.getRoomUUID(), chatDto, chat.getCreatedAt().toEpochSecond(ZoneOffset.UTC));
+        redisTemplateMessage.expire(chatMessage.getRoomUUID(), 1, TimeUnit.DAYS);
     }
 
     private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
@@ -59,70 +61,11 @@ public class ChatService {
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
-        String roomUUID = chatRoom.getRoomUUID();
+        boolean isSender =  chatRoom.getSender().getId().equals(loginMember.getId());
 
-        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-
-        if ((isSender && chatRoom.getSenderEnteredAt() == null) || (!isSender && chatRoom.getReceiverEnteredAt() == null)) {
-            throw new AlreadyChatRoomLeftException();
-        }
-        updateChaMemberStatusAndUnreadCount(chatRoom, isSender);
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
-
-        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
-
-        double startScore;
-        if (isSender){
-            startScore = chatRoom.getSenderEnteredAt().toEpochSecond(ZoneOffset.UTC);
-        }
-        else{
-            startScore = chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
-        }
-        double endScore = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-
-
-        Long count = zSetOps.count(roomUUID, startScore, endScore);
-
-        System.out.println(count);
-        // ZSet에서 Score 범위로 채팅 조회
-        long offset = Math.max(count - (pageNumber + 1) * pageSize, 0);
-        long remainingCount = count - (pageSize * pageNumber);
-        if(remainingCount<0){
-            return ChatListResponseDto.toDto(pageNumber, true, Collections.emptyList());
-        }
-        int size = (int) Math.min(remainingCount, pageSize);
-
-        Set<ChatDto> chatSet = zSetOps.rangeByScore(roomUUID, startScore, endScore, offset, size);
-
-        List<ChatDto> chatList = new ArrayList<>(chatSet);
-
-        // 마지막 페이지 여부 확인
-        boolean isLast = chatList.isEmpty() || chatList.size() < pageSize;
-        Slice<Chat> chats;
-        if (chatList.isEmpty()) {
-            if (isSender) {
-                chats = chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getSenderEnteredAt() , pageable);
-            }
-            else{
-                chats = chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getReceiverEnteredAt() , pageable);
-            }
-            chatList =chats.stream().map(ChatDto::fromEntity).toList();
-
-            // DB에서 조회한 데이터를 Redis에 저장하고 chatList에 추가
-            List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
-            for (Chat chat : dbChatList) {
-                ChatDto chatDto = ChatDto.fromEntity(chat);
-                zSetOps.add(roomUUID, chatDto, chatDto.sentTime().atZone(ZoneOffset.UTC).toInstant().getEpochSecond());
-            }
-
-            // 마지막 페이지 여부와 현재 페이지 번호 설정
-            isLast = chats.isLast();
-            pageNumber = chats.getNumber();
-        }
-
-        // ChatListResponseDto 생성 및 반환
-        return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
+        validateChatRoomAccessAndStatus(chatRoom, loginMember,  isSender);
+        updateMemberStatusToIn(chatRoom, isSender);
+        return getChatListResponse(chatRoom, isSender, pageable);
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
@@ -130,15 +73,77 @@ public class ChatService {
                 .orElseThrow(ChatRoomNotExistsException::new);
     }
 
-    private void updateChaMemberStatusAndUnreadCount(ChatRoom chatRoom, boolean isSender) {
-        if (isSender) {
-            chatRoom.setSenderStatusIn();
-            chatRoom.resetSenderUnreadCount();
-        } else {
-            chatRoom.setReceiverStatusIn();
-            chatRoom.resetReceiverUnreadCount();
+    private void validateChatRoomAccessAndStatus(ChatRoom chatRoom, Member loginMember, boolean isSender) {
+        if (!isSender && !chatRoom.getReceiver().getId().equals(loginMember.getId())) {
+            throw new InvalidMemberAccessException();
+        }
+
+        if ((isSender && chatRoom.getSenderEnteredAt() == null) || (!isSender && chatRoom.getReceiverEnteredAt() == null)) {
+            throw new AlreadyChatRoomLeftException();
         }
     }
 
+    private void updateMemberStatusToIn(ChatRoom chatRoom, boolean isSender) {
+        if (isSender) {
+            chatRoom.senderInChatRoom();
+        } else {
+            chatRoom.receiverInChatRoom();
+        }
+    }
+
+    private ChatListResponseDto getChatListResponse(ChatRoom chatRoom, boolean isSender, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+        double startScore = calculateStartScore(chatRoom, isSender);
+        double endScore = Double.POSITIVE_INFINITY;
+
+        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
+        Long sizeInRange = zSetOps.count(chatRoom.getRoomUUID(), startScore, endScore);
+
+        long remainingCount = sizeInRange - ((long) pageSize * pageNumber);
+        if (remainingCount < 0) {
+            return ChatListResponseDto.toDto(pageNumber, true, Collections.emptyList());
+        }
+        long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
+        long count = Math.min(remainingCount, pageable.getPageSize());
+
+        Set<ChatDto> chatSet = zSetOps.rangeByScore(chatRoom.getRoomUUID(), startScore, endScore, offset, count);
+
+        if (chatSet != null && !chatSet.isEmpty()) {
+            List<ChatDto> chatList = new ArrayList<>(chatSet);
+            Collections.reverse(chatList);
+            boolean isLast = chatList.size() < pageSize;
+            return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
+        } else {
+            Slice<Chat> chatSlice = getChatListFromDB(chatRoom, pageable, isSender);
+            List<ChatDto> chatList = chatSlice.stream().map(ChatDto::fromEntity).collect(Collectors.toList());
+            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatList);
+        }
+    }
+
+    private double calculateStartScore(ChatRoom chatRoom, boolean isSender) {
+        return isSender ? chatRoom.getSenderEnteredAt().toEpochSecond(ZoneOffset.UTC) :
+                chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
+    }
+
+    private Slice<Chat> getChatListFromDB(ChatRoom chatRoom, Pageable pageable, boolean isSender) {
+        String roomUUID = chatRoom.getRoomUUID();
+
+        List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
+        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
+        dbChatList.stream()
+                .map(ChatDto::fromEntity)
+                .forEach(chatDto -> {
+                    zSetOps.add(roomUUID, chatDto, chatDto.sentTime().toEpochSecond(ZoneOffset.UTC));
+                    redisTemplateMessage.expire(roomUUID, 1, TimeUnit.DAYS);
+                });
+        if (isSender) {
+            return chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getSenderEnteredAt(), pageable);
+        } else {
+            return chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getReceiverEnteredAt(), pageable);
+        }
+    }
 }
+
+
 

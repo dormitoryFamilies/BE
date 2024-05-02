@@ -28,7 +28,7 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void message(ChatMessage chatMessage) {
-        chatRoomService.enterChatRoom(chatMessage.getRoomUUID());
+        chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
         redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);
         chatService.saveChat(chatMessage);
         chatRoomService.updateUnreadCount(chatMessage);
