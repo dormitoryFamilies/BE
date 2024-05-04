@@ -28,7 +28,7 @@ public record ChatRoomResponseDto (
                         chatRoom.getReceiver().getNickname(),
                         chatRoom.getReceiver().getProfileUrl(),
                         chatRoom.getSenderUnreadCount(),
-                        lastChat.getMessage(),
+                        lastChat.getMessage() != null ? lastChat.getMessage() : lastChat.getImageUrl(),
                         lastChat.getCreatedAt()
                 );
         }
@@ -41,7 +41,7 @@ public record ChatRoomResponseDto (
                         chatRoom.getSender().getNickname(),
                         chatRoom.getSender().getProfileUrl(),
                         chatRoom.getReceiverUnreadCount(),
-                        lastChat.getMessage(),
+                        lastChat.getMessage() != null ? lastChat.getMessage() : lastChat.getImageUrl(),
                         lastChat.getCreatedAt()
                 );
         }
