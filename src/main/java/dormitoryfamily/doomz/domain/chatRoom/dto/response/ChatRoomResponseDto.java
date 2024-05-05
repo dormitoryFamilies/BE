@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.chatRoom.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
+import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
 
@@ -20,27 +21,17 @@ public record ChatRoomResponseDto (
         LocalDateTime lastMessageTime
         ){
 
-        public static ChatRoomResponseDto fromEntityWhenSender(ChatRoom chatRoom, Chat lastChat){
-                return new ChatRoomResponseDto(
-                        chatRoom.getId(),
-                        chatRoom.getRoomUUID(),
-                        chatRoom.getReceiver().getId(),
-                        chatRoom.getReceiver().getNickname(),
-                        chatRoom.getReceiver().getProfileUrl(),
-                        chatRoom.getSenderUnreadCount(),
-                        lastChat.getMessage() != null ? lastChat.getMessage() : lastChat.getImageUrl(),
-                        lastChat.getCreatedAt()
-                );
-        }
+        public static ChatRoomResponseDto fromEntity(ChatRoom chatRoom, Chat lastChat, boolean isSender) {
+                Member member = isSender ? chatRoom.getReceiver() : chatRoom.getSender();
+                int unreadCount = isSender ? chatRoom.getSenderUnreadCount() : chatRoom.getReceiverUnreadCount();
 
-        public static ChatRoomResponseDto fromEntityWhenReceiver(ChatRoom chatRoom, Chat lastChat){
                 return new ChatRoomResponseDto(
                         chatRoom.getId(),
                         chatRoom.getRoomUUID(),
-                        chatRoom.getSender().getId(),
-                        chatRoom.getSender().getNickname(),
-                        chatRoom.getSender().getProfileUrl(),
-                        chatRoom.getReceiverUnreadCount(),
+                        member.getId(),
+                        member.getNickname(),
+                        member.getProfileUrl(),
+                        unreadCount,
                         lastChat.getMessage() != null ? lastChat.getMessage() : lastChat.getImageUrl(),
                         lastChat.getCreatedAt()
                 );
