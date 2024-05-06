@@ -115,7 +115,7 @@ public class ChatService {
             boolean isLast = chatList.size() < pageSize;
             return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
         } else {
-            Slice<Chat> chatSlice = getChatListFromDB(chatRoom, pageable, isSender);
+            Slice<Chat> chatSlice = getChatListFromRDB(chatRoom, pageable, isSender);
             List<ChatDto> chatList = chatSlice.stream().map(ChatDto::fromEntity).collect(Collectors.toList());
             return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatList);
         }
@@ -126,7 +126,7 @@ public class ChatService {
                 chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
     }
 
-    private Slice<Chat> getChatListFromDB(ChatRoom chatRoom, Pageable pageable, boolean isSender) {
+    private Slice<Chat> getChatListFromRDB(ChatRoom chatRoom, Pageable pageable, boolean isSender) {
         String roomUUID = chatRoom.getRoomUUID();
 
         List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
