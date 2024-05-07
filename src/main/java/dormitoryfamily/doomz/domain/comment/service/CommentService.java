@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.comment.service;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
@@ -108,12 +109,15 @@ public class CommentService {
         return replyCommentRepository.existsByCommentId(commentId);
     }
 
-    public ArticleListResponseDto findMyComments(PrincipalDetails principalDetails, String articleDormitoryType, String articleBoardType, Pageable pageable ) {
+    public ArticleListResponseDto findMyComments(PrincipalDetails principalDetails, String articleDormitoryType, String articleBoardType, ArticleRequest request, Pageable pageable ) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        BoardType boardType = null;
-        if (articleBoardType != null) {
+        BoardType boardType;
+        if(articleBoardType.equals("all")){
+            boardType = null;
+        }
+        else{
             boardType = BoardType.fromDescription(articleBoardType);
         }
 
@@ -123,7 +127,7 @@ public class CommentService {
         List<Long> articleIds = getArticleIds(myComments, myReplyComments);
 
         Slice<Article> articles = articleRepository
-                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, boardType, pageable);
+                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, boardType, request, pageable);
 
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
     }

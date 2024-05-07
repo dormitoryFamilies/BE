@@ -119,15 +119,18 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     public Slice<Article> findAllByIdInAndDormitoryTypeAndBoardType(List<Long> articleIds,
                                                                     ArticleDormitoryType dormitoryType,
                                                                     BoardType boardType,
+                                                                    ArticleRequest request,
                                                                     Pageable pageable) {
         List<Article> content = queryFactory
                 .selectFrom(article)
                 .where(
                         article.id.in(articleIds),
                         dormitoryTypeEq(dormitoryType),
+                        articleStatus(request),
                         boardTypeEx(boardType)
                 )
                 .orderBy(article.createdAt.desc())
+                .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

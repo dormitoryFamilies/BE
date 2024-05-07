@@ -16,7 +16,7 @@ public interface ArticleRepositoryCustom {
 
     Slice<Article> findMyArticleByDormitoryTypeAndBoardType(Member member, ArticleDormitoryType dormitoryType, BoardType boardType, ArticleRequest request, Pageable pageable);
 
-    Slice<Article> findAllByIdInAndDormitoryTypeAndBoardType(List<Long> articleIds, ArticleDormitoryType dormitoryType, BoardType boardType, Pageable pageable);
+    Slice<Article> findAllByIdInAndDormitoryTypeAndBoardType(List<Long> articleIds, ArticleDormitoryType dormitoryType, BoardType boardType, ArticleRequest request, Pageable pageable);
 
     Slice<Article> searchArticles(ArticleDormitoryType dormitoryType, String keyword, Pageable pageable);
 }
