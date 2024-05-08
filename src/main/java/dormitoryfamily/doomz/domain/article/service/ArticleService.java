@@ -157,18 +157,22 @@ public class ArticleService {
     public ArticleListResponseDto findMyArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
                                                  String articleBoardType,
+                                                 ArticleRequest request,
                                                  Pageable pageable
     ) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        BoardType boardType = null;
-        if (articleBoardType != null) {
+        BoardType boardType;
+        if(articleBoardType.equals("all")){
+            boardType = null;
+        }
+        else{
             boardType = BoardType.fromDescription(articleBoardType);
         }
 
         Slice<Article> articles = articleRepository
-                .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, pageable);
+                .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, request, pageable);
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtosWithMember(loginMember, articles));
     }
 

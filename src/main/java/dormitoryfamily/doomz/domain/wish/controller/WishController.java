@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.wish.controller;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
 import dormitoryfamily.doomz.domain.wish.service.WishService;
@@ -48,14 +49,15 @@ public class WishController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/my/wishes")
+    @GetMapping("/my/dormitories/{dormitoryType}/wishes")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
-            @RequestParam String dormitoryType,
+            @PathVariable String dormitoryType,
+            @ModelAttribute ArticleRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
 
-        ArticleListResponseDto responseDto = wishService.findMyArticleWishes(principalDetails, dormitoryType, pageable);
+        ArticleListResponseDto responseDto = wishService.findMyArticleWishes(principalDetails, dormitoryType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

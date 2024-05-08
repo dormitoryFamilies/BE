@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.wish.service;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.SimpleArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.entity.Article;
@@ -73,7 +74,7 @@ public class WishService {
                 .orElseThrow(NotWishedArticleException::new);
     }
 
-    public ArticleListResponseDto findMyArticleWishes(PrincipalDetails principalDetails, String articleDormitoryType, Pageable pageable) {
+    public ArticleListResponseDto findMyArticleWishes(PrincipalDetails principalDetails, String articleDormitoryType, ArticleRequest request, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
@@ -81,7 +82,7 @@ public class WishService {
         List<Long> articleIds = getArticleIds(myWishes);
 
         Slice<Article> articles = articleRepository
-                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, null, pageable);
+                .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, null, request, pageable);
 
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDto(articles));
     }
