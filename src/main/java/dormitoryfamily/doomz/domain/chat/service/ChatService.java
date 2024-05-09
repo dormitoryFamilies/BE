@@ -2,7 +2,6 @@ package dormitoryfamily.doomz.domain.chat.service;
 
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chat.exception.InvalidChatMessageException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
@@ -12,6 +11,7 @@ import dormitoryfamily.doomz.domain.chatRoom.exception.MemberNotInChatRoomExcept
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
+import dormitoryfamily.doomz.global.chat.exception.InvalidChatMessageException;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -156,7 +156,7 @@ public class ChatService {
     private void validateMemberInChatRoom(ChatRoom chatRoom, Long senderId) {
         boolean isChatRoomMember = chatRoom.getSender().getId().equals(senderId) || chatRoom.getReceiver().getId().equals(senderId);
         if (!isChatRoomMember) {
-            throw new MemberNotInChatRoomException();
+            throw new InvalidChatMessageException("채팅방에 속해있지 않는 사용자입니다.");
         }
     }
 
@@ -165,7 +165,7 @@ public class ChatService {
         boolean hasImageUrl = chatMessage.getImageUrl() != null && !chatMessage.getImageUrl().isEmpty();
 
         if (hasMessage && hasImageUrl || !(hasMessage || hasImageUrl)) {
-            throw new InvalidChatMessageException();
+            throw new InvalidChatMessageException("메시지 또는 이미지 URL 중 하나만 존재해야 합니다.");
         }
     }
 }
