@@ -2,14 +2,15 @@ package dormitoryfamily.doomz.domain.chat.service;
 
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chat.exception.InvalidChatMessageException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
+import dormitoryfamily.doomz.domain.chatRoom.exception.MemberNotInChatRoomException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
@@ -75,7 +76,7 @@ public class ChatService {
 
     private void validateChatRoomAccessAndStatus(ChatRoom chatRoom, Member loginMember, boolean isSender) {
         if (!isSender && !chatRoom.getReceiver().getId().equals(loginMember.getId())) {
-            throw new InvalidMemberAccessException();
+            throw new MemberNotInChatRoomException();
         }
 
         if ((isSender && chatRoom.getSenderEnteredAt() == null) || (!isSender && chatRoom.getReceiverEnteredAt() == null)) {
@@ -143,7 +144,28 @@ public class ChatService {
             return chatRepository.findByRoomUUIDAndCreatedAtAfter(roomUUID, chatRoom.getReceiverEnteredAt(), pageable);
         }
     }
+
+    public void validateChat(ChatMessage chatMessage) {
+        Long senderId = chatMessage.getSenderId();
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
+
+        validateMemberInChatRoom(chatRoom, senderId);
+        validateChatMessage(chatMessage);
+    }
+
+    private void validateMemberInChatRoom(ChatRoom chatRoom, Long senderId) {
+        boolean isChatRoomMember = chatRoom.getSender().getId().equals(senderId) || chatRoom.getReceiver().getId().equals(senderId);
+        if (!isChatRoomMember) {
+            throw new MemberNotInChatRoomException();
+        }
+    }
+
+    private void validateChatMessage(ChatMessage chatMessage) {
+        boolean hasMessage = chatMessage.getMessage() != null && !chatMessage.getMessage().isEmpty();
+        boolean hasImageUrl = chatMessage.getImageUrl() != null && !chatMessage.getImageUrl().isEmpty();
+
+        if (hasMessage && hasImageUrl || !(hasMessage || hasImageUrl)) {
+            throw new InvalidChatMessageException();
+        }
+    }
 }
-
-
-

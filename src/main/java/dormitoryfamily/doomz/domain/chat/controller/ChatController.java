@@ -28,6 +28,7 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void message(ChatMessage chatMessage) {
+        chatService.validateChat(chatMessage);
         chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
         redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);
         chatService.saveChat(chatMessage);
