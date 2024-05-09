@@ -29,6 +29,7 @@ public enum ErrorCode {
     COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     MEMBER_NOT_EXISTS(HttpStatus.NOT_FOUND, "해당 회원은 존재하지 않습니다."),
+    NOT_INITIALIZE_PROFILE(HttpStatus.UNAUTHORIZED, "초기 프로필 설정을 하지 않았습니다."),
 
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
@@ -46,6 +47,9 @@ public enum ErrorCode {
     REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "리프레시 토큰이 만료되었습니다."),
     INVALID_TOKEN_CATEGORY(HttpStatus.BAD_REQUEST, "유효한 토큰 카테고리가 아닙니다."),
     NOT_SAVED_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "해당 리프레시 토큰이 DB에 저장되어 있지 않습니다."),
+    NOT_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "엑세스 토큰이 아닙니다."),
+    ACCESS_TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "엑세스 토큰이 존재하지 않습니다"),
+    MEMBER_DATA_NOT_EXISTS_IN_DB(HttpStatus.NOT_FOUND, "데이터 베이스에 해당 JWT 유저 정보가 존재하지 않습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.global.security.config;
 
 import dormitoryfamily.doomz.global.jwt.JWTAuthorizationFilter;
+//import dormitoryfamily.doomz.global.jwt.JWTExceptionFilter;
 import dormitoryfamily.doomz.global.oauth2.OAuth2LoginSuccessHandler;
 import dormitoryfamily.doomz.global.oauth2.OAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
@@ -25,6 +27,8 @@ public class SecurityConfig {
     private final OAuth2UserService oAuth2UserService;
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final AuthenticationEntryPoint entryPoint;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -63,8 +67,8 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/api/members/**").permitAll()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .requestMatchers("/api/reissue").permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated());
 
         //oauth2 로그인
@@ -75,6 +79,8 @@ public class SecurityConfig {
         // 세션 stateless 설정
         http.sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling((handler) -> handler.authenticationEntryPoint(entryPoint));
 
         return http.build();
     }
