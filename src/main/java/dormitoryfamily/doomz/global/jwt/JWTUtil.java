@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.global.jwt;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class JWTUtil {
                 .compact();
     }
 
-    public Boolean isExpired(String token) {
+    public Boolean isExpired(String token) throws ExpiredJwtException {
         return Jwts.parser()
                 .setSigningKeyResolver(SigningKeyResolver.instance)
                 .build()
@@ -55,5 +56,15 @@ public class JWTUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("category", String.class);
+    }
+
+    public String getRole(String token) {
+        // jwtToken에서 권한을 찾습니다.
+        return Jwts.parser()
+                .setSigningKeyResolver(SigningKeyResolver.instance)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 }
