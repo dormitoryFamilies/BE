@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.member.controller;
 
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.service.MemberService;
@@ -31,5 +32,14 @@ public class MemberController {
     ){
         MyProfileResponseDto responseDto = memberService.getMyProfile(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @PatchMapping("/my/profile")
+    public ResponseEntity<ResponseDto<Void>> modifyMyProfile(
+            @RequestBody MyProfileModifyRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        memberService.modifyMyProfile(requestDto, principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 }

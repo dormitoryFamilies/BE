@@ -26,7 +26,7 @@ public enum ErrorCode {
     COLLEGE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 단과대는 존재하지 않습니다."),
     DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
     COLLEGE_DEPARTMENT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단과대에는 해당 학과가 존재하지 않습니다."),
-    INVALID_MEMBER_DORMITORY_TYPE(HttpStatus.BAD_REQUEST, "해당 멤버 기숙사 유형이 존재하지 않습니다."),
+    INVALID_MEMBER_DORMITORY_TYPE(HttpStatus.BAD_REQUEST, "해당 멤버 기숙사는 존재하지 않습니다."),
     // comment
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
     COMMENT_IS_DELETED(HttpStatus.BAD_REQUEST, "삭제된 댓글입니다."),
