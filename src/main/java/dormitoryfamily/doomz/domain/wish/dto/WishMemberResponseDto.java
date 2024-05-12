@@ -12,7 +12,7 @@ public record WishMemberResponseDto(
         return new WishMemberResponseDto(
                 wishMember.getId(),
                 wishMember.getNickname(),
-                wishMember.getDormitoryType().getName(),
+                wishMember.getDormitoryType().getDescription(),
                 wishMember.getProfileUrl()
         );
     }
