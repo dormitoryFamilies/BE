@@ -35,7 +35,7 @@ public record ArticleResponseDto(
                 article.getMember().getId(),
                 article.getMember().getNickname(),
                 article.getMember().getProfileUrl(),
-                article.getMember().getDormitoryType().getName(),
+                article.getMember().getDormitoryType().getDescription(),
                 article.getDormitoryType().getName(),
                 article.getBoardType().getDescription(),
                 article.getTags(),

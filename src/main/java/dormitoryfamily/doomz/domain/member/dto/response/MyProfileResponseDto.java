@@ -8,15 +8,15 @@ import java.time.LocalDate;
 
 public record MyProfileResponseDto (
         String name,
-        String gender,
+        String genderType,
         String nickname,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate birthDate,
 
-        String memberDormitory,
-        String college,
-        String department,
+        String memberDormitoryType,
+        String collegeType,
+        String departmentType,
         String studentNumber,
         String profileUrl
 ){
@@ -26,7 +26,7 @@ public record MyProfileResponseDto (
                 member.getGenderType().getDescription(),
                 member.getNickname(),
                 member.getBirthDate(),
-                member.getDormitoryType().getName(),
+                member.getDormitoryType().getDescription(),
                 member.getCollegeType().getDescription(),
                 member.getDepartmentType().getDescription(),
                 member.getStudentNumber(),
