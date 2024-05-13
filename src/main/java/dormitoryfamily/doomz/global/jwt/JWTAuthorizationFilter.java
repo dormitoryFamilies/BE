@@ -79,11 +79,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 throw new NotAccessTokenException();
             }
 
-            String role = jwtUtil.getRole(jwt);
-            if (role.equals(ROLE_VISITOR.toString())) {
-                throw new NotInitializedProfileException();
-            }
-
             //스프링 시큐리티 인증 토큰 생성
             Authentication authentication = getUserAuthentication(jwt);
             //세션에 사용자 등록
