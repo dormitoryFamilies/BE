@@ -4,6 +4,7 @@ import dormitoryfamily.doomz.global.jwt.JWTAuthorizationFilter;
 //import dormitoryfamily.doomz.global.jwt.JWTExceptionFilter;
 import dormitoryfamily.doomz.global.oauth2.OAuth2LoginSuccessHandler;
 import dormitoryfamily.doomz.global.oauth2.OAuth2UserService;
+import dormitoryfamily.doomz.global.security.exception.handler.JWTAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final AuthenticationEntryPoint entryPoint;
+    private final JWTAccessDeniedHandler deniedHandler;
 
 
     @Bean
@@ -66,8 +68,10 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/api/members/**").permitAll()
+                .requestMatchers("/").permitAll()
                 .requestMatchers("/api/reissue").permitAll()
+                .requestMatchers("/api/members/initial-profiles").hasRole("VISITOR")
+                .requestMatchers("/api/**").hasRole("VERIFIED_STUDENT")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().authenticated());
 
@@ -80,7 +84,9 @@ public class SecurityConfig {
         http.sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.exceptionHandling((handler) -> handler.authenticationEntryPoint(entryPoint));
+        http.exceptionHandling((handler) -> handler.
+                authenticationEntryPoint(entryPoint)
+                .accessDeniedHandler(deniedHandler));
 
         return http.build();
     }
