@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.member.entity.type;
 
-import dormitoryfamily.doomz.domain.member.exception.InvalidGenderTypeException;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberDormitoryTypeException;
 import lombok.Getter;
 
