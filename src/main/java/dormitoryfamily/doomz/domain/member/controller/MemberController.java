@@ -34,7 +34,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @PatchMapping("/my/profile")
+    @PutMapping("/my/profile")
     public ResponseEntity<ResponseDto<Void>> modifyMyProfile(
             @RequestBody MyProfileModifyRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
