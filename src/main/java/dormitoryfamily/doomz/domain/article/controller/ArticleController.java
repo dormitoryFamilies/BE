@@ -114,15 +114,16 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/my/articles")
+    @GetMapping("/my/dormitories/{dormitoryType}/board-type/{boardType}/articles")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
-            @RequestParam String dormitoryType,
-            @RequestParam(required = false) String boardType,
+            @PathVariable String dormitoryType,
+            @PathVariable String boardType,
+            @ModelAttribute ArticleRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ) {
 
-        ArticleListResponseDto responseDto = articleService.findMyArticles(principalDetails, dormitoryType, boardType, pageable);
+        ArticleListResponseDto responseDto = articleService.findMyArticles(principalDetails, dormitoryType, boardType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

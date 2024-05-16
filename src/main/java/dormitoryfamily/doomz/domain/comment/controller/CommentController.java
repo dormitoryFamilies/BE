@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.comment.controller;
 
+import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.comment.dto.request.CreateCommentRequestDto;
 import dormitoryfamily.doomz.domain.comment.dto.response.CommentListResponseDto;
@@ -52,15 +53,16 @@ public class CommentController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/my/comments")
+    @GetMapping("/my/dormitories/{dormitoryType}/board-type/{boardType}/comments")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
-            @RequestParam String dormitoryType,
-            @RequestParam(required = false) String boardType,
+            @PathVariable String dormitoryType,
+            @PathVariable String boardType,
+            @ModelAttribute ArticleRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
 
-        ArticleListResponseDto responseDto = commentService.findMyComments(principalDetails, dormitoryType, boardType, pageable);
+        ArticleListResponseDto responseDto = commentService.findMyComments(principalDetails, dormitoryType, boardType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

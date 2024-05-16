@@ -22,6 +22,7 @@ public record ArticleResponseDto(
         String content,
         int wishCount,
         boolean isWished,
+        boolean isWriter,
         String status,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -29,7 +30,7 @@ public record ArticleResponseDto(
 
         List<String> imagesUrls
 ) {
-    public static ArticleResponseDto fromEntity(Member loginMember, Article article, boolean isWished, List<ArticleImage> articleImages) {
+    public static ArticleResponseDto fromEntity(Member loginMember, Article article, boolean isWished, boolean isWriter, List<ArticleImage> articleImages) {
         return new ArticleResponseDto(
                 article.getId(),
                 article.getMember().getId(),
@@ -43,6 +44,7 @@ public record ArticleResponseDto(
                 article.getContent(),
                 article.getWishCount(),
                 isWished,
+                isWriter,
                 article.getStatus().getDescription(),
                 article.getCreatedAt(),
                 getArticleImagesUrls(articleImages)

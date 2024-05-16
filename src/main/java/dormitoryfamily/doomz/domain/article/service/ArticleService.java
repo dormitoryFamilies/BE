@@ -62,9 +62,10 @@ public class ArticleService {
         Article article = getArticleById(articleId);
         List<ArticleImage> articleImages = articleImageRepository.findByArticleId(articleId);
         boolean isWished = checkIfArticleIsWished(article, loginMember);
+        boolean isWriter = isWriter(loginMember, article.getMember());
 
         article.plusViewCount();
-        return ArticleResponseDto.fromEntity(loginMember, article, isWished, articleImages);
+        return ArticleResponseDto.fromEntity(loginMember, article, isWished, isWriter, articleImages);
     }
 
     private Article getArticleById(Long articleId) {
@@ -79,7 +80,9 @@ public class ArticleService {
     public void updateArticle(PrincipalDetails principalDetails, Long articleId, ArticleRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        isWriter(loginMember, article.getMember());
+        if (!isWriter(loginMember, article.getMember())) {
+            throw new InvalidMemberAccessException();
+        }
 
         articleImageRepository.deleteAllByArticle(article);
         saveArticleImages(article, requestDto);
@@ -87,16 +90,16 @@ public class ArticleService {
         article.updateArticle(requestDto);
     }
 
-    private void isWriter(Member loginMember, Member writer) {
-        if (!Objects.equals(loginMember.getId(), writer.getId())) {
-            throw new InvalidMemberAccessException();
-        }
+    private boolean isWriter(Member loginMember, Member writer) {
+        return Objects.equals(loginMember.getId(), writer.getId());
     }
 
     public void deleteArticle(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        isWriter(loginMember, article.getMember());
+        if (!isWriter(loginMember, article.getMember())) {
+            throw new InvalidMemberAccessException();
+        }
 
         articleRepository.delete(article);
     }
@@ -104,7 +107,9 @@ public class ArticleService {
     public void changeStatus(PrincipalDetails principalDetails, Long articleId, String status) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        isWriter(loginMember, article.getMember());
+        if (!isWriter(loginMember, article.getMember())) {
+            throw new InvalidMemberAccessException();
+        }
 
         StatusType statusType = StatusType.fromDescription(status);
         article.changeStatus(statusType);
@@ -157,18 +162,22 @@ public class ArticleService {
     public ArticleListResponseDto findMyArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
                                                  String articleBoardType,
+                                                 ArticleRequest request,
                                                  Pageable pageable
     ) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        BoardType boardType = null;
-        if (articleBoardType != null) {
+        BoardType boardType;
+        if(articleBoardType.equals("all")){
+            boardType = null;
+        }
+        else{
             boardType = BoardType.fromDescription(articleBoardType);
         }
 
         Slice<Article> articles = articleRepository
-                .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, pageable);
+                .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, request, pageable);
         return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtosWithMember(loginMember, articles));
     }
 

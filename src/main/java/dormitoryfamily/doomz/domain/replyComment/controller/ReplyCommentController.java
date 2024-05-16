@@ -18,7 +18,7 @@ public class ReplyCommentController {
 
     private final ReplyCommentService replyCommentService;
 
-    @PostMapping("/comments/{commentId}/replyComments")
+    @PostMapping("/comments/{commentId}/reply-comments")
     public ResponseEntity<ResponseDto<CreateReplyCommentResponseDto>> saveReplyComment(
             @PathVariable Long commentId,
             @RequestBody @Valid CreateReplyCommentRequestDto requestDto,
@@ -29,7 +29,7 @@ public class ReplyCommentController {
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
-    @DeleteMapping("/replyComments/{replyCommentId}")
+    @DeleteMapping("/reply-comments/{replyCommentId}")
     public ResponseEntity<ResponseDto<Void>> deleteComment(
             @PathVariable Long replyCommentId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
