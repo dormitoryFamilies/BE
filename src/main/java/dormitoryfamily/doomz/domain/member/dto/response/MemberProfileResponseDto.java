@@ -12,7 +12,7 @@ public record MemberProfileResponseDto(
         return new MemberProfileResponseDto(
                 member.getId(),
                 member.getNickname(),
-                member.getDormitoryType().getName(),
+                member.getDormitoryType().getDescription(),
                 member.getProfileUrl()
         );
     }

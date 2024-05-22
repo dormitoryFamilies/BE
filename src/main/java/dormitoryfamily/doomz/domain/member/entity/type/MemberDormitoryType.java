@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.member.entity.type;
 
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberDormitoryTypeException;
 import lombok.Getter;
 
 @Getter
@@ -16,9 +17,18 @@ public enum MemberDormitoryType {
     YEJIGWAN("예지관"),
     DEUNGYONGGWAN("등용관");
 
-    private final String name;
+    private final String description;
 
     MemberDormitoryType(String name) {
-        this.name = name;
+        this.description = name;
+    }
+
+    public static MemberDormitoryType fromDescription(String description) {
+        for (MemberDormitoryType type : MemberDormitoryType.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new InvalidMemberDormitoryTypeException();
     }
 }

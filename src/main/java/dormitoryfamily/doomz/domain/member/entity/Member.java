@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.member.entity;
 
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
 import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
 import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
@@ -94,6 +95,12 @@ public class Member extends BaseTimeEntity {
 
     public void decreaseFollowerCount(){
         this.followerCount -= 1;
+    }
+
+    public void updateProfile(MyProfileModifyRequestDto requestDto){
+        this.nickname = requestDto.nickname();
+        this.dormitoryType = MemberDormitoryType.fromDescription(requestDto.memberDormitoryType());
+        this.profileUrl = requestDto.profileUrl();
     }
 
     @PrePersist

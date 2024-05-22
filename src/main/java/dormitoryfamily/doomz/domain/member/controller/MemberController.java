@@ -1,12 +1,14 @@
 package dormitoryfamily.doomz.domain.member.controller;
 
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.service.MemberService;
+import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,5 +24,22 @@ public class MemberController {
     ){
         MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/my/profile")
+    public ResponseEntity<ResponseDto<MyProfileResponseDto>> getMyProfile(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        MyProfileResponseDto responseDto = memberService.getMyProfile(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @PutMapping("/my/profile")
+    public ResponseEntity<ResponseDto<Void>> modifyMyProfile(
+            @RequestBody MyProfileModifyRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        memberService.modifyMyProfile(requestDto, principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 }
