@@ -16,5 +16,4 @@ public record ChatListResponseDto (
                 isLast,
                 chatDtos);
     }
-
 }
