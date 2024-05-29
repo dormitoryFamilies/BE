@@ -88,7 +88,7 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/dormitories/{dormitoryType}/board-type/{boardType}/articles")
+    @GetMapping("/dormitories/{dormitoryType}/board-types/{boardType}/articles")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> findAllArticlesWithBoardType(
             @PathVariable String dormitoryType,
             @PathVariable String boardType,
@@ -114,8 +114,8 @@ public class ArticleController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/my/dormitories/{dormitoryType}/board-type/{boardType}/articles")
-    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticleWishes(
+    @GetMapping("/my/dormitories/{dormitoryType}/board-types/{boardType}/articles")
+    public ResponseEntity<ResponseDto<ArticleListResponseDto>> findMyArticles(
             @PathVariable String dormitoryType,
             @PathVariable String boardType,
             @ModelAttribute ArticleRequest request,

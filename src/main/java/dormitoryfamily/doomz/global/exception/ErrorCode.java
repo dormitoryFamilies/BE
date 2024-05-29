@@ -43,6 +43,17 @@ public enum ErrorCode {
     CANNOT_FOLLOW_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신을 팔로우할 수 없습니다."),
     MEMBER_IN_NOT_FOLLOWED(HttpStatus.CONFLICT, "팔로우하고 있지 않은 회원입니다."),
 
+    //chatRoom
+    CANNOT_CHAT_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
+    CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 채팅방입니다."),
+    ALREADY_CHAT_ROOM_LEFT(HttpStatus.CONFLICT, "이미 나간 채팅방입니다."),
+    ALREADY_IN_CHAT_ROOM(HttpStatus.CONFLICT, "이미 채팅방에 입장한 상태입니다"),
+    MEMBER_NOT_IN_CHAT_ROOM(HttpStatus.NOT_FOUND, "채팅방에 속해있지 않는 사용자입니다."),
+
+    //chat
+    CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
+    CHAT_SINGLE_CONTENT_REQUIRED(HttpStatus.CONFLICT, "메시지 또는 이미지 URL 중 하나만 존재해야 합니다."),
+
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
 
