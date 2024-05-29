@@ -5,9 +5,11 @@ import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListRespons
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -36,17 +38,19 @@ public class FollowController {
 
     @GetMapping("/followings")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowingMembers(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
     ){
-        MemberProfileListResponseDto responseDto = followService.getMyFollowingMemberList(principalDetails);
+        MemberProfileListResponseDto responseDto = followService.getMyFollowingMemberList(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
     @GetMapping("/followers")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowerMembers(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
     ){
-        MemberProfileListResponseDto responseDto = followService.getMyFollowerMemberList(principalDetails);
+        MemberProfileListResponseDto responseDto = followService.getMyFollowerMemberList(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
