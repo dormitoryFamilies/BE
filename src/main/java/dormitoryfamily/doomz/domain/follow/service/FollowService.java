@@ -13,10 +13,13 @@ import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.spi.LoginModule;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,19 +75,21 @@ public class FollowService {
         followingMember.decreaseFollowerCount();
     }
 
-    public MemberProfileListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails) {
+    public MemberProfileListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        List<Follow> followings = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember);
-        List<MemberProfileResponseDto> memberProfiles = followings.stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing())).toList();
-        return MemberProfileListResponseDto.toDto(memberProfiles);
+        Page<Follow> followings = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember, pageable);
+        List<MemberProfileResponseDto> memberProfiles = followings.getContent().stream()
+                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing()))
+                .collect(Collectors.toList());
+        return MemberProfileListResponseDto.toDto(followings, memberProfiles);
     }
 
-    public MemberProfileListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails) {
+    public MemberProfileListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        List<Follow> followers = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember);
-        List<MemberProfileResponseDto> memberProfiles = followers.stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollower())).toList();
-        return MemberProfileListResponseDto.toDto(memberProfiles);
+        Page<Follow> followers = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);
+        List<MemberProfileResponseDto> memberProfiles = followers.getContent().stream()
+                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollower()))
+                .collect(Collectors.toList());
+        return MemberProfileListResponseDto.toDto(followers, memberProfiles);
     }
 }
