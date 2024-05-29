@@ -1,11 +1,11 @@
 package dormitoryfamily.doomz.domain.follow.controller;
 
 import dormitoryfamily.doomz.domain.follow.service.FollowService;
-import dormitoryfamily.doomz.domain.member.dto.request.MemberSearchRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -50,8 +50,8 @@ public class FollowController {
 
     @GetMapping("/followings/search")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowings(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @ModelAttribute @Valid MemberSearchRequestDto requestDto
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
         MemberProfileListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
@@ -68,8 +68,8 @@ public class FollowController {
 
     @GetMapping("/followers/search")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowers(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @ModelAttribute @Valid MemberSearchRequestDto requestDto
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
         MemberProfileListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
