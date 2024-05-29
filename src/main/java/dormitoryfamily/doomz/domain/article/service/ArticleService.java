@@ -2,7 +2,6 @@ package dormitoryfamily.doomz.domain.article.service;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
-import dormitoryfamily.doomz.domain.article.dto.request.ArticleSearchRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
@@ -20,6 +19,7 @@ import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessExceptio
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -193,7 +193,7 @@ public class ArticleService {
 
     public ArticleListResponseDto searchArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
-                                                 ArticleSearchRequestDto requestDto,
+                                                 SearchRequestDto requestDto,
                                                  Pageable pageable
     ) {
         Member loginMember = principalDetails.getMember();

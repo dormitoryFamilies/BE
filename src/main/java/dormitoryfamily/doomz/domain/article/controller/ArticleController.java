@@ -2,13 +2,13 @@ package dormitoryfamily.doomz.domain.article.controller;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
-import dormitoryfamily.doomz.domain.article.dto.request.ArticleSearchRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.service.ArticleService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -105,7 +105,7 @@ public class ArticleController {
     @GetMapping("/dormitories/{dormitoryType}/articles/search")
     public ResponseEntity<ResponseDto<ArticleListResponseDto>> searchArticles(
             @PathVariable String dormitoryType,
-            @ModelAttribute @Valid ArticleSearchRequestDto requestDto,
+            @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ) {

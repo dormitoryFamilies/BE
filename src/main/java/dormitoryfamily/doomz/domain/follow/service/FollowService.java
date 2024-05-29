@@ -5,7 +5,6 @@ import dormitoryfamily.doomz.domain.follow.exception.AlreadyFollowingException;
 import dormitoryfamily.doomz.domain.follow.exception.CannotFollowYourselfException;
 import dormitoryfamily.doomz.domain.follow.exception.NotFollowingMemberException;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
-import dormitoryfamily.doomz.domain.member.dto.request.MemberSearchRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
@@ -13,6 +12,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -87,7 +87,7 @@ public class FollowService {
         return MemberProfilePagingListResponseDto.toDto(followings, memberProfiles);
     }
 
-    public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, MemberSearchRequestDto requestDto) {
+    public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Follow> follows = followRepository.findByFollowerAndFollowingNicknameContaining(loginMember, requestDto.q());
         List<MemberProfileResponseDto> followings = follows.stream()
@@ -105,7 +105,7 @@ public class FollowService {
         return MemberProfilePagingListResponseDto.toDto(followers, memberProfiles);
     }
 
-    public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, MemberSearchRequestDto requestDto) {
+    public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Follow> follows = followRepository.findByFollowingAndFollowerNicknameContaining(loginMember, requestDto.q());
         List<MemberProfileResponseDto> followers = follows.stream()
