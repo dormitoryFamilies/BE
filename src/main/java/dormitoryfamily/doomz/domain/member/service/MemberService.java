@@ -1,20 +1,20 @@
 package dormitoryfamily.doomz.domain.member.service;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
-import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
-import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +41,12 @@ public class MemberService {
     public void modifyMyProfile(MyProfileModifyRequestDto requestDto, PrincipalDetails principalDetails) {
         Member member = getMemberById(principalDetails.getMember().getId());
         member.updateProfile(requestDto);
+    }
+
+    public MemberProfileListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+        Member loginMember = principalDetails.getMember();
+        List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
+        List<MemberProfileResponseDto> memberDtos = members.stream().map(MemberProfileResponseDto::fromEntity).collect(Collectors.toList());
+        return MemberProfileListResponseDto.toDto(memberDtos);
     }
 }
