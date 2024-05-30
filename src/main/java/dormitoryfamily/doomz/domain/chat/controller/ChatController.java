@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chat.controller;
 
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryListResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
@@ -7,6 +8,8 @@ import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.RedisPublisher;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +17,13 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chats")
 public class ChatController {
 
     private final RedisPublisher redisPublisher;
@@ -42,6 +46,16 @@ public class ChatController {
             Pageable pageable
     ){
         ChatListResponseDto responseDto = chatService.findAllChatHistory(principalDetails, roomId, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/messages/search")
+    public ResponseEntity<ResponseDto<ChatHistoryListResponseDto>> searchChatHistory(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            Pageable pageable
+    ){
+        ChatHistoryListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
