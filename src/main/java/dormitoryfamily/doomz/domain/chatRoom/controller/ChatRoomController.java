@@ -6,6 +6,8 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponse
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -63,4 +65,16 @@ public class ChatRoomController {
         UnreadChatCountResponseDto responseDto = chatRoomService.countTotalUnreadChat(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/rooms/search")
+    public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> searchChatRooms(
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
+    ){
+        ChatRoomListResponseDto responseDto = chatRoomService.searchChatRooms(principalDetails, requestDto, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+
 }
