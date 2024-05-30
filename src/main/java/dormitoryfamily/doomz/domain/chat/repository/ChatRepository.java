@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.repository;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.member.entity.Member;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,4 +26,12 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Transactional
     @Modifying
     void deleteByCreatedAtBefore(LocalDateTime enteredAt);
+
+    @Query("SELECT c FROM Chat c " +
+            "JOIN c.chatRoom cr " +
+            "WHERE LOWER(c.message) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND ((cr.sender = :member AND cr.senderEnteredAt IS NOT NULL) " +
+            "OR (cr.receiver = :member AND cr.receiverEnteredAt IS NOT NULL)) " +
+            "ORDER BY c.createdAt DESC")
+    Slice<Chat> findByChatMessage(Member member, String keyword, Pageable pageable);
 }

@@ -33,6 +33,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("SELECT c FROM ChatRoom c " +
             "WHERE ((c.sender = :member AND c.senderEnteredAt IS NOT NULL AND LOWER(c.receiver.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "OR (c.receiver = :member AND c.receiverEnteredAt IS NOT NULL AND LOWER(c.sender.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))))")
-    Slice<ChatRoom> findChatRoomsByKeyword(Member member, String keyword, Pageable pageable);
+    Slice<ChatRoom> findByMemberAndNickname(Member member, String keyword, Pageable pageable);
 }
 
