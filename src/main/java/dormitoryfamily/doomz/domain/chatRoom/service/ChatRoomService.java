@@ -226,7 +226,7 @@ public class ChatRoomService {
 
     public ChatRoomListResponseDto searchChatRooms(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        Slice<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByKeyword(loginMember, requestDto.q(), pageable);
+        Slice<ChatRoom> chatRooms = chatRoomRepository.findByMemberAndNickname(loginMember, requestDto.q(), pageable);
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
         return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);

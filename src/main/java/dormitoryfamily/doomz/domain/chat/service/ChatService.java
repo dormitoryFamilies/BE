@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.service;
 
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryListResponseDto;
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
@@ -13,6 +15,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.exception.InvalidChatMessageException;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -167,5 +170,18 @@ public class ChatService {
         if (hasMessage && hasImageUrl || !(hasMessage || hasImageUrl)) {
             throw new InvalidChatMessageException("메시지 또는 이미지 URL 중 하나만 존재해야 합니다.");
         }
+    }
+
+    public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
+        Member loginMember = principalDetails.getMember();
+        Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable);
+        List<ChatHistoryResponseDto>  chatHistoryDtos= chatMessages.stream().map(
+                chat -> {
+                    Member otherMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
+                            chat.getChatRoom().getReceiver() : chat.getChatRoom().getSender();
+                    return ChatHistoryResponseDto.fromEntity(chat, otherMember);
+                }
+        ).collect(Collectors.toList());
+        return ChatHistoryListResponseDto.toDto(chatMessages,chatHistoryDtos);
     }
 }

@@ -75,6 +75,4 @@ public class ChatRoomController {
         ChatRoomListResponseDto responseDto = chatRoomService.searchChatRooms(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
-
-
 }
