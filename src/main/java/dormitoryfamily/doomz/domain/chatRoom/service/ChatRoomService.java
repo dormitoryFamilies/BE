@@ -21,6 +21,7 @@ import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.RedisSubscriber;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -179,9 +180,9 @@ public class ChatRoomService {
     public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         Slice<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember, pageable);
-        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
-        responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
-        return ChatRoomListResponseDto.toDto(chatRooms, responseDtos);
+        List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
+        chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
+        return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);
     }
 
     private List<ChatRoomResponseDto> createChatRoomResponseDtos(List<ChatRoom> chatRooms, Member loginMember) {
@@ -220,5 +221,14 @@ public class ChatRoomService {
         Member loginMember = principalDetails.getMember();
         int totalCount = chatRoomRepository.findTotalUnreadCountForMember(loginMember);
         return UnreadChatCountResponseDto.toDto(totalCount);
+    }
+
+
+    public ChatRoomListResponseDto searchChatRooms(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
+        Member loginMember = principalDetails.getMember();
+        Slice<ChatRoom> chatRooms = chatRoomRepository.findChatRoomsByKeyword(loginMember, requestDto.q(), pageable);
+        List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
+        chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
+        return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);
     }
 }
