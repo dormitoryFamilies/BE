@@ -106,7 +106,7 @@ public class ChatService {
 
         long remainingCount = sizeInRange - ((long) pageSize * pageNumber);
         if (remainingCount < 0) {
-            return ChatListResponseDto.toDto(pageNumber, true, Collections.emptyList());
+            return ChatListResponseDto.toDto(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
         }
         long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
         long count = Math.min(remainingCount, pageable.getPageSize());
@@ -117,11 +117,11 @@ public class ChatService {
             List<ChatDto> chatList = new ArrayList<>(chatSet);
             Collections.reverse(chatList);
             boolean isLast = chatList.size() < pageSize;
-            return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
+            return ChatListResponseDto.toDto(pageNumber, isLast, chatRoom.getRoomUUID(), chatList);
         } else {
             Slice<Chat> chatSlice = getChatListFromRDB(chatRoom, pageable, isSender);
             List<ChatDto> chatList = chatSlice.stream().map(ChatDto::fromEntity).collect(Collectors.toList());
-            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatList);
+            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatRoom.getRoomUUID(), chatList);
         }
     }
 
