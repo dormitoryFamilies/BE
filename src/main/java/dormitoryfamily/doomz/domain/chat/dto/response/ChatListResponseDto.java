@@ -11,7 +11,11 @@ public record ChatListResponseDto (
         String roomUUID,
         List<ChatDto> chatHistory
 ){
-    public static ChatListResponseDto toDto(int nowPageNumber, boolean isLast, String roomUUID,  List<ChatDto> chatDtos){
+    public static ChatListResponseDto toDto(int nowPageNumber,
+                                            boolean isLast,
+                                            String roomUUID,
+                                            List<ChatDto> chatDtos
+    ){
         return new ChatListResponseDto(
                 nowPageNumber,
                 isLast,

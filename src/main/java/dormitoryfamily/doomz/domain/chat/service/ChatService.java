@@ -172,14 +172,14 @@ public class ChatService {
         }
     }
 
-    public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
+    public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable, String sortType) {
         Member loginMember = principalDetails.getMember();
-        Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable);
+        Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable, sortType);
         List<ChatHistoryResponseDto>  chatHistoryDtos= chatMessages.stream().map(
                 chat -> {
-                    Member otherMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
+                    Member chatMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
                             chat.getChatRoom().getReceiver() : chat.getChatRoom().getSender();
-                    return ChatHistoryResponseDto.fromEntity(chat, otherMember);
+                    return ChatHistoryResponseDto.fromEntity(chat, chatMember);
                 }
         ).collect(Collectors.toList());
         return ChatHistoryListResponseDto.toDto(chatMessages,chatHistoryDtos);
