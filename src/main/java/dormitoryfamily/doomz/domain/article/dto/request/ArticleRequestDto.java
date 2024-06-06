@@ -44,9 +44,9 @@ public record ArticleRequestDto(
                 .build();
     }
 
-    public static BoardType getBoardType(ArticleRequestDto requestDto){
-        BoardType boardType =BoardType.fromDescription(requestDto.boardType);
-        if(boardType.equals(BoardType.ALL)){
+    public static BoardType getBoardType(ArticleRequestDto requestDto) {
+        BoardType boardType = BoardType.fromDescription(requestDto.boardType);
+        if (boardType.equals(BoardType.ALL)) {
             throw new InvalidBoardTypeException();
         }
         return boardType;
