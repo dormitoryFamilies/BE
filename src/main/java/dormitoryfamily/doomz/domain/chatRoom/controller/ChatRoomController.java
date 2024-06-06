@@ -24,8 +24,8 @@ public class ChatRoomController {
     @PostMapping("/members/{memberId}")
     public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> createRoom(
             @PathVariable Long memberId,
-            @AuthenticationPrincipal PrincipalDetails principalDetails)
-    {
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
         CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
@@ -33,8 +33,8 @@ public class ChatRoomController {
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ResponseDto<Void>> deleteRoom(
             @PathVariable Long roomId,
-            @AuthenticationPrincipal PrincipalDetails principalDetails)
-    {
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
         chatRoomService.deleteChatRoom(roomId, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
@@ -43,8 +43,7 @@ public class ChatRoomController {
     public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> findAllChatRooms(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
-    )
-    {
+    ) {
         ChatRoomListResponseDto responseDto = chatRoomService.findAllChatRooms(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -53,15 +52,15 @@ public class ChatRoomController {
     public ResponseEntity<ResponseDto<Void>> exitChatRoom(
             @PathVariable Long roomId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
-      chatRoomService.exitChatRoom(principalDetails, roomId);
-      return ResponseEntity.ok(ResponseDto.ok());
+    ) {
+        chatRoomService.exitChatRoom(principalDetails, roomId);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @GetMapping("/rooms/unread")
     public ResponseEntity<ResponseDto<UnreadChatCountResponseDto>> countTotalUnreadChat(
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         UnreadChatCountResponseDto responseDto = chatRoomService.countTotalUnreadChat(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -71,7 +70,7 @@ public class ChatRoomController {
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
-    ){
+    ) {
         ChatRoomListResponseDto responseDto = chatRoomService.searchChatRooms(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
