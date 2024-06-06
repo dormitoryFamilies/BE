@@ -3,7 +3,6 @@ package dormitoryfamily.doomz.domain.chat.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chat.entity.QChat;
 import dormitoryfamily.doomz.domain.chat.util.SortType;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;

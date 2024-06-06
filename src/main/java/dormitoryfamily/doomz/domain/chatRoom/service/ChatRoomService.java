@@ -194,6 +194,7 @@ public class ChatRoomService {
                 })
                 .collect(Collectors.toList());
     }
+
     private Chat getLastChatByRoomUUID(String roomUUID) {
         return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
     }

@@ -65,9 +65,9 @@ public class ChatService {
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
-        boolean isSender =  chatRoom.getSender().getId().equals(loginMember.getId());
+        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
 
-        validateChatRoomAccessAndStatus(chatRoom, loginMember,  isSender);
+        validateChatRoomAccessAndStatus(chatRoom, loginMember, isSender);
         updateMemberStatusToIn(chatRoom, isSender);
         return getChatListResponse(chatRoom, isSender, pageable);
     }
@@ -175,13 +175,13 @@ public class ChatService {
     public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable, String sortType) {
         Member loginMember = principalDetails.getMember();
         Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable, sortType);
-        List<ChatHistoryResponseDto>  chatHistoryDtos= chatMessages.stream().map(
+        List<ChatHistoryResponseDto> chatHistoryDtos = chatMessages.stream().map(
                 chat -> {
                     Member chatMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
                             chat.getChatRoom().getReceiver() : chat.getChatRoom().getSender();
                     return ChatHistoryResponseDto.fromEntity(chat, chatMember);
                 }
         ).collect(Collectors.toList());
-        return ChatHistoryListResponseDto.toDto(chatMessages,chatHistoryDtos);
+        return ChatHistoryListResponseDto.toDto(chatMessages, chatHistoryDtos);
     }
 }

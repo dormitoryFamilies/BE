@@ -4,6 +4,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import lombok.Getter;
 
 import static dormitoryfamily.doomz.domain.chat.entity.QChat.chat;
+
 @Getter
 public enum SortType {
 

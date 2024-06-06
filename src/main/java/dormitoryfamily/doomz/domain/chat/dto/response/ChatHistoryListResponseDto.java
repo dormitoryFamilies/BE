@@ -5,12 +5,12 @@ import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
-public record ChatHistoryListResponseDto (
+public record ChatHistoryListResponseDto(
         int nowPageNumber,
         boolean isLast,
         List<ChatHistoryResponseDto> chatHistory
-){
-    public static ChatHistoryListResponseDto toDto(Slice<Chat> chats, List<ChatHistoryResponseDto> chatHistoryResponseDto){
+) {
+    public static ChatHistoryListResponseDto toDto(Slice<Chat> chats, List<ChatHistoryResponseDto> chatHistoryResponseDto) {
         return new ChatHistoryListResponseDto(
                 chats.getNumber(),
                 chats.isLast(),
