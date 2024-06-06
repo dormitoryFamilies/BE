@@ -8,8 +8,7 @@ public enum ArticleDormitoryType {
 
     MAIN_BUILDING("본관"),
     MALE_DORMITORY("양성재"),
-    FEMALE_DORMITORY("양진재"),
-    COED_DORMITORY("양현재");
+    FEMALE_DORMITORY("양진재");
 
     private final String name;
 
