@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -53,9 +50,10 @@ public class ChatController {
     public ResponseEntity<ResponseDto<ChatHistoryListResponseDto>> searchChatHistory(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @ModelAttribute @Valid SearchRequestDto requestDto,
+            @RequestParam String sort,
             Pageable pageable
     ){
-        ChatHistoryListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable);
+        ChatHistoryListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable, sort);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
