@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public enum BoardType {
 
+    ALL("전체"),
     HELP("도와주세요"),
     TOGETHER("함께해요"),
     SHARE("나눔해요"),
