@@ -171,7 +171,7 @@ public class ArticleService {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         BoardType boardType = fromDescription(articleBoardType);
-        if(boardType.equals(ALL)){
+        if (boardType.equals(ALL)) {
             boardType = null;
         }
 
