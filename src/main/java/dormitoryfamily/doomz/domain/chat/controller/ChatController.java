@@ -41,7 +41,7 @@ public class ChatController {
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @PathVariable Long roomId,
             Pageable pageable
-    ){
+    ) {
         ChatListResponseDto responseDto = chatService.findAllChatHistory(principalDetails, roomId, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -52,7 +52,7 @@ public class ChatController {
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @RequestParam String sort,
             Pageable pageable
-    ){
+    ) {
         ChatHistoryListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable, sort);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
