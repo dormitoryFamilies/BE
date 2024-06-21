@@ -15,7 +15,7 @@ public record CommentResponseDto (
         Long commentId,
         Long memberId,
         String profileUrl,
-        String nickname,
+        String nickName,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime createdAt,
@@ -33,7 +33,7 @@ public record CommentResponseDto (
                 comment.getMember().getNickname(),
                 comment.getCreatedAt(),
                 comment.getContent(),
-                isArticleWriter(loginMember, comment.getArticle().getMember()),
+                isArticleWriter(loginMember, comment.getMember()),
                 comment.isDeleted(),
                 comment.getReplyComments().stream()
                         .map(replyComment -> ReplyCommentResponseDto.fromEntity(loginMember, replyComment))
