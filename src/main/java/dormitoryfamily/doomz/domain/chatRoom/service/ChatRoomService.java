@@ -7,7 +7,6 @@ import dormitoryfamily.doomz.domain.chat.service.ChatService;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
@@ -224,11 +223,5 @@ public class ChatRoomService {
         if (chatRoom.getSenderStatus() == OUT) {
             chatRoom.increaseSenderUnreadCount();
         }
-    }
-
-    public UnreadChatCountResponseDto countTotalUnreadChat(PrincipalDetails principalDetails) {
-        Member loginMember = principalDetails.getMember();
-        int totalCount = chatRoomRepository.findTotalUnreadCountForMember(loginMember);
-        return UnreadChatCountResponseDto.toDto(totalCount);
     }
 }
