@@ -8,14 +8,12 @@ import java.util.List;
 public record ChatListResponseDto (
         int nowPageNumber,
         boolean isLast,
-        String roomUUID,
-        List<ChatDto> chatHistory
+        List<ChatDto> ChatHistory
 ){
-    public static ChatListResponseDto toDto(int nowPageNumber, boolean isLast, String roomUUID,  List<ChatDto> chatDtos){
+    public static ChatListResponseDto toDto(int nowPageNumber, boolean isLast, List<ChatDto> chatDtos){
         return new ChatListResponseDto(
                 nowPageNumber,
                 isLast,
-                roomUUID,
                 chatDtos);
     }
 }
