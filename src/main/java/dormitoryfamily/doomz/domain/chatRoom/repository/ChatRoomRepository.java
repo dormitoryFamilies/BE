@@ -2,8 +2,6 @@ package dormitoryfamily.doomz.domain.chatRoom.repository;
 
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,11 +14,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "OR (cr.sender = :member2 AND cr.receiver = :member1)")
     Optional<ChatRoom> findBySenderAndReceiver(Member member1, Member member2);
 
-    Optional<ChatRoom> findByRoomUUID(String roomUUID);
-
     @Query("SELECT cr FROM ChatRoom cr " +
             "WHERE (cr.sender = :member AND cr.chatRoomStatus != 'ONLY_RECEIVER')"+
             "OR (cr.receiver = :member AND cr.chatRoomStatus != 'ONLY_SENDER') ")
-    Slice<ChatRoom> findAllByMember(Member member, Pageable pageable);
+    List<ChatRoom> findAllByMember(Member member);
+
+    Optional<ChatRoom> findByRoomUUID(String roomUUID);
 }
 

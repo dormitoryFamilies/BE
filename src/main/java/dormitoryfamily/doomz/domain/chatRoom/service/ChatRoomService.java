@@ -22,8 +22,6 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
@@ -170,13 +168,12 @@ public class ChatRoomService {
         return topics.get(roomUUID);
     }
 
-    public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails, Pageable pageable) {
+    public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        Slice<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember, pageable);
-        List<ChatRoom> rooms = chatRooms.stream().toList();
-        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(rooms, loginMember);
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember);
+        List<ChatRoomResponseDto> responseDtos = createChatRoomResponseDtos(chatRooms, loginMember);
         responseDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
-        return ChatRoomListResponseDto.toDto(chatRooms, responseDtos);
+        return ChatRoomListResponseDto.toDto(responseDtos);
     }
 
     private List<ChatRoomResponseDto> createChatRoomResponseDtos(List<ChatRoom> chatRooms, Member loginMember) {
