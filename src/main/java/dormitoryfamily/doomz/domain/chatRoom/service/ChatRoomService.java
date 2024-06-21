@@ -101,15 +101,15 @@ public class ChatRoomService {
         }
     }
 
-    public void deleteChatRoom(Long roomId, PrincipalDetails principalDetails) {
+    public void deleteChatRoom(Long memberId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        ChatRoom chatRoom = getChatRoomById(roomId);
+        Member chatMember = getMemberById(memberId);
+        ChatRoom chatRoom = getChatRoomBySenderAndReceiver(loginMember, chatMember);
         deleteChatRoomProcess(chatRoom, loginMember);
-        setChatMemberStatusOut(chatRoom, loginMember);
     }
 
-    private ChatRoom getChatRoomById(Long chatRoomId) {
-        return chatRoomRepository.findById(chatRoomId)
+    private ChatRoom getChatRoomBySenderAndReceiver(Member loginMember, Member chatMember) {
+        return chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember)
                 .orElseThrow(ChatRoomNotExistsException::new);
     }
 
@@ -135,14 +135,6 @@ public class ChatRoomService {
             } else {
                 changeChatStatusAndClearChatIfNeed(chatRoom, false);
             }
-        }
-    }
-
-    private void setChatMemberStatusOut(ChatRoom chatRoom, Member loginMember) {
-        if (chatRoom.getSender().getId().equals(loginMember.getId())) {
-            chatRoom.setSenderStatusOut();
-        } else {
-            chatRoom.setReceiverStatusOut();
         }
     }
 
@@ -205,7 +197,18 @@ public class ChatRoomService {
     public void exitChatRoom(PrincipalDetails principalDetails, Long roomId) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
-        setChatMemberStatusOut(chatRoom, loginMember);
+
+        if(chatRoom.getSender().getId().equals(loginMember.getId())){
+            chatRoom.setSenderStatusOut();
+        }
+        else{
+            chatRoom.setReceiverStatusOut();
+        }
+    }
+
+    private ChatRoom getChatRoomById(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(ChatRoomNotExistsException::new);
     }
 }
 
