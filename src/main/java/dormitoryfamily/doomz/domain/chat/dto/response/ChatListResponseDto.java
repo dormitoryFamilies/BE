@@ -1,6 +1,8 @@
 package dormitoryfamily.doomz.domain.chat.dto.response;
 
+
 import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
+
 import java.util.List;
 
 public record ChatListResponseDto (
