@@ -92,12 +92,12 @@ public class ChatRoom extends BaseTimeEntity {
         this.receiverEnteredAt = LocalDateTime.now();
     }
 
-    public void senderInChatRoom(){
+    public void senderInChatRoom() {
         this.senderUnreadCount = 0;
         this.senderStatus = IN;
     }
 
-    public void receiverInChatRoom(){
+    public void receiverInChatRoom() {
         this.receiverUnreadCount = 0;
         this.receiverStatus = IN;
     }

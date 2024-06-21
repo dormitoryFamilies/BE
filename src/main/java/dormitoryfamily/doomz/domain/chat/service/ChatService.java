@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.service;
 
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryListResponseDto;
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
@@ -13,6 +15,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.exception.InvalidChatMessageException;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -62,9 +65,9 @@ public class ChatService {
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
-        boolean isSender =  chatRoom.getSender().getId().equals(loginMember.getId());
+        boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
 
-        validateChatRoomAccessAndStatus(chatRoom, loginMember,  isSender);
+        validateChatRoomAccessAndStatus(chatRoom, loginMember, isSender);
         updateMemberStatusToIn(chatRoom, isSender);
         return getChatListResponse(chatRoom, isSender, pageable);
     }
@@ -103,7 +106,7 @@ public class ChatService {
 
         long remainingCount = sizeInRange - ((long) pageSize * pageNumber);
         if (remainingCount < 0) {
-            return ChatListResponseDto.toDto(pageNumber, true, Collections.emptyList());
+            return ChatListResponseDto.toDto(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
         }
         long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
         long count = Math.min(remainingCount, pageable.getPageSize());
@@ -114,11 +117,11 @@ public class ChatService {
             List<ChatDto> chatList = new ArrayList<>(chatSet);
             Collections.reverse(chatList);
             boolean isLast = chatList.size() < pageSize;
-            return ChatListResponseDto.toDto(pageNumber, isLast, chatList);
+            return ChatListResponseDto.toDto(pageNumber, isLast, chatRoom.getRoomUUID(), chatList);
         } else {
             Slice<Chat> chatSlice = getChatListFromRDB(chatRoom, pageable, isSender);
             List<ChatDto> chatList = chatSlice.stream().map(ChatDto::fromEntity).collect(Collectors.toList());
-            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatList);
+            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatRoom.getRoomUUID(), chatList);
         }
     }
 
@@ -167,5 +170,18 @@ public class ChatService {
         if (hasMessage && hasImageUrl || !(hasMessage || hasImageUrl)) {
             throw new InvalidChatMessageException("메시지 또는 이미지 URL 중 하나만 존재해야 합니다.");
         }
+    }
+
+    public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable, String sortType) {
+        Member loginMember = principalDetails.getMember();
+        Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable, sortType);
+        List<ChatHistoryResponseDto> chatHistoryDtos = chatMessages.stream().map(
+                chat -> {
+                    Member chatMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
+                            chat.getChatRoom().getReceiver() : chat.getChatRoom().getSender();
+                    return ChatHistoryResponseDto.fromEntity(chat, chatMember);
+                }
+        ).collect(Collectors.toList());
+        return ChatHistoryListResponseDto.toDto(chatMessages, chatHistoryDtos);
     }
 }

@@ -6,6 +6,8 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponse
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,8 @@ public class ChatRoomController {
     @PostMapping("/members/{memberId}")
     public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> createRoom(
             @PathVariable Long memberId,
-            @AuthenticationPrincipal PrincipalDetails principalDetails)
-    {
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
         CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
@@ -31,8 +33,8 @@ public class ChatRoomController {
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ResponseDto<Void>> deleteRoom(
             @PathVariable Long roomId,
-            @AuthenticationPrincipal PrincipalDetails principalDetails)
-    {
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
         chatRoomService.deleteChatRoom(roomId, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
@@ -41,8 +43,7 @@ public class ChatRoomController {
     public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> findAllChatRooms(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
-    )
-    {
+    ) {
         ChatRoomListResponseDto responseDto = chatRoomService.findAllChatRooms(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -51,16 +52,26 @@ public class ChatRoomController {
     public ResponseEntity<ResponseDto<Void>> exitChatRoom(
             @PathVariable Long roomId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
-      chatRoomService.exitChatRoom(principalDetails, roomId);
-      return ResponseEntity.ok(ResponseDto.ok());
+    ) {
+        chatRoomService.exitChatRoom(principalDetails, roomId);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @GetMapping("/rooms/unread")
     public ResponseEntity<ResponseDto<UnreadChatCountResponseDto>> countTotalUnreadChat(
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         UnreadChatCountResponseDto responseDto = chatRoomService.countTotalUnreadChat(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/rooms/search")
+    public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> searchChatRooms(
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
+    ) {
+        ChatRoomListResponseDto responseDto = chatRoomService.searchChatRooms(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

@@ -1,11 +1,14 @@
 package dormitoryfamily.doomz.domain.member.controller;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.service.MemberService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,5 +44,14 @@ public class MemberController {
     ){
         memberService.modifyMyProfile(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @GetMapping("/members/search")
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
+            @ModelAttribute @Valid SearchRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        MemberProfileListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

@@ -2,7 +2,6 @@ package dormitoryfamily.doomz.domain.article.service;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequestDto;
-import dormitoryfamily.doomz.domain.article.dto.request.ArticleSearchRequestDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleResponseDto;
 import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
@@ -20,6 +19,7 @@ import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessExceptio
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+
+import static dormitoryfamily.doomz.domain.article.entity.type.BoardType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -152,7 +154,7 @@ public class ArticleService {
     ) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
-        BoardType boardType = BoardType.fromDescription(articleBoardType);
+        BoardType boardType = fromDescription(articleBoardType);
 
         Slice<Article> articles = articleRepository
                 .findAllByDormitoryTypeAndBoardType(dormitoryType, boardType, request, pageable);
@@ -168,11 +170,9 @@ public class ArticleService {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        BoardType boardType;
-        if (articleBoardType.equals("all")) {
+        BoardType boardType = fromDescription(articleBoardType);
+        if (boardType.equals(ALL)) {
             boardType = null;
-        } else {
-            boardType = BoardType.fromDescription(articleBoardType);
         }
 
         Slice<Article> articles = articleRepository
@@ -193,7 +193,7 @@ public class ArticleService {
 
     public ArticleListResponseDto searchArticles(PrincipalDetails principalDetails,
                                                  String articleDormitoryType,
-                                                 ArticleSearchRequestDto requestDto,
+                                                 SearchRequestDto requestDto,
                                                  Pageable pageable
     ) {
         Member loginMember = principalDetails.getMember();

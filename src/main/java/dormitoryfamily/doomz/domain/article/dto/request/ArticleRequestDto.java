@@ -6,6 +6,7 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
+import dormitoryfamily.doomz.domain.article.exception.InvalidBoardTypeException;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
@@ -38,8 +39,16 @@ public record ArticleRequestDto(
                 .thumbnailUrl(!requestDto.imagesUrls.isEmpty() ? requestDto.imagesUrls.get(0) : null)
                 .status(StatusType.PROGRESS)
                 .dormitoryType(ArticleDormitoryType.fromName(requestDto.dormitoryType))
-                .boardType(BoardType.fromDescription(requestDto.boardType))
+                .boardType(getBoardType(requestDto))
                 .tags(requestDto.tags)
                 .build();
+    }
+
+    public static BoardType getBoardType(ArticleRequestDto requestDto) {
+        BoardType boardType = BoardType.fromDescription(requestDto.boardType);
+        if (boardType.equals(BoardType.ALL)) {
+            throw new InvalidBoardTypeException();
+        }
+        return boardType;
     }
 }

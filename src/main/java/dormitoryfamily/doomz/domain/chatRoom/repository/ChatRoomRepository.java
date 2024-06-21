@@ -7,6 +7,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,5 +30,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "FROM ChatRoom cr")
     Integer findTotalUnreadCountForMember(Member member);
 
+    @Query("SELECT c FROM ChatRoom c " +
+            "WHERE ((c.sender = :member AND c.senderEnteredAt IS NOT NULL AND LOWER(c.receiver.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "OR (c.receiver = :member AND c.receiverEnteredAt IS NOT NULL AND LOWER(c.sender.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))))")
+    Slice<ChatRoom> findByMemberAndNickname(Member member, String keyword, Pageable pageable);
 }
 
