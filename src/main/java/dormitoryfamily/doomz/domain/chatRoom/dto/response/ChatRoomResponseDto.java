@@ -10,9 +10,8 @@ public record ChatRoomResponseDto (
 
         Long roomId,
         String roomUUID,
-        Long memberId,
-        String memberNickName,
-        String memberProfileUrl,
+        Long chatMemberId,
+        String chatMemberName,
         int unReadCount,
         String lastMessage,
 
@@ -25,8 +24,7 @@ public record ChatRoomResponseDto (
                         chatRoom.getId(),
                         chatRoom.getRoomUUID(),
                         chatRoom.getReceiver().getId(),
-                        chatRoom.getReceiver().getNickname(),
-                        chatRoom.getReceiver().getProfileUrl(),
+                        chatRoom.getReceiver().getName(),
                         chatRoom.getSenderUnreadCount(),
                         lastChat.getMessage(),
                         lastChat.getCreatedAt()
@@ -38,8 +36,7 @@ public record ChatRoomResponseDto (
                         chatRoom.getId(),
                         chatRoom.getRoomUUID(),
                         chatRoom.getSender().getId(),
-                        chatRoom.getSender().getNickname(),
-                        chatRoom.getSender().getProfileUrl(),
+                        chatRoom.getSender().getName(),
                         chatRoom.getReceiverUnreadCount(),
                         lastChat.getMessage(),
                         lastChat.getCreatedAt()
