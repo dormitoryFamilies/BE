@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.service;
 
+import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.exception.ChatNotExistsException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
@@ -16,12 +17,15 @@ import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.chatRoom.dto.ChatRoomDto;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.RedisSubscriber;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
@@ -44,10 +48,15 @@ public class ChatRoomService {
     private final RedisMessageListenerContainer redisMessageListener;
     private final RedisSubscriber redisSubscriber;
 
+    private static final String Chat_Rooms = "CHAT_ROOM";
+    private final RedisTemplate<String, Object> redisTemplate;
+    private HashOperations<String, String, ChatRoomDto> opsHashChatRoom;
+
     private Map<String, ChannelTopic> topics;
 
     @PostConstruct
     private void init() {
+        opsHashChatRoom = redisTemplate.opsForHash();
         topics = new HashMap<>();
     }
 
@@ -65,6 +74,7 @@ public class ChatRoomService {
         } else {
             ChatRoom createdChatRoom = ChatRoom.create(loginMember, chatMember);
             ChatRoom savedChatRoom = chatRoomRepository.save(createdChatRoom);
+            saveChatRoomToRedis(savedChatRoom);
             return CreateChatRoomResponseDto.fromEntity(savedChatRoom);
         }
     }
@@ -80,12 +90,18 @@ public class ChatRoomService {
         }
     }
 
+    private void saveChatRoomToRedis(ChatRoom chatRoom) {
+        ChatRoomDto chatRoomDto = ChatRoomDto.fromEntity(chatRoom);
+        opsHashChatRoom.put(Chat_Rooms, chatRoomDto.getRoomUUID(), chatRoomDto);
+    }
+
     private void updateChatRoomStatusIfNeeded(ChatRoom room, Member loginMember) {
         boolean isSender = room.getSender().getId().equals(loginMember.getId());
         boolean isReceiver = room.getReceiver().getId().equals(loginMember.getId());
         if ((isSender && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_RECEIVER)) ||
                 (isReceiver && room.getChatRoomStatus().equals(ChatRoomStatus.ONLY_SENDER))) {
             room.changeChatRoomStatus(ChatRoomStatus.BOTH);
+            saveChatRoomToRedis(room);
         }
     }
 
@@ -111,7 +127,7 @@ public class ChatRoomService {
             if (isSenderDeleted) {
                 throw new AlreadyChatRoomLeftException();
             } else if (isReceiverDeleted) {
-                chatRoomRepository.delete(chatRoom);
+                deleteChatRoom(chatRoom);
             } else {
                 changeChatStatusAndClearChatIfNeed(chatRoom, true);
             }
@@ -119,7 +135,7 @@ public class ChatRoomService {
             if (isReceiverDeleted) {
                 throw new AlreadyChatRoomLeftException();
             } else if (isSenderDeleted) {
-                chatRoomRepository.delete(chatRoom);
+                deleteChatRoom(chatRoom);
             } else {
                 changeChatStatusAndClearChatIfNeed(chatRoom, false);
             }
@@ -148,10 +164,16 @@ public class ChatRoomService {
             }
             chatRoom.deleteReceiver(lastChat.getId());
         }
+        saveChatRoomToRedis(chatRoom);
     }
 
     private Chat getLastChatByRoomUUID(String roomUUID) {
         return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
+    }
+
+    private void deleteChatRoom(ChatRoom chatRoom) {
+        chatRoomRepository.delete(chatRoom);
+        opsHashChatRoom.delete(Chat_Rooms, chatRoom.getRoomUUID());
     }
 
     public void enterChatRoom(String roomUUID) {
@@ -222,3 +244,5 @@ public class ChatRoomService {
         }
     }
 }
+
+
