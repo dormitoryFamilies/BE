@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus.IN;
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus.OUT;
 import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus.*;
 
@@ -102,22 +101,6 @@ public class ChatRoom extends BaseTimeEntity {
 
     public void changeChatRoomStatus(ChatRoomStatus chatRoomStatus){
         this.chatRoomStatus = chatRoomStatus;
-    }
-
-    public void setSenderStatusIn(){
-        this.senderStatus  = IN;
-    }
-
-    public void setSenderStatusOut(){
-        this.senderStatus  = OUT;
-    }
-
-    public void setReceiverStatusIn(){
-        this.receiverStatus = IN;
-    }
-
-    public void setReceiverStatusOut(){
-        this.receiverStatus = OUT;
     }
 
     @PrePersist
