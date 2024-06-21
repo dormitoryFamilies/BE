@@ -14,10 +14,9 @@ public record ChatRoomEntity(
         int senderUnreadCount,
         int receiverUnreadCount,
         String chatRoomStatus,
-        Long lastReceiverOnlyChatId,
-        Long lastSenderOnlyChatId ) implements Serializable
-{
-    public static ChatRoomEntity fromEntity(ChatRoom chatRoom){
+        String latestText) implements Serializable {
+
+    public static ChatRoomEntity create(ChatRoom chatRoom){
         return new ChatRoomEntity(
                 chatRoom.getId(),
                 chatRoom.getRoomUUID(),
@@ -26,8 +25,7 @@ public record ChatRoomEntity(
                 chatRoom.getSenderUnreadCount(),
                 chatRoom.getReceiverUnreadCount(),
                 chatRoom.getChatRoomStatus().toString(),
-                chatRoom.getLastReceiverOnlyChatId(),
-                chatRoom.getLastSenderOnlyChatId()
+                null
         );
     }
 }
