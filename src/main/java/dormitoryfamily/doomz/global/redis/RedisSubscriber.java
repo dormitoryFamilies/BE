@@ -24,9 +24,9 @@ public class RedisSubscriber implements MessageListener {
 
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
-            ChatEntity chatEntity = objectMapper.readValue(publishMessage, ChatEntity.class);
+            ChatData chatData = objectMapper.readValue(publishMessage, ChatData.class);
 
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatEntity.roomUUID(), chatEntity);
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatData.roomUUID(), chatData);
 
         } catch (Exception e) {
             log.error(e.getMessage());
