@@ -40,7 +40,7 @@ public class ReplyCommentService {
         return CreateReplyCommentResponseDto.fromEntity(replyComment);
     }
 
-    private Comment getCommentById(Long commentId){
+    private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotExistsException::new);
     }
@@ -60,7 +60,7 @@ public class ReplyCommentService {
         commentService.decideCommentDeletion(replyComment.getComment());
     }
 
-    private ReplyComment getReplyCommentById(Long replyCommentId){
+    private ReplyComment getReplyCommentById(Long replyCommentId) {
         return replyCommentRepository.findById(replyCommentId)
                 .orElseThrow(ReplyCommentNotExistsException::new);
     }
