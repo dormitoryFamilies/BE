@@ -39,7 +39,7 @@ public class Comment extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "comment")
     @OrderBy("createdAt ASC")
-    private List<ReplyComment> replyComments  = new ArrayList<>();
+    private List<ReplyComment> replyComments = new ArrayList<>();
 
     private boolean isDeleted;
 
@@ -51,7 +51,7 @@ public class Comment extends BaseTimeEntity {
         this.isDeleted = isDeleted;
     }
 
-    public void markAsDeleted(){
+    public void markAsDeleted() {
         this.isDeleted = true;
     }
 }
