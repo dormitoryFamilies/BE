@@ -29,8 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static dormitoryfamily.doomz.domain.article.entity.type.BoardType.*;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -154,7 +152,7 @@ public class ArticleService {
     ) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
-        BoardType boardType = fromDescription(articleBoardType);
+        BoardType boardType = BoardType.fromDescription(articleBoardType);
 
         Slice<Article> articles = articleRepository
                 .findAllByDormitoryTypeAndBoardType(dormitoryType, boardType, request, pageable);
@@ -170,9 +168,11 @@ public class ArticleService {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        BoardType boardType = fromDescription(articleBoardType);
-        if(boardType.equals(ALL)){
+        BoardType boardType;
+        if (articleBoardType.equals("all")) {
             boardType = null;
+        } else {
+            boardType = BoardType.fromDescription(articleBoardType);
         }
 
         Slice<Article> articles = articleRepository
