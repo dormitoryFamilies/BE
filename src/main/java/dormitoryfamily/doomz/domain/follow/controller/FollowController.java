@@ -1,12 +1,9 @@
 package dormitoryfamily.doomz.domain.follow.controller;
 
 import dormitoryfamily.doomz.domain.follow.service.FollowService;
-import dormitoryfamily.doomz.domain.member.dto.request.MemberSearchRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -40,38 +37,20 @@ public class FollowController {
     }
 
     @GetMapping("/followings")
-    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> getFollowingMembers(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowingMembers(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        MemberProfilePagingListResponseDto responseDto = followService.getMyFollowingMemberList(principalDetails, pageable);
-        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
-    }
-
-    @GetMapping("/followings/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowings(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @ModelAttribute @Valid MemberSearchRequestDto requestDto
-    ){
-        MemberProfileListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto);
+        MemberProfileListResponseDto responseDto = followService.getMyFollowingMemberList(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
     @GetMapping("/followers")
-    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> getFollowerMembers(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getFollowerMembers(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        MemberProfilePagingListResponseDto responseDto = followService.getMyFollowerMemberList(principalDetails, pageable);
-        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
-    }
-
-    @GetMapping("/followers/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowers(
-            @AuthenticationPrincipal PrincipalDetails principalDetails,
-            @ModelAttribute @Valid MemberSearchRequestDto requestDto
-    ){
-        MemberProfileListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto);
+        MemberProfileListResponseDto responseDto = followService.getMyFollowerMemberList(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
