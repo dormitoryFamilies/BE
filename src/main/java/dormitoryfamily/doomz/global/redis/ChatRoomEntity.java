@@ -11,13 +11,11 @@ public record ChatRoomEntity(
         String roomUUID,
         Long senderId,
         Long receiverId,
-        String chatRoomStatus,
         int senderUnreadCount,
         int receiverUnreadCount,
+        String chatRoomStatus,
         Long lastReceiverOnlyChatId,
-        Long lastSenderOnlyChatId,
-        String senderStatus,
-        String receiverStatus) implements Serializable
+        Long lastSenderOnlyChatId ) implements Serializable
 {
     public static ChatRoomEntity fromEntity(ChatRoom chatRoom){
         return new ChatRoomEntity(
@@ -25,13 +23,11 @@ public record ChatRoomEntity(
                 chatRoom.getRoomUUID(),
                 chatRoom.getSender().getId(),
                 chatRoom.getReceiver().getId(),
-                chatRoom.getChatRoomStatus().toString(),
                 chatRoom.getSenderUnreadCount(),
                 chatRoom.getReceiverUnreadCount(),
+                chatRoom.getChatRoomStatus().toString(),
                 chatRoom.getLastReceiverOnlyChatId(),
-                chatRoom.getLastSenderOnlyChatId(),
-                chatRoom.getSenderStatus().toString(),
-                chatRoom.getReceiverStatus().toString()
+                chatRoom.getLastSenderOnlyChatId()
         );
     }
 }
