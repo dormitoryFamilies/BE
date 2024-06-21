@@ -188,11 +188,15 @@ public class ChatRoomService {
         return chatRooms.stream()
                 .map(chatRoom -> {
                     Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
-                    boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-                    return ChatRoomResponseDto.fromEntity(chatRoom, lastChat, isSender);
+                    if (chatRoom.getSender().getId().equals(loginMember.getId())) {
+                        return ChatRoomResponseDto.fromEntityWhenSender(chatRoom, lastChat);
+                    } else {
+                        return ChatRoomResponseDto.fromEntityWhenReceiver(chatRoom, lastChat);
+                    }
                 })
                 .collect(Collectors.toList());
     }
+
     private Chat getLastChatByRoomUUID(String roomUUID) {
         return chatRepository.findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
     }
