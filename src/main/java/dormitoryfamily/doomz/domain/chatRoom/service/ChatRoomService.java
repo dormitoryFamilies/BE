@@ -3,11 +3,9 @@ package dormitoryfamily.doomz.domain.chatRoom.service;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberType;
-import dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatRoomStatus;
 import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
@@ -100,13 +98,14 @@ public class ChatRoomService {
     private ChatRoom getChatRoomBySenderAndReceiver(Member loginMember, Member chatMember) {
         return chatRoomRepository.findBySenderAndReceiver(loginMember, chatMember)
                 .orElseThrow(ChatRoomNotExistsException::new);
+
     }
 
     private void deleteChatRoomProcess(ChatRoom chatRoom, Member loginMember) {
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
-        boolean isSenderDeleted = chatRoom.getChatRoomStatus().equals(ChatRoomStatus.ONLY_RECEIVER);
-        boolean isReceiverDeleted = chatRoom.getChatRoomStatus().equals(ChatRoomStatus.ONLY_SENDER);
+        boolean isReceiverDeleted = chatRoom.isReceiverIsDeleted();
+        boolean isSenderDeleted = chatRoom.isSenderIsDeleted();
 
         if (isSender) {
             if (isSenderDeleted) {
