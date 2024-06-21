@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
-public record CommentResponseDto (
+public record CommentResponseDto(
         Long commentId,
         Long memberId,
         String profileUrl,
@@ -24,8 +24,8 @@ public record CommentResponseDto (
         boolean isWriter,
         boolean isDeleted,
         List<ReplyCommentResponseDto> replyComments
-){
-    public static CommentResponseDto fromEntity(Member loginMember, Comment comment){
+) {
+    public static CommentResponseDto fromEntity(Member loginMember, Comment comment) {
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getMember().getId(),
