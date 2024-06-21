@@ -42,6 +42,8 @@ public class ChatRoom extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ChatRoomStatus chatRoomStatus;
 
+    private String latestText;
+
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chat> chatList = new ArrayList<>();
 
