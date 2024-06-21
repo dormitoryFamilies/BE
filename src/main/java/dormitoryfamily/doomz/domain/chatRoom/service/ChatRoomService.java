@@ -18,8 +18,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.chatRoom.dto.ChatRoomDto;
-import dormitoryfamily.doomz.global.chat.ChatMessage;
-import dormitoryfamily.doomz.global.chat.RedisSubscriber;
+import dormitoryfamily.doomz.global.redis.RedisSubscriber;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
@@ -217,10 +216,10 @@ public class ChatRoomService {
         setChatMemberStatusOut(chatRoom, loginMember);
     }
 
-    public void updateUnreadCount(ChatMessage chatMessage) {
-        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
+    public void updateUnreadCount(ChatDto chatDto) {
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatDto.getRoomUUID());
 
-        if (chatMessage.getSenderId().equals(chatRoom.getSender().getId())) {
+        if (chatDto.getSenderId().equals(chatRoom.getSender().getId())) {
             updateReceiverUnreadCount(chatRoom);
         } else {
             updateSenderUnreadCount(chatRoom);

@@ -8,7 +8,6 @@ import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,15 +28,15 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    public void saveChat(ChatMessage chatMessage) {
-        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
-        Chat chat = ChatMessage.toEntity(chatMessage, chatRoom);
-        ChatDto chatDto = ChatDto.fromEntity(chat);
-        chatRepository.save(chat);
+    public void saveChat(ChatDto chatDto) {
+        ChatRoom chatRoom = getChatRoomByRoomUUID(chatDto.getRoomUUID());
+        Chat chat = ChatDto.toEntity(chatDto, chatRoom);
+        Chat savedChat = chatRepository.save(chat);
+        chatDto.setChatIdAndSentTime(savedChat.getId(), savedChat.getCreatedAt());
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
-        redisTemplateMessage.opsForList().rightPush(chatMessage.getRoomUUID(), chatDto);
-        redisTemplateMessage.expire(chatMessage.getRoomUUID(), 1, TimeUnit.MINUTES);
+        redisTemplateMessage.opsForList().rightPush(chatDto.getRoomUUID(), chatDto);
+        redisTemplateMessage.expire(chatDto.getRoomUUID(), 1, TimeUnit.MINUTES);
     }
 
     private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
@@ -101,7 +100,7 @@ public class ChatService {
         Long lastChatId = isSender ? chatRoom.getLastReceiverOnlyChatId() : chatRoom.getLastSenderOnlyChatId();
 
         if (lastChatId != null) {
-            chatList.removeIf(chatDto -> chatDto.chatId() <= lastChatId);
+            chatList.removeIf(chatDto -> chatDto.getChatId() <= lastChatId);
         }
     }
 }
