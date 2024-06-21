@@ -20,8 +20,7 @@ public class ChatService {
 
     public void saveChat(ChatDto chatDto) {
         Chat chat = ChatDto.toEntity(chatDto);
-        Chat savedChat = chatRepository.save(chat);
-        chatDto.setSentTime(savedChat.getCreatedAt());  //db 생성 시간과 일치시키기 위함
+        chatRepository.save(chat);
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(Chat.class));
         redisTemplateMessage.opsForList().rightPush(chatDto.getRoomUUID(), chatDto);
