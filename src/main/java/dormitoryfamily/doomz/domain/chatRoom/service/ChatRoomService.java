@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.service;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chat.exception.ChatNotExistsException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
@@ -142,7 +141,7 @@ public class ChatRoomService {
     }
 
     private  void changeChatStatusAndClearChatIfNeed(ChatRoom chatRoom, boolean isSender){
-        Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
+        Chat lastChat = chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(chatRoom.getRoomUUID());
         if(isSender){
             if(chatRoom.getLastSenderOnlyChatId() != null){
                 chatService.clearChat(chatRoom.getLastSenderOnlyChatId(), chatRoom.getRoomUUID());
@@ -156,10 +155,6 @@ public class ChatRoomService {
             chatRoom.deleteReceiver(lastChat.getId());
         }
         saveChatRoomToRedis(chatRoom);
-    }
-
-    private Chat getLastChatByRoomUUID(String roomUUID) {
-        return chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(roomUUID).orElseThrow(ChatNotExistsException::new);
     }
 
     private void deleteChatRoom(ChatRoom chatRoom) {
@@ -186,7 +181,7 @@ public class ChatRoomService {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember);
         List<ChatRoomResponseDto> responseDtos = chatRooms.stream()
                 .map(chatRoom -> {
-                    Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
+                    Chat lastChat = chatRepository.findTopByRoomUUIDOrderByCreatedAtDesc(chatRoom.getRoomUUID());
                     if (chatRoom.getSender().getId().equals(loginMember.getId())) {
                         return ChatRoomResponseDto.fromEntityWhenSender(chatRoom, lastChat);
                     } else {
