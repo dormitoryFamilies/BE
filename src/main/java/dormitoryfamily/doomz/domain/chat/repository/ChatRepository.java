@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.repository;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
