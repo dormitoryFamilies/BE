@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.domain.chat.service;
 
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
-import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
+import dormitoryfamily.doomz.global.redis.ChatEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,16 +15,16 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class ChatService {
 
-    private final RedisTemplate<String, ChatDto> redisTemplateMessage;
+    private final RedisTemplate<String, ChatEntity> redisTemplateMessage;
     private final ChatRepository chatRepository;
 
-    public void saveChat(ChatDto chatDto) {
-        Chat chat = ChatDto.toEntity(chatDto);
+    public void saveChat(ChatEntity chatEntity) {
+        Chat chat = ChatEntity.toEntity(chatEntity);
         chatRepository.save(chat);
 
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(Chat.class));
-        redisTemplateMessage.opsForList().rightPush(chatDto.getRoomUUID(), chatDto);
-        redisTemplateMessage.expire(chatDto.getRoomUUID(), 1, TimeUnit.MINUTES);
+        redisTemplateMessage.opsForList().rightPush(chatEntity.roomUUID(), chatEntity);
+        redisTemplateMessage.expire(chatEntity.roomUUID(), 1, TimeUnit.MINUTES);
     }
 
     public void clearChat(Long lastChatId, String roomUUID) {
