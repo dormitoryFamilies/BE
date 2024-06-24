@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 
 public record MyProfileResponseDto (
+        Long memberId,
         String name,
         String genderType,
         String nickname,
@@ -22,6 +23,7 @@ public record MyProfileResponseDto (
 ){
     public static MyProfileResponseDto fromEntity(Member member){
         return new MyProfileResponseDto(
+                member.getId(),
                 member.getName(),
                 member.getGenderType().getDescription(),
                 member.getNickname(),
