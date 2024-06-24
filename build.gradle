@@ -69,6 +69,12 @@ dependencies {
 
 	//jackson-datatype-jsr310
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+
+	//test용 h2
+	//testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+
+	// spring security 테스트 의존성
+	//testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.named('test') {
