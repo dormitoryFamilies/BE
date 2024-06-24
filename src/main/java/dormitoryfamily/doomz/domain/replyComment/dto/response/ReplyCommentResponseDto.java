@@ -27,7 +27,7 @@ public record ReplyCommentResponseDto(
                 replyComment.getMember().getNickname(),
                 replyComment.getCreatedAt(),
                 replyComment.getContent(),
-                isArticleWriter(loginMember, replyComment.getComment().getMember())
+                isArticleWriter(loginMember, replyComment.getComment().getArticle().getMember())
         );
     }
 
