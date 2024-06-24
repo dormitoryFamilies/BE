@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public record SimpleArticleResponseDto(
         Long articleId,
-        String nickName,
+        String nickname,
         String profileUrl,
         String boardType,
         String title,

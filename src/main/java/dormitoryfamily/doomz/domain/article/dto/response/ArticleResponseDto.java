@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public record ArticleResponseDto(
         Long articleId,
         Long memberId,
-        String nickName,
+        String nickname,
         String profileUrl,
         String memberDormitory,
         String articleDormitory,
