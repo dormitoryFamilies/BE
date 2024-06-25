@@ -7,6 +7,6 @@ public class JWTProperties {
     public static final String HEADER_STRING_REFRESH = "RefreshToken";
     public static final String CATEGORY_ACCESS = "access";
     public static final String CATEGORY_REFRESH = "refresh";
-    public static final int ACCESS_TOKEN_EXPIRATION_TIME = 60000 * 30; // 30분
-    public static final int REFRESH_TOKEN_EXPIRATION_TIME = 60000 * 60 * 24; // 24시간
+    public static final int ACCESS_TOKEN_EXPIRATION_TIME = 60000 * 60 * 24 * 7; // 1주일
+    public static final int REFRESH_TOKEN_EXPIRATION_TIME = 60000 * 60 * 24 * 14; // 2주일
 }
