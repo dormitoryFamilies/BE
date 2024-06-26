@@ -8,6 +8,8 @@ import dormitoryfamily.doomz.global.security.exception.handler.JWTAccessDeniedHa
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -89,5 +91,14 @@ public class SecurityConfig {
                 .accessDeniedHandler(deniedHandler));
 
         return http.build();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_VERIFIED_STUDENT\n"
+                + "ROLE_VERIFIED_STUDENT > ROLE_MEMBER\n"
+                + "ROLE_MEMBER > ROLE_VISITOR");
+        return roleHierarchy;
     }
 }
