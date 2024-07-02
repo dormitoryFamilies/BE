@@ -21,7 +21,7 @@ public record CommentResponseDto (
         LocalDateTime createdAt,
 
         String content,
-        boolean isWriter,
+        boolean isArticleWriter,
         boolean isDeleted,
         List<ReplyCommentResponseDto> replyComments
 ){
