@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record ArticleResponseDto(
+        Long loginMemberId,
         Long articleId,
         Long memberId,
         String nickname,
@@ -32,6 +33,7 @@ public record ArticleResponseDto(
 ) {
     public static ArticleResponseDto fromEntity(Member loginMember, Article article, boolean isWished, boolean isWriter, List<ArticleImage> articleImages) {
         return new ArticleResponseDto(
+                loginMember.getId(),
                 article.getId(),
                 article.getMember().getId(),
                 article.getMember().getNickname(),

@@ -127,7 +127,7 @@ public class ArticleService {
 
         Slice<Article> articles = articleRepository
                 .findAllByDormitoryTypeAndBoardType(dormitoryType, null, request, pageable);
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 
     private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
@@ -158,7 +158,7 @@ public class ArticleService {
 
         Slice<Article> articles = articleRepository
                 .findAllByDormitoryTypeAndBoardType(dormitoryType, boardType, request, pageable);
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 
     public ArticleListResponseDto findMyArticles(PrincipalDetails principalDetails,
@@ -177,7 +177,7 @@ public class ArticleService {
 
         Slice<Article> articles = articleRepository
                 .findMyArticleByDormitoryTypeAndBoardType(loginMember, dormitoryType, boardType, request, pageable);
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtosWithMember(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtosWithMember(loginMember, articles));
     }
 
     private List<SimpleArticleResponseDto> getSimpleArticleResponseDtosWithMember(Member loginMember, Slice<Article> articles) {
@@ -200,6 +200,6 @@ public class ArticleService {
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
         Slice<Article> articles = articleRepository.searchArticles(dormitoryType, requestDto.q(), pageable);
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 }
