@@ -84,7 +84,7 @@ public class WishService {
         Slice<Article> articles = articleRepository
                 .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, null, request, pageable);
 
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDto(articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDto(articles));
     }
 
     private List<Long> getArticleIds(List<Wish> wishes) {
