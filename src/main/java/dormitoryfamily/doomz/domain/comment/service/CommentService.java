@@ -129,7 +129,7 @@ public class CommentService {
         Slice<Article> articles = articleRepository
                 .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, boardType, request, pageable);
 
-        return ArticleListResponseDto.fromResponseDtos(articles, getSimpleArticleResponseDtos(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtos(loginMember, articles));
     }
 
     private List<Long> getArticleIds(List<Comment> comments, List<ReplyComment> replyComments) {
