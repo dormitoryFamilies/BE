@@ -17,7 +17,7 @@ public record ReplyCommentResponseDto(
         LocalDateTime createdAt,
 
         String content,
-        boolean isWriter
+        boolean isArticleWriter
 ) {
     public static ReplyCommentResponseDto fromEntity(Member loginMember, ReplyComment replyComment) {
         return new ReplyCommentResponseDto(
