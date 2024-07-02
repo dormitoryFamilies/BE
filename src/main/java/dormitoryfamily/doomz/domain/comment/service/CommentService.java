@@ -61,7 +61,7 @@ public class CommentService {
         List<CommentResponseDto> commentResponseDto = comments.stream()
                 .map(comment -> CommentResponseDto.fromEntity(loginMember, comment))
                 .collect(toList());
-        return CommentListResponseDto.toDto(article.getCommentCount(), commentResponseDto);
+        return CommentListResponseDto.toDto(loginMember, article.getCommentCount(), commentResponseDto);
     }
 
     public void removeComment(PrincipalDetails principalDetails, Long commentId) {
