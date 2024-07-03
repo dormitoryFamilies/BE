@@ -18,7 +18,6 @@ public class JWTUtil {
         return Jwts.builder()
                 .subject(member.getEmail())
                 .claim("category", category) // JWT 카테고리
-                .claim("role", member.getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발생 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 토큰 만료 시간
                 .header()
