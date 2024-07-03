@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
-    private final JWTAuthenticationFilter jwtAuthorizationFilter;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final AuthenticationEntryPoint entryPoint;
     private final JWTAccessDeniedHandler deniedHandler;
@@ -64,7 +64,7 @@ public class SecurityConfig {
         http.rememberMe(AbstractHttpConfigurer::disable);
 
         // JWT 필터 추가
-        http.addFilterAfter(jwtAuthorizationFilter, OAuth2LoginAuthenticationFilter.class);
+        http.addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
