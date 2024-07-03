@@ -31,33 +31,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        log.info("====== JWTAuthorizationFilter ======");
-
-//        String headerAuth = request.getHeader(HEADER_STRING_ACCESS);
-//        String jwt = "";
-//
-//        if (headerAuth == null || !headerAuth.startsWith("Bearer")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-//
-//        jwt = headerAuth.replace(TOKEN_PREFIX, "");
-//
-//        // 필터 만료 여부 확인
-//        jwtUtil.isExpired(jwt);
-//
-//        String category = jwtUtil.getCategory(jwt);
-//        if (!category.equals(CATEGORY_ACCESS)) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-
-//        //스프링 시큐리티 인증 토큰 생성
-//        Authentication authentication = getUserAuthentication(jwt);
-//        //세션에 사용자 등록
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        chain.doFilter(request, response);
 
         String headerAuth = request.getHeader(HEADER_STRING_ACCESS);
         String jwt = "";
