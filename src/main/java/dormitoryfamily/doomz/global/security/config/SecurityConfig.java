@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.security.config;
 
-import dormitoryfamily.doomz.global.jwt.JWTAuthorizationFilter;
+import dormitoryfamily.doomz.global.jwt.JWTAuthenticationFilter;
 import dormitoryfamily.doomz.global.oauth2.OAuth2LoginSuccessHandler;
 import dormitoryfamily.doomz.global.oauth2.OAuth2UserService;
 import dormitoryfamily.doomz.global.security.exception.handler.JWTAccessDeniedHandler;
@@ -27,11 +27,10 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
-    private final JWTAuthorizationFilter jwtAuthorizationFilter;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final AuthenticationEntryPoint entryPoint;
     private final JWTAccessDeniedHandler deniedHandler;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -66,18 +65,15 @@ public class SecurityConfig {
         http.rememberMe(AbstractHttpConfigurer::disable);
 
         // JWT 필터 추가
-        http.addFilterAfter(jwtAuthorizationFilter, OAuth2LoginAuthenticationFilter.class);
+        http.addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class);
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/").permitAll()
-                .requestMatchers("/api/reissue").permitAll()
-                .requestMatchers("/api/members/initial-profiles").hasRole("VISITOR")
-                .requestMatchers("/api/**").hasRole("VERIFIED_STUDENT")
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers("/api/reissue", "/api/logout").permitAll()
                 .requestMatchers("/","/stomp/**").permitAll()
+                .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasRole("VISITOR")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().hasRole("VERIFIED_STUDENT"));
 
         //oauth2 로그인
         http.oauth2Login((oauth2) -> oauth2
