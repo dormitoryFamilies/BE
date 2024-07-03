@@ -24,7 +24,7 @@ import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ReissueService {
+public class RefreshTokenService {
 
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -32,6 +32,24 @@ public class ReissueService {
 
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 
+        String email = validateRefreshToken(request);
+        Member member = findMemberByEmail(email);
+
+        String newAccess = jwtUtil.createToken(CATEGORY_ACCESS, member, ACCESS_TOKEN_EXPIRATION_TIME);
+        String newRefresh = jwtUtil.createToken(CATEGORY_REFRESH, member, REFRESH_TOKEN_EXPIRATION_TIME);
+
+        // 기존 리프레시 토큰 레디스에서 삭제
+        removeOldRefreshToken(email);
+
+        // 새로운 리프레시 토큰 레디스에 저장
+        saveNewRefreshToken(email, newRefresh);
+
+        response.setHeader(HEADER_STRING_ACCESS, TOKEN_PREFIX + newAccess);
+        response.setHeader(HEADER_STRING_REFRESH, TOKEN_PREFIX + newRefresh);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public String validateRefreshToken(HttpServletRequest request) {
         String headerAuth = request.getHeader(HEADER_STRING_REFRESH);
 
         // RefreshToken 존재 유무 확인
@@ -61,24 +79,10 @@ public class ReissueService {
         if (!isExist) {
             throw new NotSavedRefreshTokenException();
         }
-
-        Member member = findMemberByEmail(email);
-
-        String newAccess = jwtUtil.createToken(CATEGORY_ACCESS, member, ACCESS_TOKEN_EXPIRATION_TIME);
-        String newRefresh = jwtUtil.createToken(CATEGORY_REFRESH, member, REFRESH_TOKEN_EXPIRATION_TIME);
-
-        // 기존 리프레시 토큰 레디스에서 삭제
-        removeOldRefreshToken(email);
-
-        // 새로운 리프레시 토큰 레디스에 저장
-        saveNewRefreshToken(email, newRefresh);
-
-        response.setHeader(HEADER_STRING_ACCESS, TOKEN_PREFIX + newAccess);
-        response.setHeader(HEADER_STRING_REFRESH, TOKEN_PREFIX + newRefresh);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return email;
     }
 
-    private void removeOldRefreshToken(String email) {
+    public void removeOldRefreshToken(String email) {
         RefreshTokenEntity savedRefreshToken = refreshTokenRepository.findByEmail(email).get();
         refreshTokenRepository.delete(savedRefreshToken);
     }
