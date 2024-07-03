@@ -33,9 +33,19 @@ public class JWTAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setCharacterEncoding("UTF-8");
 
+        String message;
+
+        if (request.isUserInRole("ROLE_VISITOR")) {
+            message = "프로필 초기 설정이 필요합니다.";
+        } else if (request.isUserInRole("ROLE_MEMBER")) {
+            message = "학생증 인증이 완료되지 않았습니다.";
+        } else {
+            message = "접근 권한이 없는 사용자입니다.";
+        }
+
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("code", "403");
-        responseData.put("errorMessage", "접근 권한이 없는 사용자입니다.");
+        responseData.put("errorMessage", message);
 
         String responseBody = objectMapper.writeValueAsString(responseData);
         response.getWriter().write(responseBody);
