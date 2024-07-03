@@ -23,23 +23,14 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final HandlerExceptionResolver resolver;
-    private final ObjectMapper objectMapper;
 
 
-    public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, ObjectMapper objectMapper) {
+    public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         this.resolver = resolver;
-        this.objectMapper = objectMapper;
     }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         resolver.resolveException(request, response, null, (Exception) request.getAttribute("exception"));
-//        log.error("Not Authenticated Request", authException);
-//        log.error("Request Uri : {}", request.getRequestURI());
-//
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(objectMapper.writeValueAsString(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseDto.errorWithMessage(HttpStatus.UNAUTHORIZED, "zzzzzzzz"))));
     }
 }
