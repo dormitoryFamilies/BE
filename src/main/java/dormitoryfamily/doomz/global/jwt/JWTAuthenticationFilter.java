@@ -2,9 +2,9 @@ package dormitoryfamily.doomz.global.jwt;
 
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.security.exception.AccessTokenNotExistsException;
 import dormitoryfamily.doomz.global.security.exception.MemberDataNotExistsException;
 import dormitoryfamily.doomz.global.security.exception.NotAccessTokenException;
-import dormitoryfamily.doomz.global.security.exception.NotInitializedProfileException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,13 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static dormitoryfamily.doomz.domain.member.entity.type.RoleType.ROLE_VISITOR;
 import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JWTAuthorizationFilter extends OncePerRequestFilter {
+public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
     private final MemberRepository memberRepository;
@@ -66,7 +65,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         try {
             // 토큰 값 자체 유무 확인
             if (headerAuth == null || !headerAuth.startsWith("Bearer")) {
-                throw new NotAccessTokenException();
+                throw new AccessTokenNotExistsException();
             }
             jwt = headerAuth.replace(TOKEN_PREFIX, "");
 
