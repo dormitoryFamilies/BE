@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.member.entity;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.*;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -77,6 +78,28 @@ public class Member extends BaseTimeEntity {
         this.authority = RoleType.ROLE_VISITOR;
     }
 
+    public void increaseFollowingCount(){
+        this.followingCount += 1;
+    }
+
+    public void decreaseFollowingCount(){
+        this.followingCount -= 1;
+    }
+
+    public void increaseFollowerCount(){
+        this.followerCount += 1;
+    }
+
+    public void decreaseFollowerCount(){
+        this.followerCount -= 1;
+    }
+
+    public void updateProfile(MyProfileModifyRequestDto requestDto) {
+        this.nickname = requestDto.nickname();
+        this.dormitoryType = MemberDormitoryType.fromDescription(requestDto.memberDormitoryType());
+        this.profileUrl = requestDto.profileUrl();
+    }
+
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
         this.nickname = requestDto.nickname();
         this.studentCardImageUrl = requestDto.studentCardImageUrl();
@@ -87,32 +110,9 @@ public class Member extends BaseTimeEntity {
         this.authority = RoleType.ROLE_MEMBER;
     }
 
-    public void increaseFollowingCount() {
-        this.followingCount += 1;
-    }
-
-    public void decreaseFollowingCount() {
-        this.followingCount -= 1;
-    }
-
-    public void increaseFollowerCount() {
-        this.followerCount += 1;
-    }
-
-    public void decreaseFollowerCount() {
-        this.followerCount -= 1;
-    }
-
-    public void updateProfile(MyProfileModifyRequestDto requestDto) {
-        this.nickname = requestDto.nickname();
-        this.dormitoryType = MemberDormitoryType.fromDescription(requestDto.memberDormitoryType());
-        this.profileUrl = requestDto.profileUrl();
-    }
-
     @PrePersist
     private void init() {
         followingCount = 0;
         followerCount = 0;
     }
 }
-
