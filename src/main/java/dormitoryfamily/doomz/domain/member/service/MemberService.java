@@ -13,6 +13,7 @@ import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
+import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,25 @@ public class MemberService {
         return new NicknameCheckResponseDto(isDuplicated);
     }
 
-    public MemberProfileResponseDto getMemberProfile(Long memberId) {
+    public void setUpProfile(
+            MemberSetUpProfileRequestDto requestDto,
+            PrincipalDetails principalDetails)
+    {
+        Member loginMember = getMember(principalDetails);
+        loginMember.setUpProfile(requestDto);
+    }
+
+    private Member getMember(PrincipalDetails principalDetails) {
+        if (principalDetails == null) {
+            return null;
+        }
+        return memberRepository.findById(principalDetails.getMember().getId())
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    public MemberProfileResponseDto getMemberProfile(Long memberId){
         Member member = getMemberById(memberId);
-        return MemberProfileResponseDto.fromEntity(member);
+        return  MemberProfileResponseDto.fromEntity(member);
     }
 
     private Member getMemberById(Long memberId) {
@@ -61,20 +78,5 @@ public class MemberService {
         List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
         List<MemberProfileResponseDto> memberDtos = members.stream().map(MemberProfileResponseDto::fromEntity).collect(Collectors.toList());
         return MemberProfileListResponseDto.toDto(memberDtos);
-    }
-
-    public void setUpProfile(
-            MemberSetUpProfileRequestDto requestDto,
-            PrincipalDetails principalDetails) {
-        Member loginMember = getMember(principalDetails);
-        loginMember.setUpProfile(requestDto);
-    }
-
-    private Member getMember(PrincipalDetails principalDetails) {
-        if (principalDetails == null) {
-            return null;
-        }
-        return memberRepository.findById(principalDetails.getMember().getId())
-                .orElseThrow(MemberNotFoundException::new);
     }
 }
