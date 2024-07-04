@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.global.oauth2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
@@ -11,11 +12,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
 
@@ -26,6 +30,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -46,7 +51,17 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addHeader(HEADER_STRING_ACCESS, TOKEN_PREFIX + accessToken);
         response.addHeader(HEADER_STRING_REFRESH, TOKEN_PREFIX + refreshToken);
         response.setStatus(HttpStatus.OK.value());
-        response.sendRedirect("http://43.202.254.127:8080/");
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.OK.value());
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("code", 200);
+        responseData.put("message", "로그인에 성공했습니다.");
+
+        String responseBody = objectMapper.writeValueAsString(responseData);
+        response.getWriter().write(responseBody);
     }
 
     private void saveNewRefreshToken(String email, String refresh) {
