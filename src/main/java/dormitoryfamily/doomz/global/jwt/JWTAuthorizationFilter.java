@@ -2,9 +2,9 @@ package dormitoryfamily.doomz.global.jwt;
 
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
 
 @Slf4j
 @Component
@@ -29,18 +32,38 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.info("====== JWTAuthorizationFilter ======");
 
-        String headerAuth = request.getHeader(JWTProperties.HEADER_STRING);
+        String headerAuth = request.getHeader(HEADER_STRING_ACCESS);
         if (headerAuth == null || !headerAuth.startsWith("Bearer")) {
             chain.doFilter(request, response);
             return;
         }
 
-        String jwt = headerAuth.replace(JWTProperties.TOKEN_PREFIX, "");
-        if (jwtUtil.isExpired(jwt)) {
-            chain.doFilter(request, response);
+        String jwt = headerAuth.replace(TOKEN_PREFIX, "");
+        log.info("jwt ={}", jwt);
+
+        // 토큰 마료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        try {
+            jwtUtil.isExpired(jwt);
+        } catch (ExpiredJwtException e) {
+            // response body
+            PrintWriter writer = response.getWriter();
+            writer.print("access token expired");
+
+            // response status code
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        log.info("jwt ={}", jwt);
+
+        String category = jwtUtil.getCategory(jwt);
+        if (!category.equals(CATEGORY_ACCESS)) {
+            // response body
+            PrintWriter writer = response.getWriter();
+            writer.print("invalid access token");
+
+            // response status code
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authentication = getUserAuthentication(jwt);

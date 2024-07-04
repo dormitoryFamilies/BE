@@ -65,6 +65,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/","/stomp/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/api/reissue").permitAll()
                 .anyRequest().authenticated());
 
         //oauth2 로그인
