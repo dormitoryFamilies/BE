@@ -1,14 +1,13 @@
 package dormitoryfamily.doomz.domain.member.entity;
 
-import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.*;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -51,8 +50,6 @@ public class Member extends BaseTimeEntity {
     private Integer followingCount;
     private Integer followerCount;
     private boolean isSignUp;
-    private boolean isAuthenticated;
-    private String authority;
 
     @Builder
     public Member(String name,
@@ -66,11 +63,6 @@ public class Member extends BaseTimeEntity {
                   GenderType genderType,
                   String profileUrl,
                   String studentCardImageUrl) {
-                  String studentCardImageUrl,
-                  String authority
-                  String studentCardImageUrl,
-                  Integer followingCount,
-                  Integer followerCount) {
         this.name = name;
         this.email = email;
         this.nickname = nickname;
@@ -91,30 +83,28 @@ public class Member extends BaseTimeEntity {
         this.collegeType = CollegeType.fromDescription(requestDto.collegeType());
         this.departmentType = DepartmentType.fromDescription(requestDto.departmentType(), collegeType);
         this.studentNumber = requestDto.studentNumber();
-        this.dormitoryType = MemberDormitoryType.fromName(requestDto.dormitoryType());
+        this.dormitoryType = MemberDormitoryType.fromDescription(requestDto.dormitoryType());
         this.isSignUp = true;
-        this.followingCount = followingCount;
-        this.followerCount = followerCount;
     }
 
-    public void increaseFollowingCount(){
+    public void increaseFollowingCount() {
         this.followingCount += 1;
     }
 
-    public void decreaseFollowingCount(){
+    public void decreaseFollowingCount() {
         this.followingCount -= 1;
     }
 
-    public void increaseFollowerCount(){
+    public void increaseFollowerCount() {
         this.followerCount += 1;
     }
 
-    public void decreaseFollowerCount(){
+    public void decreaseFollowerCount() {
         this.followerCount -= 1;
         this.authority = RoleType.ROLE_MEMBER;
     }
 
-    public void updateProfile(MyProfileModifyRequestDto requestDto){
+    public void updateProfile(MyProfileModifyRequestDto requestDto) {
         this.nickname = requestDto.nickname();
         this.dormitoryType = MemberDormitoryType.fromDescription(requestDto.memberDormitoryType());
         this.profileUrl = requestDto.profileUrl();
@@ -125,5 +115,4 @@ public class Member extends BaseTimeEntity {
         followingCount = 0;
         followerCount = 0;
     }
-
 }
