@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.article.entity.type;
 
-import dormitoryfamily.doomz.global.exception.InvalidDormitoryTypeException;
+import dormitoryfamily.doomz.domain.article.exception.InvalidArticleDormitoryTypeException;
 import lombok.Getter;
 
 @Getter
@@ -22,6 +22,6 @@ public enum ArticleDormitoryType {
                 return type;
             }
         }
-        throw new InvalidDormitoryTypeException();
+        throw new InvalidArticleDormitoryTypeException();
     }
 }
