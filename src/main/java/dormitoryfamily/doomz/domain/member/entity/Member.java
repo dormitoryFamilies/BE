@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.member.entity;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.*;
+import dormitoryfamily.doomz.domain.member.exception.NotVisitorRoleException;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -101,6 +102,9 @@ public class Member extends BaseTimeEntity {
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
+        if (authority != RoleType.ROLE_VISITOR) {
+            throw new NotVisitorRoleException();
+        }
         this.nickname = requestDto.nickname();
         this.studentCardImageUrl = requestDto.studentCardImageUrl();
         this.collegeType = CollegeType.fromDescription(requestDto.collegeType());
