@@ -150,10 +150,14 @@ public class ChatService {
 
     public void validateChat(ChatMessage chatMessage) {
         Long senderId = chatMessage.getSenderId();
-        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
-
+        ChatRoom chatRoom = findChatRoomByUUID(chatMessage.getRoomUUID());
         validateMemberInChatRoom(chatRoom, senderId);
         validateChatMessage(chatMessage);
+    }
+
+    private ChatRoom findChatRoomByUUID(String roomUUID) {
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findByRoomUUID(roomUUID);
+        return optionalChatRoom.orElseThrow(() -> new InvalidChatMessageException("존재하지 않는 채팅방입니다."));
     }
 
     private void validateMemberInChatRoom(ChatRoom chatRoom, Long senderId) {
@@ -164,11 +168,8 @@ public class ChatService {
     }
 
     private void validateChatMessage(ChatMessage chatMessage) {
-        boolean hasMessage = chatMessage.getMessage() != null && !chatMessage.getMessage().isEmpty();
-        boolean hasImageUrl = chatMessage.getImageUrl() != null && !chatMessage.getImageUrl().isEmpty();
-
-        if (hasMessage && hasImageUrl || !(hasMessage || hasImageUrl)) {
-            throw new InvalidChatMessageException("메시지 또는 이미지 URL 중 하나만 존재해야 합니다.");
+        if (chatMessage.getMessage() == null || chatMessage.getMessage().isEmpty()) {
+            throw new InvalidChatMessageException("메세지가 없습니다.");
         }
     }
 
