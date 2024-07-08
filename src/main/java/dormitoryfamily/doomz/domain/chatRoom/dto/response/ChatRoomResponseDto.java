@@ -30,7 +30,7 @@ public record ChatRoomResponseDto (
                         member.getNickname(),
                         member.getProfileUrl(),
                         unreadCount,
-                        lastChat.getMessage() != null ? lastChat.getMessage() : lastChat.getImageUrl(),
+                        lastChat.getMessage(),
                         lastChat.getCreatedAt()
                 );
         }

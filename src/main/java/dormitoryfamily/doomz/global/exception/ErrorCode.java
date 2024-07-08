@@ -67,7 +67,6 @@ public enum ErrorCode {
 
     //chat
     CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
-    CHAT_SINGLE_CONTENT_REQUIRED(HttpStatus.CONFLICT, "메시지 또는 이미지 URL 중 하나만 존재해야 합니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

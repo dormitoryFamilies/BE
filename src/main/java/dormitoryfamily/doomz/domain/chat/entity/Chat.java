@@ -24,17 +24,14 @@ public class Chat extends BaseTimeEntity {
 
     private String message;
 
-    private String imageUrl;
-
     @ManyToOne
     @JoinColumn(name = "room_uuid", referencedColumnName = "room_uuid")
     private ChatRoom chatRoom;
 
     @Builder
-    public Chat(Long senderId, String message, String imageUrl, ChatRoom chatRoom) {
+    public Chat(Long senderId, String message, ChatRoom chatRoom) {
         this.senderId = senderId;
         this.message = message;
-        this.imageUrl = imageUrl;
         this.chatRoom = chatRoom;
     }
 }

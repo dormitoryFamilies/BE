@@ -17,13 +17,11 @@ public class ChatMessage implements Serializable {
     private String roomUUID;
     private Long senderId;
     private String message;
-    private String imageUrl;
 
     public static Chat toEntity(ChatMessage chatMessage, ChatRoom chatRoom){
         return Chat.builder()
                 .senderId(chatMessage.getSenderId())
                 .message(chatMessage.getMessage())
-                .imageUrl(chatMessage.getImageUrl())
                 .chatRoom(chatRoom)
                 .build();
     }
