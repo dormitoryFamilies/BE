@@ -25,4 +25,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long>, ChatRepositor
     @Transactional
     @Modifying
     void deleteByCreatedAtBefore(LocalDateTime enteredAt);
+
+    boolean existsByChatRoomRoomUUID(String roomUUID);
 }

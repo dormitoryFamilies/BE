@@ -48,6 +48,15 @@ public class ChatRoomControllerAdvice {
                 .body(ResponseDto.errorWithMessage(status, e.getMessage()));
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleChatRoomNotEmptyException(ChatRoomNotEmptyException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage()));
+    }
+
     @MessageExceptionHandler
     @SendToUser("/queue/errors")
     public ResponseEntity<ResponseDto<Void>> handleInvalidChatMessageException(MemberNotInChatRoomException e) {
