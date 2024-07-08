@@ -16,7 +16,6 @@ public record ChatDto(
         Long chatId,
         Long senderId,
         String message,
-        String imageUrl,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -28,7 +27,6 @@ public record ChatDto(
                 chat.getId(),
                 chat.getSenderId(),
                 chat.getMessage(),
-                chat.getImageUrl(),
                 chat.getCreatedAt()
         );
     }
