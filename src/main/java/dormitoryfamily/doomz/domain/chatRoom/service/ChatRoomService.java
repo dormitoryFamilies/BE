@@ -133,13 +133,13 @@ public class ChatRoomService {
     public void deleteChatRoom(Long roomId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         ChatRoom chatRoom = getChatRoomById(roomId);
-        checkMemberAccess(chatRoom, loginMember);
+        validateMemberAccess(chatRoom, loginMember);
 
         boolean isSender = chatRoom.getSender().getId().equals(loginMember.getId());
         boolean isSenderDeleted = chatRoom.getSenderEnteredAt() == null;
         boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
 
-        checkIfRoomAlreadyLeft(isSender, isSenderDeleted, isReceiverDeleted);
+        validateRoomLeft(isSender, isSenderDeleted, isReceiverDeleted);
         deleteOrChangeChatRoomStatus(chatRoom, isSender, isSenderDeleted, isReceiverDeleted);
     }
 
@@ -148,14 +148,14 @@ public class ChatRoomService {
                 .orElseThrow(ChatRoomNotExistsException::new);
     }
 
-    private void checkMemberAccess(ChatRoom chatRoom, Member loginMember) {
+    private void validateMemberAccess(ChatRoom chatRoom, Member loginMember) {
         if (!chatRoom.getSender().getId().equals(loginMember.getId()) &&
                 !chatRoom.getReceiver().getId().equals(loginMember.getId())) {
             throw new InvalidMemberAccessException();
         }
     }
 
-    private void checkIfRoomAlreadyLeft(boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
+    private void validateRoomLeft(boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
         if ((isSender && isSenderDeleted) || (!isSender && isReceiverDeleted)) {
             throw new AlreadyChatRoomLeftException();
         }
