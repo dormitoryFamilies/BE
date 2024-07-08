@@ -9,10 +9,7 @@ import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
-import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyChatRoomLeftException;
-import dormitoryfamily.doomz.domain.chatRoom.exception.AlreadyInChatRoomException;
-import dormitoryfamily.doomz.domain.chatRoom.exception.CannotChatYourselfException;
-import dormitoryfamily.doomz.domain.chatRoom.exception.ChatRoomNotExistsException;
+import dormitoryfamily.doomz.domain.chatRoom.exception.*;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
@@ -143,7 +140,7 @@ public class ChatRoomService {
         boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
 
         checkIfRoomAlreadyLeft(isSender, isSenderDeleted, isReceiverDeleted);
-        deleteOrChangeChatRoomStatus(chatRoom, loginMember, isSender, isSenderDeleted, isReceiverDeleted);
+        deleteOrChangeChatRoomStatus(chatRoom, isSender, isSenderDeleted, isReceiverDeleted);
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
@@ -164,7 +161,7 @@ public class ChatRoomService {
         }
     }
 
-    private void deleteOrChangeChatRoomStatus(ChatRoom chatRoom, Member loginMember, boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
+    private void deleteOrChangeChatRoomStatus(ChatRoom chatRoom, boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
         if (isSenderDeleted || isReceiverDeleted) {
             chatRoomRepository.delete(chatRoom);
         } else {
@@ -174,6 +171,18 @@ public class ChatRoomService {
                 chatRoom.deleteReceiver();
             }
             chatService.clearChatIfNeed(isSender ? chatRoom.getReceiverEnteredAt() : chatRoom.getSenderEnteredAt(), chatRoom.getRoomUUID());
+        }
+    }
+
+    public void deleteEmptyChatRoom(Long roomId) {
+        ChatRoom chatRoom = getChatRoomById(roomId);
+        checkIfChatRoomIsEmpty(chatRoom.getRoomUUID());
+        chatRoomRepository.delete(chatRoom);
+    }
+
+    private void checkIfChatRoomIsEmpty(String roomUUID){
+        if(chatRepository.existsByChatRoomRoomUUID(roomUUID)){
+            throw new ChatRoomNotEmptyException();
         }
     }
 
