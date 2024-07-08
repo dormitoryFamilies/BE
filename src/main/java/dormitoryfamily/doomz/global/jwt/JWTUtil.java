@@ -56,14 +56,4 @@ public class JWTUtil {
                 .getPayload()
                 .get("category", String.class);
     }
-
-    public String getRole(String token) {
-        // jwtToken에서 권한을 찾습니다.
-        return Jwts.parser()
-                .setSigningKeyResolver(SigningKeyResolver.instance)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("role", String.class);
-    }
 }
