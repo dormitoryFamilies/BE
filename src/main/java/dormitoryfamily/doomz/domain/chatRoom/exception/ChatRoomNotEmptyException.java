@@ -3,12 +3,11 @@ package dormitoryfamily.doomz.domain.chatRoom.exception;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
 
-public class CannotChatYourselfException extends ApplicationException {
+public class ChatRoomNotEmptyException extends ApplicationException {
 
-    private static final ErrorCode ERROR_CODE = ErrorCode.CANNOT_CHAT_YOURSELF;
+    private static final ErrorCode ERROR_CODE = ErrorCode.CHAT_ROOM_NOT_EMPTY;
 
-    public CannotChatYourselfException() {
+    public ChatRoomNotEmptyException() {
         super(ERROR_CODE);
     }
 }
-

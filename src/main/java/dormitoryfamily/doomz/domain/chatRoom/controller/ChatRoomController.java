@@ -39,6 +39,14 @@ public class ChatRoomController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
+    @DeleteMapping("/rooms/{roomId}/no-messages")
+    public ResponseEntity<ResponseDto<Void>> deleteEmptyRoom(
+            @PathVariable Long roomId
+    ) {
+        chatRoomService.deleteEmptyChatRoom(roomId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
+
     @GetMapping("/rooms")
     public ResponseEntity<ResponseDto<ChatRoomListResponseDto>> findAllChatRooms(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
