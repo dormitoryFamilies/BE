@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chatRoom.controller;
 
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomIdResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
@@ -28,6 +29,15 @@ public class ChatRoomController {
     ) {
         CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
+    }
+
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto<ChatRoomIdResponseDto>> findChatRoomByMember(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        ChatRoomIdResponseDto responseDto = chatRoomService.findChatRoomByMember(memberId, principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
     @DeleteMapping("/rooms/{roomId}")
