@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.chat.controller;
 
-import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryListResponseDto;
+import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
@@ -47,13 +47,13 @@ public class ChatController {
     }
 
     @GetMapping("/messages/search")
-    public ResponseEntity<ResponseDto<ChatHistoryListResponseDto>> searchChatHistory(
+    public ResponseEntity<ResponseDto<SearchChatListResponseDto>> searchChatHistory(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @RequestParam String sort,
             Pageable pageable
     ) {
-        ChatHistoryListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable, sort);
+        SearchChatListResponseDto responseDto = chatService.searchChatHistory(principalDetails, requestDto, pageable, sort);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

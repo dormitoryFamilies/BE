@@ -6,7 +6,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
 
-public record ChatHistoryResponseDto(
+public record SearchChatResponseDto(
         Long roomId,
         Long memberId,
         String memberNickname,
@@ -16,8 +16,8 @@ public record ChatHistoryResponseDto(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime chatMessageTime
 ) {
-    public static ChatHistoryResponseDto fromEntity(Chat chat, Member member) {
-        return new ChatHistoryResponseDto(
+    public static SearchChatResponseDto fromEntity(Chat chat, Member member) {
+        return new SearchChatResponseDto(
                 chat.getChatRoom().getId(),
                 member.getId(),
                 member.getNickname(),
