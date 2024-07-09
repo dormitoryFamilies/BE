@@ -4,10 +4,7 @@ import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.exception.ChatNotExistsException;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.*;
 import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatRoom.exception.*;
 import dormitoryfamily.doomz.domain.chatRoom.repository.ChatRoomRepository;
@@ -240,5 +237,15 @@ public class ChatRoomService {
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
         return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);
+    }
+
+    public ChatRoomIdResponseDto findChatRoomByMember(Long memberId, PrincipalDetails principalDetails) {
+        Member loggedInMember = principalDetails.getMember();
+        Member chatMember = getMemberById(memberId);
+
+        ChatRoom chatRoom = chatRoomRepository.findBySenderAndReceiver(loggedInMember, chatMember)
+                .orElseThrow(MemberChatRoomNotExistsException::new);
+
+        return ChatRoomIdResponseDto.fromEntity(chatRoom);
     }
 }
