@@ -2,6 +2,9 @@ package dormitoryfamily.doomz.global.jwt;
 
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import dormitoryfamily.doomz.global.security.exception.AccessTokenNotExistsException;
+import dormitoryfamily.doomz.global.security.exception.MemberDataNotExistsException;
+import dormitoryfamily.doomz.global.security.exception.NotAccessTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -16,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.*;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -27,31 +32,31 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        log.info("====== StompHandler ======");
-        String jwt = null;
+
         String headerAuth = null;
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         if(accessor.getCommand() == StompCommand.CONNECT) {
-            headerAuth = accessor.getFirstNativeHeader("Authorization");
-            if (headerAuth != null) {
-                jwt = headerAuth.substring(7);
-            }
+            headerAuth = accessor.getFirstNativeHeader(HEADER_STRING_ACCESS);
         }
 
-        System.out.println("headerAuth = " + headerAuth);
-        System.out.println("jwt = " + jwt);
-
-        if (jwt == null || jwtUtil.isExpired(jwt)) {
-            throw new RuntimeException();
+        if (headerAuth == null || !headerAuth.startsWith(TOKEN_PREFIX)) {
+            throw new AccessTokenNotExistsException();
         }
 
-        log.info("jwt ={}", jwt);
+        String jwt = headerAuth.replace(TOKEN_PREFIX, "");
+        jwtUtil.isExpired(jwt);
+
+        String category = jwtUtil.getCategory(jwt);
+        if (!category.equals(CATEGORY_ACCESS)) {
+            throw new NotAccessTokenException();
+        }
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authentication = getUserAuthentication(jwt);
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         return message;
     }
 
@@ -66,7 +71,7 @@ public class StompHandler implements ChannelInterceptor {
                     .map(PrincipalDetails::new)
                     .map(principalDetails -> new UsernamePasswordAuthenticationToken(
                             principalDetails, null, principalDetails.getAuthorities()
-                    )).orElseThrow(IllegalAccessError::new);
+                    )).orElseThrow(MemberDataNotExistsException::new);
         }
         return null; //유저가 없으면 null
     }
