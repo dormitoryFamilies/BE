@@ -38,7 +38,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                         articleStatus(request),
                         boardTypeEx(boardType)
                 )
-                .orderBy(article.createdAt.desc())
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -99,7 +98,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                         articleStatus(request),
                         boardTypeEx(boardType)
                 )
-                .orderBy(article.createdAt.desc())
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -129,7 +127,6 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                         articleStatus(request),
                         boardTypeEx(boardType)
                 )
-                .orderBy(article.createdAt.desc())
                 .orderBy(getOrderByExpression(request.sort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
