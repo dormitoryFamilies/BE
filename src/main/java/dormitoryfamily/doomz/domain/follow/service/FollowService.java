@@ -5,6 +5,7 @@ import dormitoryfamily.doomz.domain.follow.exception.AlreadyFollowingException;
 import dormitoryfamily.doomz.domain.follow.exception.CannotFollowYourselfException;
 import dormitoryfamily.doomz.domain.follow.exception.NotFollowingMemberException;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileFollowResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,8 +99,12 @@ public class FollowService {
     public MemberProfilePagingListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         Page<Follow> followers = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);
-        List<MemberProfileResponseDto> memberProfiles = followers.getContent().stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollower()))
+        List<MemberProfileFollowResponseDto> memberProfiles = followers.getContent().stream()
+                .map(follow -> {
+                    Member follower = follow.getFollower();
+                    boolean isFollowing = followRepository.findByFollowerAndFollowing(loginMember, follower).isPresent();
+                    return MemberProfileFollowResponseDto.fromEntity(follower, isFollowing);
+                })
                 .collect(Collectors.toList());
         return MemberProfilePagingListResponseDto.toDto(followers, memberProfiles);
     }

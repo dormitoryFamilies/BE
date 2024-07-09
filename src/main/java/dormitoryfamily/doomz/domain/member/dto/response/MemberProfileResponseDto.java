@@ -6,8 +6,9 @@ public record MemberProfileResponseDto(
         Long memberId,
         String nickname,
         String profileUrl
-){
-    public static MemberProfileResponseDto fromEntity(Member member){
+) implements MemberProfileBaseResponseDto {
+
+    public static MemberProfileResponseDto fromEntity(Member member) {
         return new MemberProfileResponseDto(
                 member.getId(),
                 member.getNickname(),
@@ -15,3 +16,4 @@ public record MemberProfileResponseDto(
         );
     }
 }
+
