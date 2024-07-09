@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.chat.service;
 
-import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryListResponseDto;
-import dormitoryfamily.doomz.domain.chat.dto.response.ChatHistoryResponseDto;
+import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatListResponseDto;
+import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chat.repository.ChatRepository;
@@ -173,16 +173,16 @@ public class ChatService {
         }
     }
 
-    public ChatHistoryListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable, String sortType) {
+    public SearchChatListResponseDto searchChatHistory(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable, String sortType) {
         Member loginMember = principalDetails.getMember();
         Slice<Chat> chatMessages = chatRepository.findByChatMessage(loginMember, requestDto.q(), pageable, sortType);
-        List<ChatHistoryResponseDto> chatHistoryDtos = chatMessages.stream().map(
+        List<SearchChatResponseDto> searchChatDtos = chatMessages.stream().map(
                 chat -> {
                     Member chatMember = chat.getChatRoom().getSender().getId().equals(loginMember.getId()) ?
                             chat.getChatRoom().getReceiver() : chat.getChatRoom().getSender();
-                    return ChatHistoryResponseDto.fromEntity(chat, chatMember);
+                    return SearchChatResponseDto.fromEntity(chat, chatMember);
                 }
         ).collect(Collectors.toList());
-        return ChatHistoryListResponseDto.toDto(chatMessages, chatHistoryDtos);
+        return SearchChatListResponseDto.toDto(chatMessages, searchChatDtos);
     }
 }
