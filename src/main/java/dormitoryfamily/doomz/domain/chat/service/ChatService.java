@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.chat.service;
 
+import dormitoryfamily.doomz.domain.chat.dto.response.ChatResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
@@ -69,7 +70,7 @@ public class ChatService {
 
         validateChatRoomAccessAndStatus(chatRoom, loginMember, isSender);
         updateMemberStatusToIn(chatRoom, isSender);
-        return getChatListResponse(chatRoom, isSender, pageable);
+        return getChatListResponse(chatRoom, loginMember, isSender, pageable);
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
@@ -95,7 +96,7 @@ public class ChatService {
         }
     }
 
-    private ChatListResponseDto getChatListResponse(ChatRoom chatRoom, boolean isSender, Pageable pageable) {
+    private ChatListResponseDto getChatListResponse(ChatRoom chatRoom, Member loginMember, boolean isSender, Pageable pageable) {
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber();
         double startScore = calculateStartScore(chatRoom, isSender);
@@ -108,26 +109,41 @@ public class ChatService {
         if (remainingCount < 0) {
             return ChatListResponseDto.toDto(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
         }
+
         long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
         long count = Math.min(remainingCount, pageable.getPageSize());
 
         Set<ChatDto> chatSet = zSetOps.rangeByScore(chatRoom.getRoomUUID(), startScore, endScore, offset, count);
 
+        List<ChatResponseDto> chatResponseDtos;
         if (chatSet != null && !chatSet.isEmpty()) {
-            List<ChatDto> chatList = new ArrayList<>(chatSet);
-            Collections.reverse(chatList);
-            boolean isLast = chatList.size() < pageSize;
-            return ChatListResponseDto.toDto(pageNumber, isLast, chatRoom.getRoomUUID(), chatList);
+            chatResponseDtos = getChatResponseDtoList(chatSet, chatRoom, loginMember);
+            Collections.reverse(chatResponseDtos);
         } else {
             Slice<Chat> chatSlice = getChatListFromRDB(chatRoom, pageable, isSender);
             List<ChatDto> chatList = chatSlice.stream().map(ChatDto::fromEntity).collect(Collectors.toList());
-            return new ChatListResponseDto(pageNumber, chatSlice.isLast(), chatRoom.getRoomUUID(), chatList);
+            chatResponseDtos = getChatResponseDtoList(new HashSet<>(chatList), chatRoom, loginMember);
         }
+
+        boolean isLast = chatResponseDtos.size() < pageSize;
+        return ChatListResponseDto.toDto(pageNumber, isLast, chatRoom.getRoomUUID(), chatResponseDtos);
     }
 
     private double calculateStartScore(ChatRoom chatRoom, boolean isSender) {
         return isSender ? chatRoom.getSenderEnteredAt().toEpochSecond(ZoneOffset.UTC) :
                 chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
+    }
+
+    private List<ChatResponseDto> getChatResponseDtoList(Set<ChatDto> chatSet, ChatRoom chatRoom, Member loginMember) {
+        List<ChatDto> chatList = new ArrayList<>(chatSet);
+        return chatList.stream()
+                .map(chat -> {
+                    Member chatMember = Objects.equals(chat.senderId(), chatRoom.getSender().getId()) ?
+                            chatRoom.getSender() : chatRoom.getReceiver();
+                    boolean isChatSender = chat.senderId().equals(loginMember.getId());
+                    return ChatResponseDto.fromChatDto(chat, chatMember, isChatSender);
+                })
+                .collect(Collectors.toList());
     }
 
     private Slice<Chat> getChatListFromRDB(ChatRoom chatRoom, Pageable pageable, boolean isSender) {

@@ -8,17 +8,17 @@ public record ChatListResponseDto(
         int nowPageNumber,
         boolean isLast,
         String roomUUID,
-        List<ChatDto> chatHistory
+        List<ChatResponseDto> chatHistory
 ) {
     public static ChatListResponseDto toDto(int nowPageNumber,
                                             boolean isLast,
                                             String roomUUID,
-                                            List<ChatDto> chatDtos
+                                            List<ChatResponseDto> chatResponseDtos
     ) {
         return new ChatListResponseDto(
                 nowPageNumber,
                 isLast,
                 roomUUID,
-                chatDtos);
+                chatResponseDtos);
     }
 }
