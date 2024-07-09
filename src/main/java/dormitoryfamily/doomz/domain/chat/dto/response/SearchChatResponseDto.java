@@ -14,7 +14,7 @@ public record SearchChatResponseDto(
         String chatMessage,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-        LocalDateTime chatMessageTime
+        LocalDateTime sentTime
 ) {
     public static SearchChatResponseDto fromEntity(Chat chat, Member member) {
         return new SearchChatResponseDto(
