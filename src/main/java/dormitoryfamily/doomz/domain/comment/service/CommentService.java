@@ -59,7 +59,7 @@ public class CommentService {
         Article article = getArticleById(articleId);
         List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
         List<CommentResponseDto> commentResponseDto = comments.stream()
-                .map(comment -> CommentResponseDto.fromEntity(loginMember, comment))
+                .map(comment -> CommentResponseDto.fromEntity(article.getMember(), comment))
                 .collect(toList());
         return CommentListResponseDto.toDto(loginMember, article.getCommentCount(), commentResponseDto);
     }

@@ -25,7 +25,7 @@ public record CommentResponseDto (
         boolean isDeleted,
         List<ReplyCommentResponseDto> replyComments
 ){
-    public static CommentResponseDto fromEntity(Member loginMember, Comment comment){
+    public static CommentResponseDto fromEntity(Member articleWriter, Comment comment){
         return new CommentResponseDto(
                 comment.getId(),
                 comment.getMember().getId(),
@@ -33,15 +33,15 @@ public record CommentResponseDto (
                 comment.getMember().getNickname(),
                 comment.getCreatedAt(),
                 comment.getContent(),
-                isArticleWriter(loginMember, comment.getArticle().getMember()),
+                isArticleWriter(articleWriter, comment.getArticle().getMember()),
                 comment.isDeleted(),
                 comment.getReplyComments().stream()
-                        .map(replyComment -> ReplyCommentResponseDto.fromEntity(loginMember, replyComment))
+                        .map(replyComment -> ReplyCommentResponseDto.fromEntity(articleWriter, replyComment))
                         .collect(toList())
         );
     }
 
-    private static boolean isArticleWriter(Member loginMember, Member ArticleWriter) {
-        return Objects.equals(loginMember.getId(), ArticleWriter.getId());
+    private static boolean isArticleWriter(Member articleWriter, Member commentWriter) {
+        return Objects.equals(articleWriter.getId(), commentWriter.getId());
     }
 }
