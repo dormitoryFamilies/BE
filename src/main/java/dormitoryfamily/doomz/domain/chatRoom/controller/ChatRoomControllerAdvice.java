@@ -58,7 +58,7 @@ public class ChatRoomControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ResponseDto<Void>> MemberChatRoomNotExistsException(MemberChatRoomNotExistsException e) {
+    public ResponseEntity<ResponseDto<Void>> handleMemberChatRoomNotExistsException(MemberChatRoomNotExistsException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity
