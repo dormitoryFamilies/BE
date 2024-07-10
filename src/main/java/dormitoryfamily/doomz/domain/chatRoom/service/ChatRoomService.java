@@ -136,7 +136,7 @@ public class ChatRoomService {
         boolean isSenderDeleted = chatRoom.getSenderEnteredAt() == null;
         boolean isReceiverDeleted = chatRoom.getReceiverEnteredAt() == null;
 
-        validateRoomLeft(isSender, isSenderDeleted, isReceiverDeleted);
+        checkIfRoomAlreadyLeft(isSender, isSenderDeleted, isReceiverDeleted);
         deleteOrChangeChatRoomStatus(chatRoom, isSender, isSenderDeleted, isReceiverDeleted);
     }
 
@@ -152,7 +152,7 @@ public class ChatRoomService {
         }
     }
 
-    private void validateRoomLeft(boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
+    private void checkIfRoomAlreadyLeft(boolean isSender, boolean isSenderDeleted, boolean isReceiverDeleted) {
         if ((isSender && isSenderDeleted) || (!isSender && isReceiverDeleted)) {
             throw new AlreadyChatRoomLeftException();
         }
