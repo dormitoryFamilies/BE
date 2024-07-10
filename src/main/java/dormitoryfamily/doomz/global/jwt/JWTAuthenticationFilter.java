@@ -37,7 +37,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             // 토큰 값 자체 유무 확인
-            if (headerAuth == null || !headerAuth.startsWith("Bearer")) {
+            if (headerAuth == null || !headerAuth.startsWith(TOKEN_PREFIX)) {
                 throw new AccessTokenNotExistsException();
             }
             jwt = headerAuth.replace(TOKEN_PREFIX, "");
