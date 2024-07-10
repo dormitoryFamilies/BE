@@ -33,7 +33,7 @@ public record CommentResponseDto (
                 comment.getMember().getNickname(),
                 comment.getCreatedAt(),
                 comment.getContent(),
-                isArticleWriter(articleWriter, comment.getArticle().getMember()),
+                isArticleWriter(articleWriter, comment.getMember()),
                 comment.isDeleted(),
                 comment.getReplyComments().stream()
                         .map(replyComment -> ReplyCommentResponseDto.fromEntity(articleWriter, replyComment))
