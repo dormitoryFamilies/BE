@@ -19,7 +19,7 @@ public record ReplyCommentResponseDto(
         String content,
         boolean isArticleWriter
 ) {
-    public static ReplyCommentResponseDto fromEntity(Member loginMember, ReplyComment replyComment) {
+    public static ReplyCommentResponseDto fromEntity(Member articleWriter, ReplyComment replyComment) {
         return new ReplyCommentResponseDto(
                 replyComment.getId(),
                 replyComment.getMember().getId(),
@@ -27,12 +27,12 @@ public record ReplyCommentResponseDto(
                 replyComment.getMember().getNickname(),
                 replyComment.getCreatedAt(),
                 replyComment.getContent(),
-                isArticleWriter(loginMember, replyComment.getComment().getArticle().getMember())
+                isArticleWriter(articleWriter, replyComment.getMember())
         );
     }
 
-    private static boolean isArticleWriter(Member loginMember, Member articleWriter) {
-        return Objects.equals(loginMember.getId(), articleWriter.getId());
+    private static boolean isArticleWriter(Member articleWriter, Member replyCommentWriter) {
+        return Objects.equals(articleWriter.getId(), replyCommentWriter.getId());
     }
 }
 
