@@ -1,7 +1,5 @@
 package dormitoryfamily.doomz.domain.chat.dto.response;
 
-import dormitoryfamily.doomz.domain.chat.dto.ChatDto;
-
 import java.util.List;
 
 public record ChatListResponseDto(
@@ -10,7 +8,7 @@ public record ChatListResponseDto(
         String roomUUID,
         List<ChatResponseDto> chatHistory
 ) {
-    public static ChatListResponseDto toDto(int nowPageNumber,
+    public static ChatListResponseDto from(int nowPageNumber,
                                             boolean isLast,
                                             String roomUUID,
                                             List<ChatResponseDto> chatResponseDtos

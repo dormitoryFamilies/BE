@@ -84,7 +84,7 @@ public class FollowService {
         List<MemberInfoResponseDto> memberProfiles = followings.getContent().stream()
                 .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
-        return MemberProfilePagingListResponseDto.toDto(followings, memberProfiles);
+        return MemberProfilePagingListResponseDto.from(followings, memberProfiles);
     }
 
     public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
@@ -93,7 +93,7 @@ public class FollowService {
         List<MemberInfoResponseDto> followings = follows.stream()
                 .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(followings);
+        return MemberProfileListResponseDto.from(followings);
     }
 
     public MemberProfilePagingListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails, Pageable pageable) {
@@ -106,7 +106,7 @@ public class FollowService {
                     return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
                 })
                 .collect(Collectors.toList());
-        return MemberProfilePagingListResponseDto.toDto(follows, memberProfiles);
+        return MemberProfilePagingListResponseDto.from(follows, memberProfiles);
     }
 
     public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
@@ -119,6 +119,6 @@ public class FollowService {
                     return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
                 })
                 .collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(memberProfiles);
+        return MemberProfileListResponseDto.from(memberProfiles);
     }
 }
