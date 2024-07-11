@@ -8,7 +8,7 @@ public record MemberDetailsResponseDto (
         String profileUrl,
         String dormitoryType,
         boolean isFollowing
-){
+) implements MemberBaseResponseDto{
     public static MemberDetailsResponseDto  fromEntity(Member member, boolean isFollowing) {
         return new MemberDetailsResponseDto(
                 member.getId(),

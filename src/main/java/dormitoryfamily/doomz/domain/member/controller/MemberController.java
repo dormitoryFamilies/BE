@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberInfoListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 
 @RestController
@@ -59,11 +59,11 @@ public class MemberController {
     }
 
     @GetMapping("/members/search")
-    public ResponseEntity<ResponseDto<MemberInfoListResponseDto>> searchMembers(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        MemberInfoListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
+        MemberProfileListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
     // 닉네임 중복 체크

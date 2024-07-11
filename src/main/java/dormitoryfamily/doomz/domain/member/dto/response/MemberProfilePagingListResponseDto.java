@@ -9,9 +9,9 @@ public record MemberProfilePagingListResponseDto(
         int totalPageNumber,
         int nowPageNumber,
         boolean isLast,
-        List<? extends MemberProfileBaseResponseDto> memberProfiles
+        List<? extends MemberBasePagingResponseDto> memberProfiles
 ) {
-    public static MemberProfilePagingListResponseDto toDto(Page<Follow> follows, List<? extends MemberProfileBaseResponseDto> memberProfiles){
+    public static MemberProfilePagingListResponseDto toDto(Page<Follow> follows, List<? extends MemberBasePagingResponseDto> memberProfiles){
         return new MemberProfilePagingListResponseDto(
                 follows.getTotalPages(),
                 follows.getNumber(),

@@ -72,10 +72,10 @@ public class MemberService {
         member.updateProfile(requestDto);
     }
 
-    public MemberInfoListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberProfileListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
         List<MemberInfoResponseDto> memberDtos = members.stream().map(MemberInfoResponseDto::fromEntity).collect(Collectors.toList());
-        return MemberInfoListResponseDto.toDto(memberDtos);
+        return MemberProfileListResponseDto.toDto(memberDtos);
     }
 }

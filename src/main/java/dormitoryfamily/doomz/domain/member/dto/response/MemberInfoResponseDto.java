@@ -6,7 +6,7 @@ public record MemberInfoResponseDto(
         Long memberId,
         String nickname,
         String profileUrl
-) implements MemberProfileBaseResponseDto {
+) implements MemberBasePagingResponseDto, MemberBaseResponseDto {
 
     public static MemberInfoResponseDto fromEntity(Member member) {
         return new MemberInfoResponseDto(
