@@ -11,7 +11,7 @@ public record MemberProfilePagingListResponseDto(
         boolean isLast,
         List<? extends MemberBasePagingResponseDto> memberProfiles
 ) {
-    public static MemberProfilePagingListResponseDto toDto(Page<Follow> follows, List<? extends MemberBasePagingResponseDto> memberProfiles){
+    public static MemberProfilePagingListResponseDto from(Page<Follow> follows, List<? extends MemberBasePagingResponseDto> memberProfiles){
         return new MemberProfilePagingListResponseDto(
                 follows.getTotalPages(),
                 follows.getNumber(),

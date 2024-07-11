@@ -9,7 +9,7 @@ public record CommentListResponseDto(
         int totalCount,
         List<CommentResponseDto> comments
 ) {
-    public static CommentListResponseDto toDto(Member loginMember, int totalCount, List<CommentResponseDto> comments) {
+    public static CommentListResponseDto from(Member loginMember, int totalCount, List<CommentResponseDto> comments) {
         return new CommentListResponseDto(loginMember.getId(), totalCount, comments);
     }
 }

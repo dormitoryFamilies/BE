@@ -76,6 +76,6 @@ public class MemberService {
         Member loginMember = principalDetails.getMember();
         List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
         List<MemberInfoResponseDto> memberDtos = members.stream().map(MemberInfoResponseDto::fromEntity).collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(memberDtos);
+        return MemberProfileListResponseDto.from(memberDtos);
     }
 }

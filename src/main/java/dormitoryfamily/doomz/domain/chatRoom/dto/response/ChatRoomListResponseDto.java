@@ -10,7 +10,7 @@ public record ChatRoomListResponseDto(
         boolean isLast,
         List<ChatRoomResponseDto> chatRooms
 ) {
-    public static ChatRoomListResponseDto toDto(Slice<ChatRoom> chatRooms,
+    public static ChatRoomListResponseDto from(Slice<ChatRoom> chatRooms,
                                                 List<ChatRoomResponseDto> chatRoomResponseDtos){
         return new ChatRoomListResponseDto(
                 chatRooms.getNumber(),

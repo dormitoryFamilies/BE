@@ -10,7 +10,7 @@ public record SearchChatListResponseDto(
         boolean isLast,
         List<SearchChatResponseDto> chatHistory
 ) {
-    public static SearchChatListResponseDto toDto(Slice<Chat> chats, List<SearchChatResponseDto> SearchChatResponseDto) {
+    public static SearchChatListResponseDto from(Slice<Chat> chats, List<SearchChatResponseDto> SearchChatResponseDto) {
         return new SearchChatListResponseDto(
                 chats.getNumber(),
                 chats.isLast(),
