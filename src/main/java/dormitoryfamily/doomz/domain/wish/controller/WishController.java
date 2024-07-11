@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.domain.wish.controller;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
-import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.wish.service.WishService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -32,10 +32,10 @@ public class WishController {
     }
 
     @GetMapping("/articles/{articleId}/wish-members")
-    public ResponseEntity<ResponseDto<WishMemberListResponseDto>> getWishMemberList(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getWishMemberList(
             @PathVariable Long articleId
     ){
-        WishMemberListResponseDto responseDto = wishService.getWishMembers(articleId);
+        MemberProfileListResponseDto responseDto = wishService.getWishMembers(articleId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
