@@ -1,11 +1,10 @@
 package dormitoryfamily.doomz.domain.member.service;
 
+import dormitoryfamily.doomz.domain.follow.entity.Follow;
+import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.NicknameCheckResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.*;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
@@ -16,6 +15,7 @@ import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final FollowRepository followRepository;
 
     public NicknameCheckResponseDto checkNickname(String nickname) {
         boolean isDuplicated = memberRepository.existsByNickname(nickname);
@@ -39,8 +40,7 @@ public class MemberService {
 
     public void setUpProfile(
             MemberSetUpProfileRequestDto requestDto,
-            PrincipalDetails principalDetails)
-    {
+            PrincipalDetails principalDetails) {
         Member loginMember = getMember(principalDetails);
         loginMember.setUpProfile(requestDto);
     }
@@ -53,9 +53,11 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
-    public MemberProfileResponseDto getMemberProfile(Long memberId){
-        Member member = getMemberById(memberId);
-        return  MemberProfileResponseDto.fromEntity(member);
+    public MemberProfileFollowResponseDto getMemberProfile(Long memberId, PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        Member targetMember = getMemberById(memberId);
+        boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, targetMember);
+        return MemberProfileFollowResponseDto.fromEntity(targetMember, isFollowing);
     }
 
     private Member getMemberById(Long memberId) {

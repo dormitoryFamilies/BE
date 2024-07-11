@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.member.controller;
 
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
-import dormitoryfamily.doomz.domain.member.dto.response.NicknameCheckResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.*;
 import dormitoryfamily.doomz.domain.member.service.MemberService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -14,35 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.service.MemberService;
-import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import dormitoryfamily.doomz.global.util.ResponseDto;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
-import dormitoryfamily.doomz.domain.member.service.MemberService;
-import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import dormitoryfamily.doomz.global.util.ResponseDto;
-import dormitoryfamily.doomz.global.util.SearchRequestDto;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,10 +32,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("members/{memberId}")
-    public ResponseEntity<ResponseDto<MemberProfileResponseDto>> getMemberProfile(
-            @PathVariable Long memberId
+    public ResponseEntity<ResponseDto<MemberProfileFollowResponseDto>> getMemberProfile(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+
     ){
-        MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
+        MemberProfileFollowResponseDto responseDto = memberService.getMemberProfile(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
