@@ -9,6 +9,7 @@ public record MemberDetailsResponseDto (
         String dormitoryType,
         boolean isFollowing
 ) implements MemberBaseResponseDto{
+
     public static MemberDetailsResponseDto  fromEntity(Member member, boolean isFollowing) {
         return new MemberDetailsResponseDto(
                 member.getId(),
