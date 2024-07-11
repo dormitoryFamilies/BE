@@ -107,7 +107,7 @@ public class ChatService {
 
         long remainingCount = sizeInRange - ((long) pageSize * pageNumber);
         if (remainingCount < 0) {
-            return ChatListResponseDto.toDto(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
+            return ChatListResponseDto.from(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
         }
 
         long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
@@ -126,7 +126,7 @@ public class ChatService {
         }
 
         boolean isLast = chatResponseDtos.size() < pageSize;
-        return ChatListResponseDto.toDto(pageNumber, isLast, chatRoom.getRoomUUID(), chatResponseDtos);
+        return ChatListResponseDto.from(pageNumber, isLast, chatRoom.getRoomUUID(), chatResponseDtos);
     }
 
     private double calculateStartScore(ChatRoom chatRoom, boolean isSender) {
@@ -199,6 +199,6 @@ public class ChatService {
                     return SearchChatResponseDto.fromEntity(chat, chatMember);
                 }
         ).collect(Collectors.toList());
-        return SearchChatListResponseDto.toDto(chatMessages, searchChatDtos);
+        return SearchChatListResponseDto.from(chatMessages, searchChatDtos);
     }
 }

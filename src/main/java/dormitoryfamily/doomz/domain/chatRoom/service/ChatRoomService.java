@@ -188,7 +188,7 @@ public class ChatRoomService {
         Slice<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember, pageable);
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
-        return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);
+        return ChatRoomListResponseDto.from(chatRooms, chatRoomDtos);
     }
 
     private List<ChatRoomResponseDto> createChatRoomResponseDtos(List<ChatRoom> chatRooms, Member loginMember) {
@@ -227,7 +227,7 @@ public class ChatRoomService {
     public UnreadChatCountResponseDto countTotalUnreadChat(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         int totalCount = chatRoomRepository.findTotalUnreadCountForMember(loginMember);
-        return UnreadChatCountResponseDto.toDto(totalCount);
+        return UnreadChatCountResponseDto.from(totalCount);
     }
 
 
@@ -236,7 +236,7 @@ public class ChatRoomService {
         Slice<ChatRoom> chatRooms = chatRoomRepository.findByMemberAndNickname(loginMember, requestDto.q(), pageable);
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
-        return ChatRoomListResponseDto.toDto(chatRooms, chatRoomDtos);
+        return ChatRoomListResponseDto.from(chatRooms, chatRoomDtos);
     }
 
     public ChatRoomIdResponseDto findChatRoomByMember(Long memberId, PrincipalDetails principalDetails) {

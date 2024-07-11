@@ -10,14 +10,12 @@ import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberDetailsResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.WishMemberResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +55,7 @@ public class WishService {
                     boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, wishMember);
                     return MemberDetailsResponseDto.fromEntity(wishMember, isFollowing);
                 }).collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(memberProfiles);
+        return MemberProfileListResponseDto.from(memberProfiles);
     }
 
     public void removeWish(PrincipalDetails principalDetails, Long articleId) {
