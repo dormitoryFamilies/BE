@@ -7,7 +7,7 @@ public record FollowerMemberResponseDto(
         String nickname,
         String profileUrl,
         boolean isFollowing
-) implements MemberProfileBaseResponseDto {
+) implements MemberBasePagingResponseDto, MemberBaseResponseDto {
 
     public static FollowerMemberResponseDto fromEntity(Member member, boolean isFollowing) {
         return new FollowerMemberResponseDto(
