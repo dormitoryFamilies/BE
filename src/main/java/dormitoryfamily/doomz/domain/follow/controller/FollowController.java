@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.follow.controller;
 
 import dormitoryfamily.doomz.domain.follow.service.FollowService;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberInfoListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -49,11 +49,11 @@ public class FollowController {
     }
 
     @GetMapping("/followings/search")
-    public ResponseEntity<ResponseDto<MemberInfoListResponseDto>> searchFollowings(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowings(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        MemberInfoListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto);
+        MemberProfileListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -67,11 +67,11 @@ public class FollowController {
     }
 
     @GetMapping("/followers/search")
-    public ResponseEntity<ResponseDto<MemberInfoListResponseDto>> searchFollowers(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        MemberInfoListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto);
+        MemberProfileListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
