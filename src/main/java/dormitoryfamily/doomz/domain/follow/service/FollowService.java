@@ -102,7 +102,7 @@ public class FollowService {
         List<MemberProfileFollowResponseDto> memberProfiles = followers.getContent().stream()
                 .map(follow -> {
                     Member follower = follow.getFollower();
-                    boolean isFollowing = followRepository.findByFollowerAndFollowing(loginMember, follower).isPresent();
+                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, follower);
                     return MemberProfileFollowResponseDto.fromEntity(follower, isFollowing);
                 })
                 .collect(Collectors.toList());
