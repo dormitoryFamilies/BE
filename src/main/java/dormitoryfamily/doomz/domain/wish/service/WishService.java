@@ -7,9 +7,9 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.WishMemberResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.wish.dto.WishMemberListResponseDto;
-import dormitoryfamily.doomz.domain.wish.dto.WishMemberResponseDto;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
@@ -42,12 +42,12 @@ public class WishService {
         article.increaseWishCount();
     }
 
-    public WishMemberListResponseDto getWishMembers(Long articleId) {
+    public MemberProfileListResponseDto getWishMembers(Long articleId) {
         getArticleById(articleId);
         List<Wish> wishes = wishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);
         List<WishMemberResponseDto> wishMemberResponseDtos = wishes.stream()
-                .map(wish -> WishMemberResponseDto.fromMember(wish.getMember())).collect(toList());
-        return WishMemberListResponseDto.toDto(wishMemberResponseDtos);
+                .map(wish -> WishMemberResponseDto.fromEntity(wish.getMember())).collect(toList());
+        return MemberProfileListResponseDto.toDto(wishMemberResponseDtos);
     }
 
     public void removeWish(PrincipalDetails principalDetails, Long articleId) {

@@ -7,7 +7,7 @@ public record WishMemberResponseDto(
         String nickname,
         String profileUrl,
         String dormitory
-) {
+) implements MemberBaseResponseDto{
 
     public static WishMemberResponseDto fromEntity(Member member) {
         return new WishMemberResponseDto(
