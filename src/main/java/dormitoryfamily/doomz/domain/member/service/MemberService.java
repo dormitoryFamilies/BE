@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.member.service;
 
-import dormitoryfamily.doomz.domain.follow.entity.Follow;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
@@ -12,10 +11,8 @@ import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
-import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,11 +50,11 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
-    public MemberProfileFollowResponseDto getMemberProfile(Long memberId, PrincipalDetails principalDetails) {
+    public MemberDetailsResponseDto getMemberProfile(Long memberId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Member targetMember = getMemberById(memberId);
         boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, targetMember);
-        return MemberProfileFollowResponseDto.fromEntity(targetMember, isFollowing);
+        return MemberDetailsResponseDto.fromEntity(targetMember, isFollowing);
     }
 
     private Member getMemberById(Long memberId) {
@@ -75,10 +72,10 @@ public class MemberService {
         member.updateProfile(requestDto);
     }
 
-    public MemberProfileListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberInfoListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
-        List<MemberProfileResponseDto> memberDtos = members.stream().map(MemberProfileResponseDto::fromEntity).collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(memberDtos);
+        List<MemberInfoResponseDto> memberDtos = members.stream().map(MemberInfoResponseDto::fromEntity).collect(Collectors.toList());
+        return MemberInfoListResponseDto.toDto(memberDtos);
     }
 }

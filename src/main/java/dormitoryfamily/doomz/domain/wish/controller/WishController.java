@@ -31,7 +31,7 @@ public class WishController {
         return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @GetMapping("/articles/{articleId}/wishes")
+    @GetMapping("/articles/{articleId}/wish-members")
     public ResponseEntity<ResponseDto<WishMemberListResponseDto>> getWishMemberList(
             @PathVariable Long articleId
     ){

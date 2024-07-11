@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberInfoListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MyProfileResponseDto;
 
 @RestController
@@ -32,12 +32,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("members/{memberId}")
-    public ResponseEntity<ResponseDto<MemberProfileFollowResponseDto>> getMemberProfile(
+    public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> getMemberProfile(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
 
     ){
-        MemberProfileFollowResponseDto responseDto = memberService.getMemberProfile(memberId, principalDetails);
+        MemberDetailsResponseDto responseDto = memberService.getMemberProfile(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -59,11 +59,11 @@ public class MemberController {
     }
 
     @GetMapping("/members/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
+    public ResponseEntity<ResponseDto<MemberInfoListResponseDto>> searchMembers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        MemberProfileListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
+        MemberInfoListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
     // 닉네임 중복 체크
