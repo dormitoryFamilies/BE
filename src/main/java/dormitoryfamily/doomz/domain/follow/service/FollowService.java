@@ -35,7 +35,9 @@ public class FollowService {
     public void saveFollow(PrincipalDetails principalDetails, Long followingMemberId) {
         Member loginMember = getMemberById(principalDetails.getMember().getId());
         Member followingMember = getMemberById(followingMemberId);
+
         validateFollowRequest(loginMember, followingMember);
+
         Follow follow = Follow.createFollow(loginMember, followingMember);
         saveFollowAndIncreaseCounts(loginMember, followingMember, follow);
     }
@@ -64,6 +66,7 @@ public class FollowService {
         Member loginMember = getMemberById(principalDetails.getMember().getId());
         Member followingMember = getMemberById(followingMemberId);
         Follow follow = getFollowByFollowerAndFollowing(loginMember, followingMember);
+
         deleteFollowAndDecreaseCounts(loginMember, followingMember, follow);
     }
 
@@ -78,47 +81,56 @@ public class FollowService {
         followingMember.decreaseFollowerCount();
     }
 
-    public MemberProfilePagingListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails, Pageable pageable) {
+    public MemberProfilePagingListResponseDto getFollowings(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        Page<Follow> followings = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember, pageable);
-        List<MemberInfoResponseDto> memberProfiles = followings.getContent().stream()
+
+        Page<Follow> follows = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember, pageable);
+        List<MemberInfoResponseDto> memberInfoDtos = convertToMemberInfoResponseDtoList(follows.getContent());
+
+        return MemberProfilePagingListResponseDto.from(follows, memberInfoDtos);
+    }
+
+    private List<MemberInfoResponseDto> convertToMemberInfoResponseDtoList(List<Follow> follows){
+        return follows.stream()
                 .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
-        return MemberProfilePagingListResponseDto.from(followings, memberProfiles);
     }
 
     public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
+
         List<Follow> follows = followRepository.findByFollowerAndFollowingNicknameContaining(loginMember, requestDto.q());
-        List<MemberInfoResponseDto> followings = follows.stream()
-                .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
-                .collect(Collectors.toList());
-        return MemberProfileListResponseDto.from(followings);
+        List<MemberInfoResponseDto> memberInfoDtos = convertToMemberInfoResponseDtoList(follows);
+
+        return MemberProfileListResponseDto.from(memberInfoDtos);
     }
 
-    public MemberProfilePagingListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails, Pageable pageable) {
+    public MemberProfilePagingListResponseDto getFollowers(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        Page<Follow> follows = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);
-        List<FollowerMemberResponseDto> memberProfiles = follows.getContent().stream()
-                .map(follow -> {
-                    Member follower = follow.getFollower();
-                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, follower);
-                    return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
-                })
+
+        Page<Follow> followsPage = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);
+        List<FollowerMemberResponseDto> followers = convertToFollowerMemberResponseDtoList(loginMember, followsPage.getContent());
+
+        return MemberProfilePagingListResponseDto.from(followsPage, followers);
+    }
+
+    private List<FollowerMemberResponseDto> convertToFollowerMemberResponseDtoList(Member loginMember, List<Follow> follows) {
+        return follows.stream()
+                .map(follow -> createFollowerMemberResponseDto(loginMember, follow.getFollower()))
                 .collect(Collectors.toList());
-        return MemberProfilePagingListResponseDto.from(follows, memberProfiles);
+    }
+
+    private FollowerMemberResponseDto createFollowerMemberResponseDto(Member loginMember, Member follower) {
+        boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, follower);
+        return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
     }
 
     public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
+
         List<Follow> follows = followRepository.findByFollowingAndFollowerNicknameContaining(loginMember, requestDto.q());
-        List<FollowerMemberResponseDto> memberProfiles = follows.stream()
-                .map(follow -> {
-                    Member follower = follow.getFollower();
-                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, follower);
-                    return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
-                })
-                .collect(Collectors.toList());
+        List<FollowerMemberResponseDto> memberProfiles = convertToFollowerMemberResponseDtoList(loginMember, follows);
+
         return MemberProfileListResponseDto.from(memberProfiles);
     }
 }
