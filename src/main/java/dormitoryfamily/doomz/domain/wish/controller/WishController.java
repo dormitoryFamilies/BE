@@ -13,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -25,7 +24,7 @@ public class WishController {
     public ResponseEntity<ResponseDto<Void>> saveWish(
             @PathVariable Long articleId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-            ){
+    ) {
 
         wishService.saveWish(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.created());
@@ -33,9 +32,10 @@ public class WishController {
 
     @GetMapping("/articles/{articleId}/wish-members")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getWishMemberList(
-            @PathVariable Long articleId
-    ){
-        MemberProfileListResponseDto responseDto = wishService.getWishMembers(articleId);
+            @PathVariable Long articleId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        MemberProfileListResponseDto responseDto = wishService.getWishMembers(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -43,7 +43,7 @@ public class WishController {
     public ResponseEntity<ResponseDto<Void>> cancelWish(
             @PathVariable Long articleId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
 
         wishService.removeWish(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.ok());
@@ -55,7 +55,7 @@ public class WishController {
             @ModelAttribute ArticleRequest request,
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
-    ){
+    ) {
 
         ArticleListResponseDto responseDto = wishService.findMyArticleWishes(principalDetails, dormitoryType, request, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
