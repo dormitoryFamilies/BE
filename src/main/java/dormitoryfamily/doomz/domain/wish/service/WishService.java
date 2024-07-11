@@ -11,6 +11,7 @@ import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberDetailsResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.wish.entity.Wish;
 import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
 import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
@@ -23,9 +24,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -47,15 +47,27 @@ public class WishService {
 
     public MemberProfileListResponseDto getWishMembers(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
-        getArticleById(articleId);
-        List<Wish> wishes = wishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);
-        List<MemberDetailsResponseDto> memberProfiles = wishes.stream()
-                .map(wish -> {
-                    Member wishMember = wish.getMember();
-                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, wishMember);
-                    return MemberDetailsResponseDto.fromEntity(wishMember, isFollowing);
-                }).collect(Collectors.toList());
+        Article article = getArticleById(articleId);
+
+        validateArticleWriter(article, loginMember);
+
+        List<MemberDetailsResponseDto> memberProfiles = wishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId)
+                .stream()
+                .map(wish -> createMemberDetailsResponseDto(loginMember, wish.getMember()))
+                .collect(Collectors.toList());
+
         return MemberProfileListResponseDto.from(memberProfiles);
+    }
+
+    private void validateArticleWriter(Article article, Member loginMember) {
+        if (!Objects.equals(article.getMember().getId(), loginMember.getId())) {
+            throw new InvalidMemberAccessException();
+        }
+    }
+
+    private MemberDetailsResponseDto createMemberDetailsResponseDto(Member loginMember, Member wishMember) {
+        boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, wishMember);
+        return MemberDetailsResponseDto.fromEntity(wishMember, isFollowing);
     }
 
     public void removeWish(PrincipalDetails principalDetails, Long articleId) {
