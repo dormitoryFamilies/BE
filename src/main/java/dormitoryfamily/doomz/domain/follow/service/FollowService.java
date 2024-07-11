@@ -5,10 +5,10 @@ import dormitoryfamily.doomz.domain.follow.exception.AlreadyFollowingException;
 import dormitoryfamily.doomz.domain.follow.exception.CannotFollowYourselfException;
 import dormitoryfamily.doomz.domain.follow.exception.NotFollowingMemberException;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileFollowResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.FollowerMemberResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberInfoListResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
-import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberInfoResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
@@ -81,40 +81,40 @@ public class FollowService {
     public MemberProfilePagingListResponseDto getMyFollowingMemberList(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         Page<Follow> followings = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember, pageable);
-        List<MemberProfileResponseDto> memberProfiles = followings.getContent().stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing()))
+        List<MemberInfoResponseDto> memberProfiles = followings.getContent().stream()
+                .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
         return MemberProfilePagingListResponseDto.toDto(followings, memberProfiles);
     }
 
-    public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberInfoListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Follow> follows = followRepository.findByFollowerAndFollowingNicknameContaining(loginMember, requestDto.q());
-        List<MemberProfileResponseDto> followings = follows.stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollowing()))
+        List<MemberInfoResponseDto> followings = follows.stream()
+                .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(followings);
+        return MemberInfoListResponseDto.toDto(followings);
     }
 
     public MemberProfilePagingListResponseDto getMyFollowerMemberList(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         Page<Follow> followers = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);
-        List<MemberProfileFollowResponseDto> memberProfiles = followers.getContent().stream()
+        List<FollowerMemberResponseDto> memberProfiles = followers.getContent().stream()
                 .map(follow -> {
                     Member follower = follow.getFollower();
                     boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, follower);
-                    return MemberProfileFollowResponseDto.fromEntity(follower, isFollowing);
+                    return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
                 })
                 .collect(Collectors.toList());
         return MemberProfilePagingListResponseDto.toDto(followers, memberProfiles);
     }
 
-    public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberInfoListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         List<Follow> follows = followRepository.findByFollowingAndFollowerNicknameContaining(loginMember, requestDto.q());
-        List<MemberProfileResponseDto> followers = follows.stream()
-                .map(follow -> MemberProfileResponseDto.fromEntity(follow.getFollower()))
+        List<MemberInfoResponseDto> followers = follows.stream()
+                .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollower()))
                 .collect(Collectors.toList());
-        return MemberProfileListResponseDto.toDto(followers);
+        return MemberInfoListResponseDto.toDto(followers);
     }
 }
