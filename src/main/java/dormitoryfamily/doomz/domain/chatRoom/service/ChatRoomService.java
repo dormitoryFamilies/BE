@@ -50,7 +50,7 @@ public class ChatRoomService {
         topics = new HashMap<>();
     }
 
-    public CreateChatRoomResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
+    public ChatRoomEntryResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
 
@@ -58,7 +58,7 @@ public class ChatRoomService {
 
         ChatRoom room = ChatRoom.create(loginMember, chatMember);
         chatRoomRepository.save(room);
-        return CreateChatRoomResponseDto.fromEntity(room);
+        return ChatRoomEntryResponseDto.fromEntity(room);
     }
 
     private Member getMemberById(Long memberId) {
@@ -93,7 +93,7 @@ public class ChatRoomService {
         }
     }
 
-    public CreateChatRoomResponseDto reEnterChatRoom(Long memberId, PrincipalDetails principalDetails) {
+    public ChatRoomEntryResponseDto reEnterChatRoom(Long memberId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
 
@@ -102,7 +102,7 @@ public class ChatRoomService {
         checkIfAlreadyEnteredAt(chatRoom, loginMember);
         updateEnteredStatus(chatRoom, loginMember);
 
-        return CreateChatRoomResponseDto.fromEntity(chatRoom);
+        return ChatRoomEntryResponseDto.fromEntity(chatRoom);
     }
 
     private ChatRoom getChatRoomByMembers(Member loginMember, Member chatMember) {
@@ -223,9 +223,12 @@ public class ChatRoomService {
 
     public ChatRoomListResponseDto findAllChatRooms(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
+
         Slice<ChatRoom> chatRooms = chatRoomRepository.findAllByMember(loginMember, pageable);
+
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
+
         return ChatRoomListResponseDto.from(chatRooms, chatRoomDtos);
     }
 
@@ -233,7 +236,7 @@ public class ChatRoomService {
         return chatRooms.stream()
                 .map(chatRoom -> {
                     Chat lastChat = getLastChatByRoomUUID(chatRoom.getRoomUUID());
-                    boolean isInitiator = chatRoom.getInitiator().getId().equals(loginMember.getId());
+                    boolean isInitiator = Objects.equals(chatRoom.getInitiator().getId(), loginMember.getId());
                     return ChatRoomResponseDto.fromEntity(chatRoom, lastChat, isInitiator);
                 })
                 .collect(Collectors.toList());
@@ -250,7 +253,9 @@ public class ChatRoomService {
     }
 
     private void setChatMemberStatusOut(ChatRoom chatRoom, Member loginMember) {
-        if (chatRoom.getInitiator().getId().equals(loginMember.getId())) {
+        boolean isInitiator = (Objects.equals(chatRoom.getInitiator().getId(), loginMember.getId()));
+
+        if (isInitiator) {
             chatRoom.setInitiatorStatusOut();
         } else {
             chatRoom.setParticipantStatusOut();
@@ -271,17 +276,20 @@ public class ChatRoomService {
 
     public ChatRoomListResponseDto searchChatRooms(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
+
         Slice<ChatRoom> chatRooms = chatRoomRepository.findByMemberAndNickname(loginMember, requestDto.q(), pageable);
+
         List<ChatRoomResponseDto> chatRoomDtos = createChatRoomResponseDtos(chatRooms.stream().toList(), loginMember);
         chatRoomDtos.sort(Comparator.comparing(ChatRoomResponseDto::lastMessageTime).reversed());
+
         return ChatRoomListResponseDto.from(chatRooms, chatRoomDtos);
     }
 
     public ChatRoomIdResponseDto findChatRoomByMember(Long memberId, PrincipalDetails principalDetails) {
-        Member loggedInMember = principalDetails.getMember();
+        Member logInMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
 
-        ChatRoom chatRoom = chatRoomRepository.findByInitiatorAndParticipant(loggedInMember, chatMember)
+        ChatRoom chatRoom = chatRoomRepository.findByInitiatorAndParticipant(logInMember, chatMember)
                 .orElseThrow(MemberChatRoomNotExistsException::new);
 
         return ChatRoomIdResponseDto.fromEntity(chatRoom);
