@@ -21,7 +21,7 @@ public enum ErrorCode {
 
     // Member
     INVALID_MEMBER_ACCESS(HttpStatus.FORBIDDEN, "해당 요청에 대한 권한이 없는 사용자입니다."),
-    MEMBER_NOT_EXISTS(HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."),
+    MEMBER_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
     GENDER_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST,"해당 성별은 존재하지 않습니다."),
     COLLEGE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 단과대는 존재하지 않습니다."),
     DEPARTMENT_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 학과는 존재하지 않습니다."),
@@ -61,7 +61,7 @@ public enum ErrorCode {
     CANNOT_CHAT_YOURSELF(HttpStatus.BAD_REQUEST, "자기 자신과 채팅할 수 없습니다."),
     CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 채팅방입니다."),
     ALREADY_CHAT_ROOM_LEFT(HttpStatus.CONFLICT, "이미 나간 채팅방입니다."),
-    ALREADY_IN_CHAT_ROOM(HttpStatus.CONFLICT, "이미 채팅방에 입장한 상태입니다"),
+    ALREADY_ENTERED_CHAT_ROOM(HttpStatus.CONFLICT, "이미 채팅방에 입장한 상태입니다"),
     MEMBER_NOT_IN_CHAT_ROOM(HttpStatus.NOT_FOUND, "채팅방에 속해있지 않는 사용자입니다."),
     CHAT_ROOM_NOT_EMPTY(HttpStatus.BAD_REQUEST, "빈 채팅방이 아닙니다."),
     MEMBER_CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "해당 사용자와의 채팅방이 존재하지 않습니다."),
