@@ -76,6 +76,7 @@ public class MemberService {
 
     public MemberProfileListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
+
         List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
 
         List<MemberInfoResponseDto> memberInfoDtos = members.stream()

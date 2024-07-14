@@ -36,7 +36,7 @@ public class MemberController {
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
 
-    ){
+    ) {
         MemberDetailsResponseDto responseDto = memberService.getMemberProfile(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -44,7 +44,7 @@ public class MemberController {
     @GetMapping("/my/profile")
     public ResponseEntity<ResponseDto<MyProfileResponseDto>> getMyProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         MyProfileResponseDto responseDto = memberService.getMyProfile(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
@@ -53,7 +53,7 @@ public class MemberController {
     public ResponseEntity<ResponseDto<Void>> modifyMyProfile(
             @RequestBody MyProfileModifyRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         memberService.modifyMyProfile(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
@@ -62,10 +62,11 @@ public class MemberController {
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
-    ){
+    ) {
         MemberProfileListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
     // 닉네임 중복 체크
     @GetMapping("/members/check")
     public ResponseEntity<ResponseDto<NicknameCheckResponseDto>> checkNickname(

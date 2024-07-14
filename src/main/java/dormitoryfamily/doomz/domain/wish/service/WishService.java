@@ -39,10 +39,19 @@ public class WishService {
     public void saveWish(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
+
         checkArticleIsNotWished(loginMember.getId(), articleId);
+
         Wish wish = Wish.createWish(loginMember, article);
         wishRepository.save(wish);
+
         article.increaseWishCount();
+    }
+
+    private void checkArticleIsNotWished(Long memberId, Long articleId) {
+        if (wishRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
+            throw new AlreadyWishedArticleException();
+        }
     }
 
     public MemberProfileListResponseDto getWishMembers(PrincipalDetails principalDetails, Long articleId) {
@@ -73,20 +82,16 @@ public class WishService {
     public void removeWish(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
+
         Wish wish = getWishByMemberIdAndArticleId(loginMember.getId(), articleId);
         wishRepository.delete(wish);
+
         article.decreaseWishCount();
     }
 
     private Article getArticleById(Long articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow(ArticleNotExistsException::new);
-    }
-
-    private void checkArticleIsNotWished(Long memberId, Long articleId) {
-        if (wishRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
-            throw new AlreadyWishedArticleException();
-        }
     }
 
     private Wish getWishByMemberIdAndArticleId(Long memberId, Long articleId) {
@@ -104,7 +109,7 @@ public class WishService {
         Slice<Article> articles = articleRepository
                 .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, null, request, pageable);
 
-        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDto(articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, CreateSimpleArticleResponseDto(articles));
     }
 
     private List<Long> getArticleIds(List<Wish> wishes) {
@@ -113,7 +118,7 @@ public class WishService {
                 .toList();
     }
 
-    private List<SimpleArticleResponseDto> getSimpleArticleResponseDto(Slice<Article> articles) {
+    private List<SimpleArticleResponseDto> CreateSimpleArticleResponseDto(Slice<Article> articles) {
         return articles.stream()
                 .map(article -> {
                     return SimpleArticleResponseDto.fromEntity(article, true);
