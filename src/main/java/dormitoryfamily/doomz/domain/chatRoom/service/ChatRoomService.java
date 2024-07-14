@@ -79,16 +79,53 @@ public class ChatRoomService {
 
     private void checkChatRoomDoesNotExist(Member loginMember, Member chatMember) {
         Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByInitiatorAndParticipant(loginMember, chatMember);
-        existingChatRoom.ifPresent(this::handleExistingChatRoom);
+        existingChatRoom.ifPresent(room -> handleExistingChatRoom(room, loginMember));
     }
 
-    private void handleExistingChatRoom(ChatRoom room) {
-        boolean isInitiator = room.getInitiator().getId().equals(room.getInitiator().getId());
-        if (isInitiator && room.getInitiatorEnteredAt() == null ||
-                !isInitiator && room.getParticipantEnteredAt() == null) {
+    private void handleExistingChatRoom(ChatRoom chatRoom, Member loginMember) {
+        boolean isInitiator = Objects.equals(chatRoom.getInitiator().getId(), loginMember.getId());
+
+        if (isInitiator && chatRoom.getInitiatorEnteredAt() == null ||
+                !isInitiator && chatRoom.getParticipantEnteredAt() == null) {
             throw new ChatRoomAlreadyExistsException();
         } else {
-            throw new AlreadyInChatRoomException();
+            throw new AlreadyEnteredChatRoomException();
+        }
+    }
+
+    public CreateChatRoomResponseDto reEnterChatRoom(Long memberId, PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        Member chatMember = getMemberById(memberId);
+
+        ChatRoom chatRoom = getChatRoomByMembers(loginMember, chatMember);
+
+        checkIfAlreadyEnteredAt(chatRoom, loginMember);
+        updateEnteredStatus(chatRoom, loginMember);
+
+        return CreateChatRoomResponseDto.fromEntity(chatRoom);
+    }
+
+    private ChatRoom getChatRoomByMembers(Member loginMember, Member chatMember) {
+        return chatRoomRepository.findByInitiatorAndParticipant(loginMember, chatMember)
+                .orElseThrow(ChatRoomNotExistsException::new);
+    }
+
+    private void checkIfAlreadyEnteredAt(ChatRoom chatRoom, Member loginMember) {
+        boolean isInitiator = Objects.equals(chatRoom.getInitiator().getId(), loginMember.getId());
+
+        if (isInitiator && chatRoom.getInitiatorEnteredAt() != null ||
+                !isInitiator && chatRoom.getParticipantEnteredAt() != null) {
+            throw new AlreadyEnteredChatRoomException();
+        }
+    }
+
+    private void updateEnteredStatus(ChatRoom chatRoom, Member loginMember) {
+        boolean isInitiator = Objects.equals(chatRoom.getInitiator().getId(), loginMember.getId());
+
+        if (isInitiator) {
+            chatRoom.reEnterInitiator();
+        } else {
+            chatRoom.reEnterParticipant();
         }
     }
 
@@ -178,8 +215,8 @@ public class ChatRoomService {
         chatRoomRepository.delete(chatRoom);
     }
 
-    private void checkIfChatRoomIsEmpty(String roomUUID){
-        if(chatRepository.existsByChatRoomRoomUUID(roomUUID)){
+    private void checkIfChatRoomIsEmpty(String roomUUID) {
+        if (chatRepository.existsByChatRoomRoomUUID(roomUUID)) {
             throw new ChatRoomNotEmptyException();
         }
     }

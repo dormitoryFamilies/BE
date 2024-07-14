@@ -23,11 +23,20 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @PostMapping("/members/{memberId}")
-    public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> createRoom(
+    public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> createChatRoom(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
+        return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
+    }
+
+    @PatchMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> reEnterRoom(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        CreateChatRoomResponseDto responseDto = chatRoomService.reEnterChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 
