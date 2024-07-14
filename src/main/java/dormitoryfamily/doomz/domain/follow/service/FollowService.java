@@ -58,6 +58,7 @@ public class FollowService {
 
     private void saveFollowAndIncreaseCounts(Member loginMember, Member followingMember, Follow follow) {
         followRepository.save(follow);
+
         loginMember.increaseFollowingCount();
         followingMember.increaseFollowerCount();
     }
