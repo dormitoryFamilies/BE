@@ -33,14 +33,17 @@ public class ReplyCommentService {
                                                           CreateReplyCommentRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         Comment comment = getCommentById(commentId);
+
         checkCommentIsDeleted(comment);
         ReplyComment replyComment = CreateReplyCommentRequestDto.toEntity(loginMember, comment, requestDto);
         replyCommentRepository.save(replyComment);
+
         comment.getArticle().increaseCommentCount();
+
         return CreateReplyCommentResponseDto.fromEntity(replyComment);
     }
 
-    private Comment getCommentById(Long commentId){
+    private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotExistsException::new);
     }
@@ -54,13 +57,16 @@ public class ReplyCommentService {
     public void removeReplyComment(PrincipalDetails principalDetails, Long replyCommentId) {
         Member loginMember = principalDetails.getMember();
         ReplyComment replyComment = getReplyCommentById(replyCommentId);
+
         isWriter(loginMember, replyComment.getMember());
         replyCommentRepository.delete(replyComment);
+
         replyComment.getComment().getArticle().decreaseCommentCount();
-        commentService.decideCommentDeletion(replyComment.getComment());
+
+        commentService.deleteCommentIfIsDeletedAndNoReplyComments(replyComment.getComment());
     }
 
-    private ReplyComment getReplyCommentById(Long replyCommentId){
+    private ReplyComment getReplyCommentById(Long replyCommentId) {
         return replyCommentRepository.findById(replyCommentId)
                 .orElseThrow(ReplyCommentNotExistsException::new);
     }
