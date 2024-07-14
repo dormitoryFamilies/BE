@@ -30,7 +30,7 @@ public class ReplyCommentController {
     }
 
     @DeleteMapping("/reply-comments/{replyCommentId}")
-    public ResponseEntity<ResponseDto<Void>> deleteComment(
+    public ResponseEntity<ResponseDto<Void>> deleteReplyComment(
             @PathVariable Long replyCommentId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
