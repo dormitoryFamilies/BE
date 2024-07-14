@@ -20,9 +20,9 @@ public record ChatRoomResponseDto (
         LocalDateTime lastMessageTime
         ){
 
-        public static ChatRoomResponseDto fromEntity(ChatRoom chatRoom, Chat lastChat, boolean isSender) {
-                Member member = isSender ? chatRoom.getReceiver() : chatRoom.getSender();
-                int unreadCount = isSender ? chatRoom.getSenderUnreadCount() : chatRoom.getReceiverUnreadCount();
+        public static ChatRoomResponseDto fromEntity(ChatRoom chatRoom, Chat lastChat, boolean isInitiator) {
+                Member member = isInitiator ? chatRoom.getParticipant() : chatRoom.getInitiator();
+                int unreadCount = isInitiator ? chatRoom.getInitiatorUnreadCount() : chatRoom.getParticipantUnreadCount();
 
                 return new ChatRoomResponseDto(
                         chatRoom.getId(),

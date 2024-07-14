@@ -29,10 +29,19 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void message(ChatMessage chatMessage) {
+        // 채팅 메시지 유효성 검사
         chatService.validateChat(chatMessage);
+
+        // 채팅방에 참여
         chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
+
+        // 채팅 메시지 발행
         redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);
+
+        // 채팅 메시지 저장
         chatService.saveChat(chatMessage);
+
+        // 읽지 않은 메시지 수 업데이트
         chatRoomService.updateUnreadCount(chatMessage);
     }
 
