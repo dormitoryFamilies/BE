@@ -14,11 +14,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m " +
             "WHERE LOWER(m.nickname) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "AND m.id NOT IN (SELECT f.following.id FROM Follow f WHERE f.follower.id = :followerId) " +
+            "AND m.authority = 'ROLE_VERIFIED_STUDENT' " +
             "ORDER BY m.createdAt DESC")
     List<Member> findMembersExcludingFollowed(Long followerId, String keyword);
 
     @Query("SELECT m FROM Member m " +
             "WHERE m.id NOT IN (SELECT f.following.id FROM Follow f WHERE f.follower.id = :followerId) " +
+            "AND m.authority = 'ROLE_VERIFIED_STUDENT' "+
             "ORDER BY m.createdAt DESC")
     List<Member> findAllMembersExcludingFollowed(Long followerId);
 
