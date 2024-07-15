@@ -119,6 +119,7 @@ public class WishService {
     }
 
     private List<SimpleArticleResponseDto> CreateSimpleArticleResponseDto(Slice<Article> articles) {
+
         return articles.stream()
                 .map(article -> {
                     return SimpleArticleResponseDto.fromEntity(article, true);
