@@ -42,6 +42,17 @@ public class MemberService {
         loginMember.setUpProfile(requestDto);
     }
 
+    public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails){
+        Member loginMember = principalDetails.getMember();
+
+        List<Member> members = memberRepository.findAllMembersExcludingFollowed(loginMember.getId());
+
+        List<MemberInfoResponseDto> memberInfoDtos = members.stream()
+                .map(MemberInfoResponseDto::fromEntity)
+                .toList();
+        return MemberProfileListResponseDto.from(memberInfoDtos);
+    }
+
     private Member getMember(PrincipalDetails principalDetails) {
         if (principalDetails == null) {
             return null;
@@ -81,7 +92,7 @@ public class MemberService {
 
         List<MemberInfoResponseDto> memberInfoDtos = members.stream()
                 .map(MemberInfoResponseDto::fromEntity)
-                .collect(Collectors.toList());
+                .toList();
 
         return MemberProfileListResponseDto.from(memberInfoDtos);
     }

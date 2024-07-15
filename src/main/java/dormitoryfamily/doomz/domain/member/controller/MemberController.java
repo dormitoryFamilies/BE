@@ -31,6 +31,14 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping("/members")
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> findAllMembers(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        MemberProfileListResponseDto responseDto = memberService.findAllMembers(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
     @GetMapping("members/{memberId}")
     public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> findMemberProfile(
             @PathVariable Long memberId,
