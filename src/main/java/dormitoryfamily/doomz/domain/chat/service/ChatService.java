@@ -141,11 +141,6 @@ public class ChatService {
         return ChatListResponseDto.from(pageNumber, isLast, chatRoom.getRoomUUID(), chatResponseDtos);
     }
 
-    private double calculateStartScore(ChatRoom chatRoom, boolean isSender) {
-        return isSender ? chatRoom.getSenderEnteredAt().toEpochSecond(ZoneOffset.UTC) :
-                chatRoom.getReceiverEnteredAt().toEpochSecond(ZoneOffset.UTC);
-    }
-
     private void cacheChatMessagesFromDB(ChatRoom chatRoom, String roomUUID, ZSetOperations<String, ChatDto> zSetOps) {
         List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
         dbChatList.stream()
