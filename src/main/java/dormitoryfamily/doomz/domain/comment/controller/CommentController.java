@@ -34,12 +34,12 @@ public class CommentController {
     }
 
     @GetMapping("/articles/{articleId}/comments")
-    public ResponseEntity<ResponseDto<CommentListResponseDto>> getComments(
+    public ResponseEntity<ResponseDto<CommentListResponseDto>> findComments(
             @PathVariable Long articleId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        CommentListResponseDto responseDto = commentService.getCommentList(articleId, principalDetails);
+        CommentListResponseDto responseDto = commentService.findCommentList(articleId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 

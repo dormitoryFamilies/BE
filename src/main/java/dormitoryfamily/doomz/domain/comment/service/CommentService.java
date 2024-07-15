@@ -63,7 +63,7 @@ public class CommentService {
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
-    public CommentListResponseDto getCommentList(Long articleId, PrincipalDetails principalDetails) {
+    public CommentListResponseDto findCommentList(Long articleId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
 

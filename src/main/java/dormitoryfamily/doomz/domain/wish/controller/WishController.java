@@ -31,11 +31,11 @@ public class WishController {
     }
 
     @GetMapping("/articles/{articleId}/wish-members")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> getWishMemberList(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> findWishMemberList(
             @PathVariable Long articleId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        MemberProfileListResponseDto responseDto = wishService.getWishMembers(principalDetails, articleId);
+        MemberProfileListResponseDto responseDto = wishService.findWishMembers(principalDetails, articleId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
