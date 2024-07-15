@@ -40,7 +40,7 @@ public class ChatRoomControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ResponseDto<Void>> handleAlreadyInChatRoomException(AlreadyInChatRoomException e) {
+    public ResponseEntity<ResponseDto<Void>> handleAlreadyEnteredChatRoomException(AlreadyEnteredChatRoomException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity
@@ -59,6 +59,15 @@ public class ChatRoomControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleMemberChatRoomNotExistsException(MemberChatRoomNotExistsException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleChatRoomAlreadyExistsException(ChatRoomAlreadyExistsException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity

@@ -58,6 +58,7 @@ public class FollowService {
 
     private void saveFollowAndIncreaseCounts(Member loginMember, Member followingMember, Follow follow) {
         followRepository.save(follow);
+
         loginMember.increaseFollowingCount();
         followingMember.increaseFollowerCount();
     }
@@ -81,7 +82,7 @@ public class FollowService {
         followingMember.decreaseFollowerCount();
     }
 
-    public MemberProfilePagingListResponseDto getFollowings(PrincipalDetails principalDetails, Pageable pageable) {
+    public MemberProfilePagingListResponseDto findFollowings(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
 
         Page<Follow> follows = followRepository.findAllByFollowerOrderByCreatedAtDesc(loginMember, pageable);
@@ -105,7 +106,7 @@ public class FollowService {
         return MemberProfileListResponseDto.from(memberInfoDtos);
     }
 
-    public MemberProfilePagingListResponseDto getFollowers(PrincipalDetails principalDetails, Pageable pageable) {
+    public MemberProfilePagingListResponseDto findFollowers(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
 
         Page<Follow> followsPage = followRepository.findAllByFollowingOrderByCreatedAtDesc(loginMember, pageable);

@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.chatRoom.controller;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomIdResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.UnreadChatCountResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomListResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.dto.response.CreateChatRoomResponseDto;
+import dormitoryfamily.doomz.domain.chatRoom.dto.response.ChatRoomEntryResponseDto;
 import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -23,11 +23,20 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @PostMapping("/members/{memberId}")
-    public ResponseEntity<ResponseDto<CreateChatRoomResponseDto>> createRoom(
+    public ResponseEntity<ResponseDto<ChatRoomEntryResponseDto>> createChatRoom(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        CreateChatRoomResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
+        ChatRoomEntryResponseDto responseDto = chatRoomService.createChatRoom(memberId, principalDetails);
+        return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
+    }
+
+    @PatchMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto<ChatRoomEntryResponseDto>> reEnterChatRoom(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        ChatRoomEntryResponseDto responseDto = chatRoomService.reEnterChatRoom(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.createdWithData(responseDto));
     }
 

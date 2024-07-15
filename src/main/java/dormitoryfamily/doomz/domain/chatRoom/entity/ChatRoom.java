@@ -34,108 +34,108 @@ public class ChatRoom extends BaseTimeEntity {
     private String roomUUID;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
-    private Member sender;  //최초에 채팅을 보낸 사람
+    @JoinColumn(name = "initiator_id")
+    private Member initiator;  //최초에 채팅을 보낸 사람
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id")
-    private Member receiver;  //최초에 채팅을 받은 사람
+    @JoinColumn(name = "participant_id")
+    private Member participant;  //최초에 채팅을 받은 사람
 
     @CreatedDate
-    private LocalDateTime senderEnteredAt;
+    private LocalDateTime initiatorEnteredAt;
 
     @CreatedDate
-    private LocalDateTime receiverEnteredAt;
+    private LocalDateTime participantEnteredAt;
 
-    private int senderUnreadCount;
+    private int initiatorUnreadCount;
 
-    private int receiverUnreadCount;
-
-    @Enumerated(EnumType.STRING)
-    private ChatMemberStatus senderStatus;
+    private int participantUnreadCount;
 
     @Enumerated(EnumType.STRING)
-    private ChatMemberStatus receiverStatus;
+    private ChatMemberStatus initiatorStatus;
+
+    @Enumerated(EnumType.STRING)
+    private ChatMemberStatus participantStatus;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chat> chatList = new ArrayList<>();
 
     @Builder
-    public ChatRoom(String roomUUID, Member sender, Member receiver,
-                    LocalDateTime senderEnteredAt, LocalDateTime receiverEnteredAt,
-                    int senderUnreadCount, int receiverUnreadCount,
-                    ChatMemberStatus senderStatus, ChatMemberStatus receiverStatus) {
+    public ChatRoom(String roomUUID, Member initiator, Member participant,
+                    LocalDateTime initiatorEnteredAt, LocalDateTime participantEnteredAt,
+                    int initiatorUnreadCount, int participantUnreadCount,
+                    ChatMemberStatus initiatorStatus, ChatMemberStatus participantStatus) {
         this.roomUUID = roomUUID;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.senderEnteredAt = senderEnteredAt;
-        this.receiverEnteredAt = receiverEnteredAt;
-        this.senderUnreadCount = senderUnreadCount;
-        this.receiverUnreadCount = receiverUnreadCount;
-        this.senderStatus = senderStatus;
-        this.receiverStatus = receiverStatus;
+        this.initiator = initiator;
+        this.participant = participant;
+        this.initiatorEnteredAt = initiatorEnteredAt;
+        this.participantEnteredAt = participantEnteredAt;
+        this.initiatorUnreadCount = initiatorUnreadCount;
+        this.participantUnreadCount = participantUnreadCount;
+        this.initiatorStatus = initiatorStatus;
+        this.participantStatus = participantStatus;
     }
 
-    public static ChatRoom create(Member sender, Member receiver) {
+    public static ChatRoom create(Member initiator, Member participant) {
         return ChatRoom.builder()
                 .roomUUID(UUID.randomUUID().toString())
-                .sender(sender)
-                .receiver(receiver)
+                .initiator(initiator)
+                .participant(participant)
                 .build();
     }
 
-    public void reEnterSender() {
-        this.senderEnteredAt = LocalDateTime.now();
+    public void reEnterInitiator() {
+        this.initiatorEnteredAt = LocalDateTime.now();
     }
 
-    public void reEnterReceiver() {
-        this.receiverEnteredAt = LocalDateTime.now();
+    public void reEnterParticipant() {
+        this.participantEnteredAt = LocalDateTime.now();
     }
 
-    public void senderInChatRoom() {
-        this.senderUnreadCount = 0;
-        this.senderStatus = IN;
+    public void initiatorInChatRoom() {
+        this.initiatorUnreadCount = 0;
+        this.initiatorStatus = IN;
     }
 
-    public void receiverInChatRoom() {
-        this.receiverUnreadCount = 0;
-        this.receiverStatus = IN;
+    public void participantInChatRoom() {
+        this.participantUnreadCount = 0;
+        this.participantStatus = IN;
     }
 
-    public void setSenderStatusOut() {
-        this.senderStatus = OUT;
+    public void setInitiatorStatusOut() {
+        this.initiatorStatus = OUT;
     }
 
-    public void setReceiverStatusOut() {
-        this.receiverStatus = OUT;
+    public void setParticipantStatusOut() {
+        this.participantStatus = OUT;
     }
 
-    public void increaseSenderUnreadCount() {
-        this.senderUnreadCount += 1;
+    public void increaseInitiatorUnreadCount() {
+        this.initiatorUnreadCount += 1;
     }
 
-    public void increaseReceiverUnreadCount() {
-        this.receiverUnreadCount += 1;
+    public void increaseParticipantUnreadCount() {
+        this.participantUnreadCount += 1;
     }
 
-    public void deleteSender() {
-        this.senderUnreadCount = 0;
-        this.senderEnteredAt = null;
-        this.senderStatus = OUT;
+    public void deleteInitiator() {
+        this.initiatorUnreadCount = 0;
+        this.initiatorEnteredAt = null;
+        this.initiatorStatus = OUT;
     }
 
-    public void deleteReceiver() {
-        this.receiverUnreadCount = 0;
-        this.receiverEnteredAt = null;
-        this.receiverStatus = OUT;
+    public void deleteParticipant() {
+        this.participantUnreadCount = 0;
+        this.participantEnteredAt = null;
+        this.participantStatus = OUT;
     }
 
     @PrePersist
     private void init() {
-        this.senderUnreadCount = 0;
-        this.receiverUnreadCount = 0;
-        this.senderStatus = OUT;
-        this.receiverStatus = OUT;
+        this.initiatorUnreadCount = 0;
+        this.participantUnreadCount = 0;
+        this.initiatorStatus = OUT;
+        this.participantStatus = OUT;
     }
 }
 

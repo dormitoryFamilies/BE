@@ -40,11 +40,11 @@ public class FollowController {
     }
 
     @GetMapping("/followings")
-    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> getFollowings(
+    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> findFollowings(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        MemberProfilePagingListResponseDto responseDto = followService.getFollowings(principalDetails, pageable);
+        MemberProfilePagingListResponseDto responseDto = followService.findFollowings(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -58,11 +58,11 @@ public class FollowController {
     }
 
     @GetMapping("/followers")
-    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> getFollowers(
+    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> findFollowers(
             @AuthenticationPrincipal PrincipalDetails principalDetails,
             Pageable pageable
     ){
-        MemberProfilePagingListResponseDto responseDto = followService.getFollowers(principalDetails, pageable);
+        MemberProfilePagingListResponseDto responseDto = followService.findFollowers(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 

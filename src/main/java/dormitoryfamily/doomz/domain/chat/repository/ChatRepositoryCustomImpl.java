@@ -26,8 +26,8 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
                 .join(chat.chatRoom)
                 .where(chat.message.lower().likeIgnoreCase("%" + keyword + "%")
                         .and(
-                                (chat.chatRoom.sender.eq(member).and(chat.chatRoom.senderEnteredAt.isNotNull()))
-                                        .or(chat.chatRoom.receiver.eq(member).and(chat.chatRoom.receiverEnteredAt.isNotNull()))
+                                (chat.chatRoom.initiator.eq(member).and(chat.chatRoom.initiator.isNotNull()))
+                                        .or(chat.chatRoom.participant.eq(member).and(chat.chatRoom.participantEnteredAt.isNotNull()))
                         )
                 )
                 .orderBy(getOrderByExpression(sortType))

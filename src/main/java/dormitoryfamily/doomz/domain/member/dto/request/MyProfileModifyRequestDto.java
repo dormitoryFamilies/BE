@@ -4,6 +4,6 @@ public record MyProfileModifyRequestDto(
         String nickname,
         String memberDormitoryType,
         String profileUrl
-){
+) {
 
 }

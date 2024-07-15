@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static dormitoryfamily.doomz.domain.article.entity.type.BoardType.ALL;
+import static dormitoryfamily.doomz.domain.article.entity.type.BoardType.fromDescription;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -48,33 +50,49 @@ public class CommentService {
     public CreateCommentResponseDto saveComment(Long articleId, PrincipalDetails principalDetails, CreateCommentRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
+
         Comment comment = CreateCommentRequestDto.toEntity(loginMember, article, requestDto);
         commentRepository.save(comment);
         article.increaseCommentCount();
+
         return CreateCommentResponseDto.fromEntity(comment);
     }
 
-    public CommentListResponseDto getCommentList(Long articleId, PrincipalDetails principalDetails) {
+    private Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+                .orElseThrow(ArticleNotExistsException::new);
+    }
+
+    public CommentListResponseDto findCommentList(Long articleId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
+
         List<Comment> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
         List<CommentResponseDto> commentResponseDto = comments.stream()
                 .map(comment -> CommentResponseDto.fromEntity(article.getMember(), comment))
                 .collect(toList());
+
         return CommentListResponseDto.from(loginMember, article.getCommentCount(), commentResponseDto);
     }
 
     public void removeComment(PrincipalDetails principalDetails, Long commentId) {
         Member loginMember = principalDetails.getMember();
         Comment comment = getCommentById(commentId);
+
         checkAlreadyDeleted(comment);
-        isWriter(loginMember, comment.getMember());
-        if (hasReplyComment(comment.getId())) {
+        validateIsWriter(loginMember, comment.getMember());
+
+        if (checkHasReplyComments(comment.getId())) {
             comment.markAsDeleted();
         } else {
             commentRepository.delete(comment);
         }
         comment.getArticle().decreaseCommentCount();
+    }
+
+    private Comment getCommentById(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(CommentNotExistsException::new);
     }
 
     private void checkAlreadyDeleted(Comment comment) {
@@ -83,53 +101,48 @@ public class CommentService {
         }
     }
 
-    private void isWriter(Member loginMember, Member writer) {
+    private void validateIsWriter(Member loginMember, Member writer) {
         if (!Objects.equals(loginMember.getId(), writer.getId())) {
             throw new InvalidMemberAccessException();
         }
     }
 
-    private Article getArticleById(Long articleId) {
-        return articleRepository.findById(articleId)
-                .orElseThrow(ArticleNotExistsException::new);
+    private boolean checkHasReplyComments(Long commentId) {
+        return replyCommentRepository.existsByCommentId(commentId);
     }
 
-    private Comment getCommentById(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(CommentNotExistsException::new);
-    }
-
-    public void decideCommentDeletion(Comment comment) {
-        if (comment.isDeleted() && !hasReplyComment(comment.getId())) {
+    public void deleteCommentIfIsDeletedAndNoReplyComments(Comment comment) {
+        if (comment.isDeleted() && !checkHasReplyComments(comment.getId())) {
             commentRepository.delete(comment);
         }
     }
 
-    private boolean hasReplyComment(Long commentId) {
-        return replyCommentRepository.existsByCommentId(commentId);
-    }
-
-    public ArticleListResponseDto findMyComments(PrincipalDetails principalDetails, String articleDormitoryType, String articleBoardType, ArticleRequest request, Pageable pageable ) {
+    public ArticleListResponseDto findMyComments(PrincipalDetails principalDetails, String articleDormitoryType, String articleBoardType, ArticleRequest request, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
+        BoardType boardType = getBoardType(articleBoardType);
 
-        BoardType boardType;
-        if(articleBoardType.equals("all")){
-            boardType = null;
-        }
-        else{
-            boardType = BoardType.fromDescription(articleBoardType);
-        }
-
-        List<Comment> myComments = commentRepository.findAllByMemberId(loginMember.getId());
-        List<ReplyComment> myReplyComments = replyCommentRepository.findAllByMemberId(loginMember.getId());
-
-        List<Long> articleIds = getArticleIds(myComments, myReplyComments);
+        List<Long> articleIds = getArticleIdsFromMyComments(loginMember.getId());
 
         Slice<Article> articles = articleRepository
                 .findAllByIdInAndDormitoryTypeAndBoardType(articleIds, dormitoryType, boardType, request, pageable);
 
-        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, getSimpleArticleResponseDtos(loginMember, articles));
+        return ArticleListResponseDto.fromResponseDtos(loginMember, articles, createSimpleArticleResponseDtos(loginMember, articles));
+    }
+
+    private BoardType getBoardType(String articleBoardType) {
+        BoardType boardType = fromDescription(articleBoardType);
+        if (boardType.equals(ALL)) {
+            boardType = null;
+        }
+        return boardType;
+    }
+
+    private List<Long> getArticleIdsFromMyComments(Long memberId) {
+        List<Comment> myComments = commentRepository.findAllByMemberId(memberId);
+        List<ReplyComment> myReplyComments = replyCommentRepository.findAllByMemberId(memberId);
+
+        return getArticleIds(myComments, myReplyComments);
     }
 
     private List<Long> getArticleIds(List<Comment> comments, List<ReplyComment> replyComments) {
@@ -141,19 +154,19 @@ public class CommentService {
                 .toList();
     }
 
-    private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
+    private List<SimpleArticleResponseDto> createSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
         List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
 
         return articles.stream()
                 .map(article -> {
-                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
+                    boolean isWished = isArticleWishedByMember(article, memberWishes);
                     return SimpleArticleResponseDto.fromEntity(article, isWished);
                 })
                 .toList();
     }
 
-    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<Wish> memberWishes) {
-        return memberWishes.stream()
+    private boolean isArticleWishedByMember(Article article, List<Wish> wishes) {
+        return wishes.stream()
                 .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
 }
