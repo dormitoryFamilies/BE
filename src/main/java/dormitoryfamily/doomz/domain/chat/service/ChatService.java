@@ -228,6 +228,7 @@ public class ChatService {
 
     private Member determineChatMember(Chat chat, Member loginMember) {
         return Objects.equals(chat.getChatRoom().getInitiator().getId(), loginMember.getId()) ?
-                chat.getChatRoom().getParticipant() : chat.getChatRoom().getInitiator();
+                chat.getChatRoom().getParticipant() : chat.getChatRoom().getInitiator()
+
     }
 }

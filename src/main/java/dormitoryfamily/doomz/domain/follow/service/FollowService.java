@@ -82,6 +82,7 @@ public class FollowService {
         followingMember.decreaseFollowerCount();
     }
 
+
     public MemberProfilePagingListResponseDto findFollowings(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
 
@@ -105,6 +106,7 @@ public class FollowService {
 
         return MemberProfileListResponseDto.from(memberInfoDtos);
     }
+
 
     public MemberProfilePagingListResponseDto findFollowers(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
