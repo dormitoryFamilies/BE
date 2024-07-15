@@ -54,7 +54,7 @@ public class WishService {
         }
     }
 
-    public MemberProfileListResponseDto getWishMembers(PrincipalDetails principalDetails, Long articleId) {
+    public MemberProfileListResponseDto findWishMembers(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
 

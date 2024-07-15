@@ -32,7 +32,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("members/{memberId}")
-    public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> getMemberProfile(
+    public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> findMemberProfile(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
 

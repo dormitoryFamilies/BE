@@ -78,7 +78,7 @@ public class ChatService {
         validateChatRoomAccessAndStatus(chatRoom, loginMember, isInitiator);
         updateMemberStatusToIn(chatRoom, isInitiator);
 
-        return CreateChatListResponse(chatRoom, loginMember, isInitiator, pageable);
+        return createChatListResponse(chatRoom, loginMember, isInitiator, pageable);
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {
@@ -104,7 +104,7 @@ public class ChatService {
         }
     }
 
-    private ChatListResponseDto CreateChatListResponse(ChatRoom chatRoom, Member loginMember, boolean isInitiator, Pageable pageable) {
+    private ChatListResponseDto createChatListResponse(ChatRoom chatRoom, Member loginMember, boolean isInitiator, Pageable pageable) {
         String roomUUID = chatRoom.getRoomUUID();
         ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
 
@@ -171,13 +171,14 @@ public class ChatService {
 
     public void validateChat(ChatMessage chatMessage) {
         Long senderId = chatMessage.getSenderId();
-        ChatRoom chatRoom = findChatRoomByUUID(chatMessage.getRoomUUID());
+        ChatRoom chatRoom = getChatRoomByUUID(chatMessage.getRoomUUID());
 
         validateMemberInChatRoom(chatRoom, senderId);
         validateChatMessageContent(chatMessage.getMessage());
     }
 
-    private ChatRoom findChatRoomByUUID(String roomUUID) {
+    //웹 소켓 요청에 대한 예외
+    private ChatRoom getChatRoomByUUID(String roomUUID) {
         return chatRoomRepository.findByRoomUUID(roomUUID)
                 .orElseThrow(() -> new InvalidChatMessageException("존재하지 않는 채팅방입니다."));
     }
