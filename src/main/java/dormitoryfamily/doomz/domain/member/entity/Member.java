@@ -4,6 +4,7 @@ import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequest
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.*;
 import dormitoryfamily.doomz.domain.member.exception.NotVisitorRoleException;
+import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -21,6 +22,9 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private MyLifestyle myLifeStyle;
 
     private String name;
     private String nickname;
