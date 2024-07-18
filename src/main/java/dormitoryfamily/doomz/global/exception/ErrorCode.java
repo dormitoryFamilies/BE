@@ -67,8 +67,13 @@ public enum ErrorCode {
     CHAT_ROOM_NOT_EMPTY(HttpStatus.BAD_REQUEST, "빈 채팅방이 아닙니다."),
     MEMBER_CHAT_ROOM_NOT_EXISTS(HttpStatus.NOT_FOUND, "해당 사용자와의 채팅방이 존재하지 않습니다."),
     ALREADY_CHAT_ROOM_EXISTS(HttpStatus.CONFLICT, "채팅방이 존재합니다. 재입장해주세요."),
+
     //chat
     CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
+
+    //roommate
+    SLEEPING_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
+    WAKE_UP_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
