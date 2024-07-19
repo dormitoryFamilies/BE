@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request;
+package dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request;
 
 import jakarta.validation.constraints.Size;
 
