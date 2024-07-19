@@ -26,5 +26,4 @@ public class ArticleWishControllerAdvice {
                 .status(status)
                 .body(ResponseDto.errorWithMessage(status, e.getMessage()));
     }
-
 }
