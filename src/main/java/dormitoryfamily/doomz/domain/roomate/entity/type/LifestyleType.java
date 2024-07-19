@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
 import lombok.Getter;
 
 @Getter
@@ -40,7 +39,7 @@ public enum LifestyleType {
                 return lifestyleType;
             }
         }
-        throw new InvalidLifestyleTypeException();
+        return null;
     }
 
     public Enum<?> getLifestyleValue(String value) {
