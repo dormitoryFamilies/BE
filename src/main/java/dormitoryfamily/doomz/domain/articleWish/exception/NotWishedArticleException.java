@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.wish.exception;
+package dormitoryfamily.doomz.domain.articleWish.exception;
 
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;

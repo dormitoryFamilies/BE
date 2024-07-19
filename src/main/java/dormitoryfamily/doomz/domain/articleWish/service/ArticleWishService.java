@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.wish.service;
+package dormitoryfamily.doomz.domain.articleWish.service;
 
 import dormitoryfamily.doomz.domain.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.article.dto.response.ArticleListResponseDto;
@@ -7,15 +7,16 @@ import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
+import dormitoryfamily.doomz.domain.articleWish.entity.ArticleWish;
+import dormitoryfamily.doomz.domain.articleWish.exception.CannotWishYourArticleException;
 import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberDetailsResponseDto;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
-import dormitoryfamily.doomz.domain.wish.entity.Wish;
-import dormitoryfamily.doomz.domain.wish.exception.AlreadyWishedArticleException;
-import dormitoryfamily.doomz.domain.wish.exception.NotWishedArticleException;
-import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
+import dormitoryfamily.doomz.domain.articleWish.exception.AlreadyWishedArticleException;
+import dormitoryfamily.doomz.domain.articleWish.exception.NotWishedArticleException;
+import dormitoryfamily.doomz.domain.articleWish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,37 +31,48 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class WishService {
+public class ArticleWishService {
 
     private final ArticleRepository articleRepository;
-    private final WishRepository wishRepository;
+    private final ArticleWishRepository articleWishRepository;
     private final FollowRepository followRepository;
 
-    public void saveWish(PrincipalDetails principalDetails, Long articleId) {
+    public void saveArticleWish(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
 
-        checkArticleIsNotWished(loginMember.getId(), articleId);
+        validateArticleWishRequest(loginMember, article);
 
-        Wish wish = Wish.createWish(loginMember, article);
-        wishRepository.save(wish);
+        ArticleWish articleWish = ArticleWish.createArticleWish(loginMember, article);
+        articleWishRepository.save(articleWish);
 
         article.increaseWishCount();
     }
 
-    private void checkArticleIsNotWished(Long memberId, Long articleId) {
-        if (wishRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
+    private void validateArticleWishRequest(Member loginMember, Article article){
+        checkArticleIfNotWished(loginMember.getId(), article.getId());
+        checkIfNotArticleWriter(loginMember.getId(), article);
+    }
+
+    private void checkArticleIfNotWished(Long memberId, Long articleId) {
+        if (articleWishRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
             throw new AlreadyWishedArticleException();
         }
     }
 
-    public MemberProfileListResponseDto findWishMembers(PrincipalDetails principalDetails, Long articleId) {
+    private void checkIfNotArticleWriter(Long memberId, Article article){
+        if(Objects.equals(article.getMember().getId(), memberId)){
+            throw new CannotWishYourArticleException();
+        }
+    }
+
+    public MemberProfileListResponseDto findArticleWishMembers(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
 
         validateArticleWriter(article, loginMember);
 
-        List<MemberDetailsResponseDto> memberProfiles = wishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId)
+        List<MemberDetailsResponseDto> memberProfiles = articleWishRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId)
                 .stream()
                 .map(wish -> createMemberDetailsResponseDto(loginMember, wish.getMember()))
                 .collect(Collectors.toList());
@@ -79,12 +91,12 @@ public class WishService {
         return MemberDetailsResponseDto.fromEntity(wishMember, isFollowing);
     }
 
-    public void removeWish(PrincipalDetails principalDetails, Long articleId) {
+    public void removeArticleWish(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
 
-        Wish wish = getWishByMemberIdAndArticleId(loginMember.getId(), articleId);
-        wishRepository.delete(wish);
+        ArticleWish articleWish = getWishByMemberIdAndArticleId(loginMember.getId(), articleId);
+        articleWishRepository.delete(articleWish);
 
         article.decreaseWishCount();
     }
@@ -94,8 +106,8 @@ public class WishService {
                 .orElseThrow(ArticleNotExistsException::new);
     }
 
-    private Wish getWishByMemberIdAndArticleId(Long memberId, Long articleId) {
-        return wishRepository.findByMemberIdAndArticleId(memberId, articleId)
+    private ArticleWish getWishByMemberIdAndArticleId(Long memberId, Long articleId) {
+        return articleWishRepository.findByMemberIdAndArticleId(memberId, articleId)
                 .orElseThrow(NotWishedArticleException::new);
     }
 
@@ -103,7 +115,7 @@ public class WishService {
         Member loginMember = principalDetails.getMember();
         ArticleDormitoryType dormitoryType = ArticleDormitoryType.fromName(articleDormitoryType);
 
-        List<Wish> myWishes = wishRepository.findAllByMemberId(loginMember.getId());
+        List<ArticleWish> myWishes = articleWishRepository.findAllByMemberId(loginMember.getId());
         List<Long> articleIds = getArticleIds(myWishes);
 
         Slice<Article> articles = articleRepository
@@ -112,7 +124,7 @@ public class WishService {
         return ArticleListResponseDto.fromResponseDtos(loginMember, articles, CreateSimpleArticleResponseDto(articles));
     }
 
-    private List<Long> getArticleIds(List<Wish> wishes) {
+    private List<Long> getArticleIds(List<ArticleWish> wishes) {
         return wishes.stream()
                 .map(wish -> wish.getArticle().getId())
                 .toList();
