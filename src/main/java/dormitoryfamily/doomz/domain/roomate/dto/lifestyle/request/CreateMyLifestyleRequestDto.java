@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request;
+package dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
@@ -6,7 +6,7 @@ import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record MyLifestyleRequestDto(
+public record CreateMyLifestyleRequestDto(
 
         @NotBlank(message = "필수 값 입니다.")
         String sleepTime,
@@ -56,7 +56,7 @@ public record MyLifestyleRequestDto(
         String insectTolerance
 
 ) {
-    public static MyLifestyle toEntity(Member member, MyLifestyleRequestDto requestDto) {
+    public static MyLifestyle toEntity(Member member, CreateMyLifestyleRequestDto requestDto) {
         return MyLifestyle.builder()
                 .member(member)
                 .sleepTimeType(SleepTimeType.fromDescription(requestDto.sleepTime()))
