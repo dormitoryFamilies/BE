@@ -6,11 +6,13 @@ import jakarta.persistence.Converter;
 @Converter
 public class EnumConverter implements AttributeConverter<Enum<?>, String> {
 
+    //Enum을 문자열로 변환하여 데이터베이스에 저장
     @Override
     public String convertToDatabaseColumn(Enum<?> attribute) {
         return attribute == null ? null : attribute.getClass().getName() + ":" + attribute.name();
     }
 
+    //문자열을 다시 Enum 객체로 변환
     @Override
     public Enum<?> convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isEmpty()) {

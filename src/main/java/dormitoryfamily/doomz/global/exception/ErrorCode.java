@@ -71,8 +71,28 @@ public enum ErrorCode {
     CHAT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
 
     //roommate
+    LIFE_STYLE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 생활 유형은 존재하지 않습니다."),
     SLEEPING_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
     WAKE_UP_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
+    SLEEPING_HABIT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 잠버릇은 존재하지 않습니다."),
+    SLEEPING_SENSITIVITY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 잠귀 유형은 존재하지 않습니다."),
+    SMOKING_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 흡연 유형은 존재하지 않습니다."),
+    DRINKING_FREQUENCY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 음주 빈도는 존재하지 않습니다."),
+    SHOWER_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 샤워 시간대는 존재하지 않습니다."),
+    SHOWER_DURATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 샤워 시간은 존재하지 않습니다."),
+    CLEANING_HABIT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 청소 타입은 존재하지 않습니다."),
+    HEAT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 더위 타입은 존재하지 않습니다."),
+    COLD_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 추위 타입은 존재하지 않습니다."),
+    MBTI_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 MBTI 타입은 존재하지 않습니다."),
+    VISIT_HOME_FREQUENCY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 본가 가는 빈도는 존재하지 않습니다."),
+    LATE_NIGHT_SNACK_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 야식 유형은 존재하지 않습니다."),
+    SNACK_IN_ROOM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 방안에서 유형은 존재하지 않습니다."),
+    PHONE_SOUND_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 휴대 소리 유형은 존재하지 않습니다."),
+    PERFUME_USAGE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 향수 유형은 존재하지 않습니다."),
+    STUDY_LOCATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 공부 장소는 존재하지 않습니다."),
+    EXAM_PREPARATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 시험 유형은 존재하지 않습니다."),
+    EXERCISE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 운동 유형은 존재하지 않습니다."),
+    INSECT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 벌레 유형은 존재하지 않습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

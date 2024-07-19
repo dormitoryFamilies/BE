@@ -3,11 +3,11 @@ package dormitoryfamily.doomz.domain.roomate.exception;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
 
-public class InvalidSleepingTimeTypeException extends ApplicationException {
+public class InvalidLateNightSnackTypeException extends ApplicationException {
 
-    private static final ErrorCode ERROR_CODE = ErrorCode.SLEEPING_TIME_NOT_EXISTS;
+    private static final ErrorCode ERROR_CODE = ErrorCode.LATE_NIGHT_SNACK_NOT_EXISTS;
 
-    public InvalidSleepingTimeTypeException() {
+    public InvalidLateNightSnackTypeException() {
         super(ERROR_CODE);
     }
 }

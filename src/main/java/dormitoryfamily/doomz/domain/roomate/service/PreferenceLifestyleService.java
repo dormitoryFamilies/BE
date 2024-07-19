@@ -27,8 +27,8 @@ public class PreferenceLifestyleService {
     }
 
     private void savePreference(Member member, String preferenceTypeStr, String preferenceStr, int order) {
-        LifestyleType preferenceType = LifestyleType.fromString(preferenceTypeStr);
-        Enum<?> preferenceDetail = preferenceType.getEnumValue(preferenceStr);
+        LifestyleType preferenceType = LifestyleType.fromType(preferenceTypeStr);
+        Enum<?> preferenceDetail = preferenceType.getLifestyleValue(preferenceStr);
         preferenceRepository.save(new PreferenceLifestyle(member, preferenceType, preferenceDetail, order));
     }
 }

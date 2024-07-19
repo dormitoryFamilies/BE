@@ -1,32 +1,33 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
 import dormitoryfamily.doomz.domain.member.exception.InvalidCollegeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.InvalidCleaningHabitTypeException;
 import lombok.Getter;
 
 @Getter
-public enum CleaningHabitType {
+public enum CleaningFrequencyType {
 
     IMMEDIATELY("바로바로"),
     OCCASIONALLY("가끔"),
-    BATCH("몰아서");
+    ALL_AT_ONCE("몰아서");
 
     private final String description;
 
-    CleaningHabitType(String description) {
+    CleaningFrequencyType(String description) {
         this.description = description;
     }
 
-    public static CleaningHabitType fromDescription(String description) {
-        for (CleaningHabitType type : CleaningHabitType.values()) {
+    public static CleaningFrequencyType fromDescription(String description) {
+        for (CleaningFrequencyType type : CleaningFrequencyType.values()) {
             if (type.description.equals(description)) {
                 return type;
             }
         }
-        throw new InvalidCollegeTypeException();
+        throw new InvalidCleaningHabitTypeException();
     }
 
-    public CleaningHabitType abc(String str) {
-        for (CleaningHabitType type : CleaningHabitType.values()) {
+    public CleaningFrequencyType abc(String str) {
+        for (CleaningFrequencyType type : CleaningFrequencyType.values()) {
             if (type.description.equals(str)) {
                 return type;
             }
