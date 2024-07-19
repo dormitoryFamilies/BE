@@ -17,6 +17,10 @@ public enum LateNightSnackType {
     }
 
     public static LateNightSnackType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (LateNightSnackType type : LateNightSnackType.values()) {
             if (type.description.equals(description)) {
                 return type;

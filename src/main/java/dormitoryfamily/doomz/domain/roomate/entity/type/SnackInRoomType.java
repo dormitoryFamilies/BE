@@ -16,6 +16,10 @@ public enum SnackInRoomType {
     }
 
     public static SnackInRoomType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (SnackInRoomType type : SnackInRoomType.values()) {
             if (type.description.equals(description)) {
                 return type;

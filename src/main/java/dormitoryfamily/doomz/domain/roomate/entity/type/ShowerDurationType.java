@@ -20,6 +20,10 @@ public enum ShowerDurationType {
     }
 
     public static ShowerDurationType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (ShowerDurationType type : ShowerDurationType.values()) {
             if (type.description.equals(description)) {
                 return type;

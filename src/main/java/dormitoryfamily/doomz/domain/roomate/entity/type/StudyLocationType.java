@@ -17,6 +17,10 @@ public enum StudyLocationType {
     }
 
     public static StudyLocationType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (StudyLocationType type : StudyLocationType.values()) {
             if (type.description.equals(description)) {
                 return type;
