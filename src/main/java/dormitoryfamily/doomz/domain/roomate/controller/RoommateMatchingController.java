@@ -1,7 +1,8 @@
 package dormitoryfamily.doomz.domain.roomate.controller;
 
-import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.MyLifestyleRequestDto;
-import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.service.MyLifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceLifestyleService;
@@ -21,9 +22,9 @@ public class RoommateMatchingController {
     private final MyLifestyleService myLifestyleService;
     private final PreferenceLifestyleService preferenceLifestyleService;
 
-    @PostMapping("/my/lifestyle")
+    @PostMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerMyLifestyle(
-            @RequestBody @Valid MyLifestyleRequestDto requestDto,
+            @RequestBody @Valid CreateMyLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
@@ -31,17 +32,27 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @PatchMapping("/my/lifestyle")
+    @PatchMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> editMyLifestyle(
             @RequestBody @Valid UpdateMyLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        myLifestyleService.editMyLifestyle(requestDto, principalDetails);
+        myLifestyleService.updateMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @PostMapping("/preference/lifestyle")
+    @GetMapping("/my/lifestyles")
+    public ResponseEntity<ResponseDto<LifestyleResponseDto>> getMyLifestyle(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        LifestyleResponseDto responseDto =
+                myLifestyleService.findMyLifestyle(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @PostMapping("/preference/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerPreferenceLifestyle(
             @RequestBody PreferenceLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails

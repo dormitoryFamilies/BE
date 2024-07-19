@@ -1,8 +1,9 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.MyLifestyleRequestDto;
-import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
 import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterMyLifestyleException;
 import dormitoryfamily.doomz.domain.roomate.exception.MyLifestyleNotExistsException;
@@ -19,10 +20,10 @@ public class MyLifestyleService {
 
     private final MyLifestyleRepository myLifestyleRepository;
 
-    public void saveMyLifestyle(MyLifestyleRequestDto requestDto, PrincipalDetails principalDetails){
+    public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails){
         Member loginMember = principalDetails.getMember();
         checkAlreadySetLifestyle(loginMember);
-        MyLifestyle myLifeStyle = MyLifestyleRequestDto.toEntity(loginMember, requestDto);
+        MyLifestyle myLifeStyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
 
         myLifestyleRepository.save(myLifeStyle);
     }
@@ -33,15 +34,22 @@ public class MyLifestyleService {
         }
     }
 
-    public void editMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        MyLifestyle myLifestyle = getMyLifestyleByMemberId(loginMember);
+        MyLifestyle myLifestyle = getLifestyleByMemberId(loginMember);
 
         myLifestyle.updateMyLifestyle(requestDto);
     }
 
-    private MyLifestyle getMyLifestyleByMemberId(Member loginMember) {
+    private MyLifestyle getLifestyleByMemberId(Member loginMember) {
         return myLifestyleRepository.findByMemberId(loginMember.getId())
                 .orElseThrow(MyLifestyleNotExistsException::new);
+    }
+
+    public LifestyleResponseDto findMyLifestyle(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        MyLifestyle myLifestyle = getLifestyleByMemberId(loginMember);
+
+        return LifestyleResponseDto.fromEntity(myLifestyle);
     }
 }
