@@ -17,6 +17,10 @@ public enum ExerciseType {
     }
 
     public static ExerciseType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (ExerciseType type : ExerciseType.values()) {
             if (type.description.equals(description)) {
                 return type;
