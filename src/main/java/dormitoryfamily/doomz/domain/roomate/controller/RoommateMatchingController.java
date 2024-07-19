@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.controller;
 
 import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.MyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.service.MyLifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceLifestyleService;
@@ -10,10 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +29,16 @@ public class RoommateMatchingController {
 
         myLifestyleService.saveMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.created());
+    }
+
+    @PatchMapping("/my/lifestyle")
+    public ResponseEntity<ResponseDto<Void>> editMyLifestyle(
+            @RequestBody @Valid UpdateMyLifestyleRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        myLifestyleService.editMyLifestyle(requestDto, principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 
     @PostMapping("/preference/lifestyle")

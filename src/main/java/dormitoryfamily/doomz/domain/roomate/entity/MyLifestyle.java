@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.entity;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -159,5 +160,74 @@ public class MyLifestyle {
         this.exerciseType = exerciseType;
         this.insectToleranceType = insectToleranceType;
         this.drunkHabit = drunkHabit;
+    }
+
+    public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto) {
+        if (requestDto.drunkHabit() != null) {
+            this.drunkHabit = requestDto.drunkHabit();
+        }
+        if (requestDto.sleepTime() != null) {
+            this.sleepTimeType = SleepTimeType.fromDescription(requestDto.sleepTime());
+        }
+        if (requestDto.wakeUpTime() != null) {
+            this.wakeUpTimeType = WakeUpTimeType.fromDescription(requestDto.wakeUpTime());
+        }
+        if (requestDto.sleepingHabit() != null) {
+            this.sleepingHabitType = SleepingHabitType.fromDescription(requestDto.sleepingHabit());
+        }
+        if (requestDto.sleepingSensitivity() != null) {
+            this.sleepingSensitivityType = SleepingSensitivityType.fromDescription(requestDto.sleepingSensitivity());
+        }
+        if (requestDto.smoking() != null) {
+            this.smokingType = SmokingType.fromDescription(requestDto.smoking());
+        }
+        if (requestDto.drinkingFrequency() != null) {
+            this.drinkingFrequencyType = DrinkingFrequencyType.fromDescription(requestDto.drinkingFrequency());
+        }
+        if (requestDto.showerTime() != null) {
+            this.showerTimeType = ShowerTimeType.fromDescription(requestDto.showerTime());
+        }
+        if (requestDto.showerDuration() != null) {
+            this.showerDurationType = ShowerDurationType.fromDescription(requestDto.showerDuration());
+        }
+        if (requestDto.cleaningFrequency() != null) {
+            this.cleaningFrequencyType = CleaningFrequencyType.fromDescription(requestDto.cleaningFrequency());
+        }
+        if (requestDto.heatTolerance() != null) {
+            this.heatToleranceType = HeatToleranceType.fromDescription(requestDto.heatTolerance());
+        }
+        if (requestDto.coldTolerance() != null) {
+            this.coldToleranceType = ColdToleranceType.fromDescription(requestDto.coldTolerance());
+        }
+        if (requestDto.MBTI() != null) {
+            this.mbtiType = MBTIType.fromDescription(requestDto.MBTI());
+        }
+        if (requestDto.visitHomeFrequency() != null) {
+            this.visitHomeFrequencyType = VisitHomeFrequencyType.fromDescription(requestDto.visitHomeFrequency());
+        }
+        if (requestDto.lateNightSnack() != null) {
+            this.lateNightSnackType = LateNightSnackType.fromDescription(requestDto.lateNightSnack());
+        }
+        if (requestDto.snackInRoom() != null) {
+            this.snackInRoomType = SnackInRoomType.fromDescription(requestDto.snackInRoom());
+        }
+        if (requestDto.phoneSound() != null) {
+            this.phoneSoundType = PhoneSoundType.fromDescription(requestDto.phoneSound());
+        }
+        if (requestDto.perfumeUsage() != null) {
+            this.perfumeUsageType = PerfumeUsageType.fromDescription(requestDto.perfumeUsage());
+        }
+        if (requestDto.studyLocation() != null) {
+            this.studyLocationType = StudyLocationType.fromDescription(requestDto.studyLocation());
+        }
+        if (requestDto.examPreparation() != null) {
+            this.examPreparationType = ExamPreparationType.fromDescription(requestDto.examPreparation());
+        }
+        if (requestDto.exercise() != null) {
+            this.exerciseType = ExerciseType.fromDescription(requestDto.exercise());
+        }
+        if (requestDto.insectTolerance() != null) {
+            this.insectToleranceType = InsectToleranceType.fromDescription(requestDto.insectTolerance());
+        }
     }
 }

@@ -95,6 +95,7 @@ public enum ErrorCode {
     EXAM_PREPARATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 시험 타입은 존재하지 않습니다."),
     EXERCISE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 운동 타입은 존재하지 않습니다."),
     INSECT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
+    MY_LIFESTYLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
