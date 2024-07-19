@@ -42,6 +42,7 @@ public enum ErrorCode {
     //wish
     ALREADY_WISHED_ARTICLE(HttpStatus.CONFLICT, "이미 찜한 게시글입니다."),
     ARTICLE_IS_NOT_WISHED(HttpStatus.CONFLICT, "찜하지 않은 게시글입니다."),
+    CANNOT_WISH_YOUR_ARTICLE(HttpStatus.CONFLICT,"본인이 작성한 게시글은 찜할 수 없습니다."),
 
     //token
     REFRESH_TOKEN_NOT_EXISTS(HttpStatus.BAD_REQUEST, "리프레시 토큰이 존재하지 않습니다."),
