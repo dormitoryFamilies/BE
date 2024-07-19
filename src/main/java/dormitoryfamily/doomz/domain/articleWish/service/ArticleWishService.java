@@ -50,17 +50,17 @@ public class ArticleWishService {
     }
 
     private void validateArticleWishRequest(Member loginMember, Article article){
-        checkArticleIsNotWished(loginMember.getId(), article.getId());
-        checkIsArticleWriter(loginMember.getId(), article);
+        checkArticleIfNotWished(loginMember.getId(), article.getId());
+        checkIfNotArticleWriter(loginMember.getId(), article);
     }
 
-    private void checkArticleIsNotWished(Long memberId, Long articleId) {
+    private void checkArticleIfNotWished(Long memberId, Long articleId) {
         if (articleWishRepository.existsByMemberIdAndArticleId(memberId, articleId)) {
             throw new AlreadyWishedArticleException();
         }
     }
 
-    private void checkIsArticleWriter(Long memberId, Article article){
+    private void checkIfNotArticleWriter(Long memberId, Article article){
         if(Objects.equals(article.getMember().getId(), memberId)){
             throw new CannotWishYourArticleException();
         }
