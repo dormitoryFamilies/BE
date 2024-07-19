@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.entity;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
