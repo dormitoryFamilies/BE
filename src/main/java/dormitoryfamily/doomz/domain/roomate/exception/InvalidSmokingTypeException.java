@@ -3,11 +3,11 @@ package dormitoryfamily.doomz.domain.roomate.exception;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
 
-public class InvalidSleepingTimeTypeException extends ApplicationException {
+public class InvalidSmokingTypeException extends ApplicationException {
 
-    private static final ErrorCode ERROR_CODE = ErrorCode.SLEEPING_TIME_NOT_EXISTS;
+    private static final ErrorCode ERROR_CODE = ErrorCode.SMOKING_NOT_EXISTS;
 
-    public InvalidSleepingTimeTypeException() {
+    public InvalidSmokingTypeException() {
         super(ERROR_CODE);
     }
 }

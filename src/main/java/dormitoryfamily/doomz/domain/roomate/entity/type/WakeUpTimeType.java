@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.member.exception.InvalidCollegeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.InvalidWakeUpTimeTypeException;
 import lombok.Getter;
 
 @Getter
@@ -28,6 +28,6 @@ public enum WakeUpTimeType {
                 return type;
             }
         }
-        throw new InvalidCollegeTypeException();
+        throw new InvalidWakeUpTimeTypeException();
     }
 }
