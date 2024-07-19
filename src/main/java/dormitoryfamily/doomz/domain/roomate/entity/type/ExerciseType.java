@@ -1,15 +1,14 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.member.exception.InvalidCollegeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.InvalidExerciseTypeException;
 import lombok.Getter;
-
 
 @Getter
 public enum ExerciseType {
 
-    NO("안해요"),
-    AT_DORMITORY("긱사에서"),
-    AT_GYM("헬스장에서");
+    NONE("안해요"),
+    DORMITORY("긱사에서"),
+    GYM("헬스장에서");
 
     private final String description;
 
@@ -23,6 +22,6 @@ public enum ExerciseType {
                 return type;
             }
         }
-        throw new InvalidCollegeTypeException();
+        throw new InvalidExerciseTypeException();
     }
 }

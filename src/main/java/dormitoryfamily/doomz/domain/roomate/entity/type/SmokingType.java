@@ -1,14 +1,13 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.member.exception.InvalidCollegeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.InvalidSmokingTypeException;
 import lombok.Getter;
 
 @Getter
 public enum SmokingType {
-    NONE("없음"),
-    SOMETIMES("가끔"),
-    OCCASIONALLY("종종"),
-    OFTEN("자주");
+
+    NON_SMOKER("비흡연"),
+    SMOKER("흡연");
 
     private final String description;
 
@@ -22,6 +21,6 @@ public enum SmokingType {
                 return type;
             }
         }
-        throw new InvalidCollegeTypeException();
+        throw new InvalidSmokingTypeException();
     }
 }
