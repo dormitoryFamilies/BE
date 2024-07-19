@@ -4,6 +4,7 @@ import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record MyLifestyleRequestDto(
 
@@ -40,7 +41,9 @@ public record MyLifestyleRequestDto(
         @NotBlank(message = "필수 값 입니다.")
         String examPreparation,
 
+        @Size(max = 12, message = "최대 글자수는 12자 입니다.")
         String drunkHabit,
+
         String showerTime,
         String showerDuration,
         String MBTI,
