@@ -14,10 +14,10 @@ import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.article.repository.ArticleImageRepository;
 import dormitoryfamily.doomz.domain.article.repository.ArticleRepository;
+import dormitoryfamily.doomz.domain.articleWish.entity.ArticleWish;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
-import dormitoryfamily.doomz.domain.wish.entity.Wish;
-import dormitoryfamily.doomz.domain.wish.repository.WishRepository;
+import dormitoryfamily.doomz.domain.articleWish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ArticleImageRepository articleImageRepository;
-    private final WishRepository wishRepository;
+    private final ArticleWishRepository articleWishRepository;
 
     public CreateArticleResponseDto save(PrincipalDetails principalDetails, ArticleRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
@@ -76,7 +76,7 @@ public class ArticleService {
     }
 
     private boolean checkIfArticleIsWished(Article article, Member loginMember) {
-        return wishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
+        return articleWishRepository.existsByMemberIdAndArticleId(loginMember.getId(), article.getId());
     }
 
     public void updateArticle(PrincipalDetails principalDetails, Long articleId, ArticleRequestDto requestDto) {
@@ -131,7 +131,7 @@ public class ArticleService {
     }
 
     private List<SimpleArticleResponseDto> getSimpleArticleResponseDtos(Member loginMember, Slice<Article> articles) {
-        List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
+        List<ArticleWish> memberWishes = articleWishRepository.findAllByMemberId(loginMember.getId());
 
         return articles.stream()
                 .map(article -> {
@@ -141,7 +141,7 @@ public class ArticleService {
                 .toList();
     }
 
-    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<Wish> memberWishes) {
+    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<ArticleWish> memberWishes) {
         return memberWishes.stream()
                 .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
@@ -181,7 +181,7 @@ public class ArticleService {
     }
 
     private List<SimpleArticleResponseDto> getSimpleArticleResponseDtosWithMember(Member loginMember, Slice<Article> articles) {
-        List<Wish> memberWishes = wishRepository.findAllByMemberId(loginMember.getId());
+        List<ArticleWish> memberWishes = articleWishRepository.findAllByMemberId(loginMember.getId());
 
         return articles.stream()
                 .map(article -> {

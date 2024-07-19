@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.wish.entity;
+package dormitoryfamily.doomz.domain.articleWish.entity;
 
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.member.entity.Member;
@@ -14,8 +14,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "wish")
-public class Wish extends BaseTimeEntity {
+public class ArticleWish extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +30,12 @@ public class Wish extends BaseTimeEntity {
     private Article article;
 
     @Builder
-    public Wish(Member member, Article article) {
+    public ArticleWish(Member member, Article article) {
         this.member = member;
         this.article = article;
     }
 
-    public static Wish createWish(Member member, Article article){
-        return Wish.builder().member(member).article(article).build();
+    public static ArticleWish createArticleWish(Member member, Article article){
+        return ArticleWish.builder().member(member).article(article).build();
     }
 }
