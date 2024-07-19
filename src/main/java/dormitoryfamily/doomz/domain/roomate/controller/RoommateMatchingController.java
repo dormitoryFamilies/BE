@@ -52,11 +52,12 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @PostMapping("/preference/lifestyles")
+    @PostMapping("/preferences/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerPreferenceLifestyle(
-            @RequestBody PreferenceLifestyleRequestDto requestDto,
+            @RequestBody @Valid PreferenceLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
+
         preferenceLifestyleService.savePreferenceLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }

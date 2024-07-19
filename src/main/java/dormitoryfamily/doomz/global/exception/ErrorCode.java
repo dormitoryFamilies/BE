@@ -73,7 +73,8 @@ public enum ErrorCode {
 
     //roommate
     ALREADY_REGISTER_MY_LIFESTYLE(HttpStatus.CONFLICT, "나의 라이프 스타일을 이미 설정했습니다."),
-    LIFE_STYLE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "생활 타입은 유효하지 않습니다."),
+    ALREADY_REGISTER_PREFERENCE_ORDER(HttpStatus.CONFLICT, "선호 우선순위를 이미 설정했습니다."),
+    LIFESTYLE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 생활 타입은 존재하지 않습니다."),
     SLEEPING_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
     WAKE_UP_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
     SLEEPING_HABIT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 잠버릇은 존재하지 않습니다."),
@@ -96,6 +97,7 @@ public enum ErrorCode {
     EXERCISE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 운동 타입은 존재하지 않습니다."),
     INSECT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
     MY_LIFESTYLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
+    WRONG_PROPERTY(HttpStatus.BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
