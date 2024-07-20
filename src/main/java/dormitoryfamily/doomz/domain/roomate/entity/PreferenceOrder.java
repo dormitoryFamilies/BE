@@ -14,7 +14,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PreferenceLifestyle {
+public class PreferenceOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +34,10 @@ public class PreferenceLifestyle {
     private Integer preferenceOrder;
 
     @Builder
-    public PreferenceLifestyle(Member member,
-                               LifestyleType lifestyleType,
-                               Enum<?> lifestyleDetail,
-                               Integer preferenceOrder) {
+    public PreferenceOrder(Member member,
+                           LifestyleType lifestyleType,
+                           Enum<?> lifestyleDetail,
+                           Integer preferenceOrder) {
         this.member = member;
         this.lifestyleType = lifestyleType;
         this.lifestyleDetail = lifestyleDetail;
