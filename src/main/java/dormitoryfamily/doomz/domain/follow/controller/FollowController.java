@@ -27,7 +27,7 @@ public class FollowController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
         followService.saveFollow(principalDetails, memberId);
-        return ResponseEntity.ok(ResponseDto.created());
+       return ResponseEntity.ok(ResponseDto.created());
     }
 
     @DeleteMapping("/{memberId}/follows")
