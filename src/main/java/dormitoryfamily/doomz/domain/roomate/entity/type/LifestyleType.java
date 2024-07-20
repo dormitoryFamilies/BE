@@ -1,36 +1,37 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
 import lombok.Getter;
 
 @Getter
 public enum LifestyleType {
 
-    SLEEP_TIME(SleepTimeType.class), //수면시간
-    WAKE_UP_TIME(WakeUpTimeType.class), //기상시간
-    SLEEPING_HABIT(SleepingHabitType.class), //잠버릇
-    SLEEPING_SENSITIVITY(SleepingSensitivityType.class), //잠귀
-    SMOKING(SmokingType.class), //흡연 여부
-    DRINKING_FREQUENCY(DrinkingFrequencyType.class), //음주 빈도
-    SHOWER_TIME(ShowerTimeType.class), //샤워 시간대
-    SHOWER_DURATION(ShowerDurationType.class), //샤워시간
-    CLEANING_HABIT(CleaningFrequencyType.class), //청소
-    HEAT_TOLERANCE(HeatToleranceType.class), //더위
-    COLD_TOLERANCE(ColdToleranceType.class), //추위
-    MBTI(MBTIType.class), //MBTI
-    VISIT_HOME_FREQUENCY(VisitHomeFrequencyType.class), //본가가는 빈도
-    LATE_NIGHT_SNACK(LateNightSnackType.class), //야식
-    SNACK_IN_ROOM(SnackInRoomType.class), //야식 방안에서
-    PHONE_SOUND(PhoneSoundType.class), //휴대폰 소리
-    PERFUME_USAGE(PerfumeUsageType.class), //향수
-    STUDY_LOCATION(StudyLocationType.class), //공부 장소
-    EXAM_PREPARATION(ExamPreparationType.class), //시험
-    EXERCISE(ExerciseType.class), //운동
-    INSECT_TOLERANCE(InsectToleranceType.class); //벌레
+    SLEEP_TIME("sleepTime", SleepTimeType.class), //수면시간
+    WAKE_UP_TIME("wakeUpTime", WakeUpTimeType.class), //기상시간
+    SLEEPING_HABIT("sleepingHabit", SleepingHabitType.class), //잠버릇
+    SLEEPING_SENSITIVITY("sleepingSensitivity", SleepingSensitivityType.class), //잠귀
+    SMOKING("smoking", SmokingType.class), //흡연 여부
+    DRINKING_FREQUENCY("drinkingFrequency", DrinkingFrequencyType.class), //음주 빈도
+    SHOWER_TIME("showerTime", ShowerTimeType.class), //샤워 시간대
+    SHOWER_DURATION("showerDuration", ShowerDurationType.class), //샤워시간
+    CLEANING_FREQUENCY("cleaningFrequency", CleaningFrequencyType.class), //청소
+    HEAT_TOLERANCE("heatTolerance", HeatToleranceType.class), //더위
+    COLD_TOLERANCE("coldTolerance", ColdToleranceType.class), //추위
+    MBTI("MBTI", MBTIType.class), //MBTI
+    VISIT_HOME_FREQUENCY("visitHomeFrequency", VisitHomeFrequencyType.class), //본가가는 빈도
+    LATE_NIGHT_SNACK("lateNightSnack", LateNightSnackType.class), //야식
+    SNACK_IN_ROOM("snackInRoom", SnackInRoomType.class), //야식 방안에서
+    PHONE_SOUND("phoneSound", PhoneSoundType.class), //휴대폰 소리
+    PERFUME_USAGE("perfumeUsage", PerfumeUsageType.class), //향수
+    STUDY_LOCATION("studyLocation", StudyLocationType.class), //공부 장소
+    EXAM_PREPARATION("examPreparation", ExamPreparationType.class), //시험
+    EXERCISE("exercise", ExerciseType.class), //운동
+    INSECT_TOLERANCE("insectTolerance", InsectToleranceType.class); //벌레
 
+    private final String type;
     private final Class<? extends Enum<?>> enumClass;
 
-    LifestyleType(Class<? extends Enum<?>> enumClass) {
+    LifestyleType(String type, Class<? extends Enum<?>> enumClass) {
+        this.type = type;
         this.enumClass = enumClass;
     }
 
@@ -40,7 +41,7 @@ public enum LifestyleType {
                 return lifestyleType;
             }
         }
-        throw new InvalidLifestyleTypeException();
+        return null;
     }
 
     public Enum<?> getLifestyleValue(String value) {
@@ -54,7 +55,7 @@ public enum LifestyleType {
             case DRINKING_FREQUENCY -> DrinkingFrequencyType.fromDescription(value);
             case SHOWER_TIME -> ShowerTimeType.fromDescription(value);
             case SHOWER_DURATION -> ShowerDurationType.fromDescription(value);
-            case CLEANING_HABIT -> CleaningFrequencyType.fromDescription(value);
+            case CLEANING_FREQUENCY -> CleaningFrequencyType.fromDescription(value);
             case HEAT_TOLERANCE -> HeatToleranceType.fromDescription(value);
             case COLD_TOLERANCE -> ColdToleranceType.fromDescription(value);
             case MBTI -> MBTIType.fromDescription(value);

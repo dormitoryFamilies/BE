@@ -17,6 +17,10 @@ public enum InsectToleranceType {
     }
 
     public static InsectToleranceType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (InsectToleranceType type : InsectToleranceType.values()) {
             if (type.description.equals(description)) {
                 return type;

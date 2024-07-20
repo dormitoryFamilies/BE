@@ -18,6 +18,10 @@ public enum VisitHomeFrequencyType {
     }
 
     public static VisitHomeFrequencyType fromDescription(String description) {
+        if(description == null || description.trim().isEmpty()) {
+            return null;
+        }
+
         for (VisitHomeFrequencyType type : VisitHomeFrequencyType.values()) {
             if (type.description.equals(description)) {
                 return type;

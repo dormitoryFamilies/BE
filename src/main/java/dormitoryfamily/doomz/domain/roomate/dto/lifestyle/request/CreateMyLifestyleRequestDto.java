@@ -1,35 +1,62 @@
-package dormitoryfamily.doomz.domain.roomate.dto.mylifestyle.request;
+package dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.type.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public record MyLifestyleRequestDto(
+public record CreateMyLifestyleRequestDto(
+
+        @NotBlank(message = "필수 값 입니다.")
         String sleepTime,
+
+        @NotBlank(message = "필수 값 입니다.")
         String wakeUpTime,
+
+        @NotBlank(message = "필수 값 입니다.")
         String sleepingHabit,
+
+        @NotBlank(message = "필수 값 입니다.")
         String sleepingSensitivity,
+
+        @NotBlank(message = "필수 값 입니다.")
         String smoking,
+
+        @NotBlank(message = "필수 값 입니다.")
         String drinkingFrequency,
+
+        @NotBlank(message = "필수 값 입니다.")
+        String cleaningFrequency,
+
+        @NotBlank(message = "필수 값 입니다.")
+        String heatTolerance,
+
+        @NotBlank(message = "필수 값 입니다.")
+        String coldTolerance,
+
+        @NotBlank(message = "필수 값 입니다.")
+        String perfumeUsage,
+
+        @NotBlank(message = "필수 값 입니다.")
+        String examPreparation,
+
+        @Size(max = 12, message = "최대 글자수는 12자 입니다.")
         String drunkHabit,
+
         String showerTime,
         String showerDuration,
-        String cleaningFrequency,
-        String heatTolerance,
-        String coldTolerance,
         String MBTI,
         String visitHomeFrequency,
         String lateNightSnack,
         String snackInRoom,
         String phoneSound,
-        String perfumeUsage,
         String studyLocation,
-        String examPreparation,
         String exercise,
         String insectTolerance
 
 ) {
-    public static MyLifestyle toEntity(Member member, MyLifestyleRequestDto requestDto) {
+    public static MyLifestyle toEntity(Member member, CreateMyLifestyleRequestDto requestDto) {
         return MyLifestyle.builder()
                 .member(member)
                 .sleepTimeType(SleepTimeType.fromDescription(requestDto.sleepTime()))
