@@ -16,10 +16,10 @@ public class MatchingResult {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_a_id")
-    private Member memberA;
+    @JoinColumn(name = "sender_id")
+    private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_b_id")
-    private Member memberB;
+    @JoinColumn(name = "receiver_id")
+    private Member receiver;
 }
