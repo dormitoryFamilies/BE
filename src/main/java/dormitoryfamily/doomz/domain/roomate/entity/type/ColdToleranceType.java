@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidColdToleranceTypeEx
 import lombok.Getter;
 
 @Getter
-public enum ColdToleranceType {
+public enum ColdToleranceType implements Describable {
 
     LOW("적게 탐"),
     MEDIUM("조금 탐"),

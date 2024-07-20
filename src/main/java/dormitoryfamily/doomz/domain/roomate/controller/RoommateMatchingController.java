@@ -3,9 +3,10 @@ package dormitoryfamily.doomz.domain.roomate.controller;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
-import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceOrderRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.service.MyLifestyleService;
-import dormitoryfamily.doomz.domain.roomate.service.PreferenceLifestyleService;
+import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoommateMatchingController {
 
     private final MyLifestyleService myLifestyleService;
-    private final PreferenceLifestyleService preferenceLifestyleService;
+    private final PreferenceOrderService preferenceOrderService;
 
     @PostMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerMyLifestyle(
@@ -55,13 +56,23 @@ public class RoommateMatchingController {
     /**
      * 선호 우선순위의 등록, 수정 모두 사용
      */
-    @PostMapping("/preferences/lifestyles")
+    @PostMapping("/my/preferences/lifestyles")
     public ResponseEntity<ResponseDto<Void>> setPreferenceOrder(
             @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        preferenceLifestyleService.setPreferenceOrder(requestDto, principalDetails);
+        preferenceOrderService.setPreferenceOrder(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @GetMapping("/my/preferences/lifestyles")
+    public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getMyPreferenceOrder(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        PreferenceOrderResponseDto responseDto =
+                preferenceOrderService.findPreferenceOrder(principalDetails.getMember().getId());
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

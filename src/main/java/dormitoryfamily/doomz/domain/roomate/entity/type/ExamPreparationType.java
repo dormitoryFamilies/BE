@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidExamPreparationType
 import lombok.Getter;
 
 @Getter
-public enum ExamPreparationType {
+public enum ExamPreparationType implements Describable {
 
     PREPARING("시험 준비"),
     NONE("해당 없어요");

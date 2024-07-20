@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidDrinkingFrequencyTy
 import lombok.Getter;
 
 @Getter
-public enum DrinkingFrequencyType {
+public enum DrinkingFrequencyType implements Describable {
 
     NONE("없음"),
     OCCASIONAL("가끔"),

@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidHeatToleranceTypeEx
 import lombok.Getter;
 
 @Getter
-public enum HeatToleranceType {
+public enum HeatToleranceType implements Describable {
 
     LOW("적게 탐"),
     MEDIUM("조금 탐"),
