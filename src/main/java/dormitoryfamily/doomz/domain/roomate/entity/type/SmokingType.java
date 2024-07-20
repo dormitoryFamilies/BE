@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSmokingTypeExceptio
 import lombok.Getter;
 
 @Getter
-public enum SmokingType {
+public enum SmokingType implements Describable {
 
     NON_SMOKER("비흡연"),
     SMOKER("흡연");

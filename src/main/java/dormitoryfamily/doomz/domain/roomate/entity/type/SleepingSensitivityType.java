@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingSensitivity
 import lombok.Getter;
 
 @Getter
-public enum SleepingSensitivityType {
+public enum SleepingSensitivityType implements Describable {
 
     DARK("어두움"),
     LIGHT("밝음"),

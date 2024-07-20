@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidPerfumeUsageTypeExc
 import lombok.Getter;
 
 @Getter
-public enum PerfumeUsageType {
+public enum PerfumeUsageType implements Describable {
 
     NONE("미사용"),
     SOMETIMES("가끔"),
