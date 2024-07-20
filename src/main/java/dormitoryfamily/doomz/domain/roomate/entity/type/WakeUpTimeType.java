@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidWakeUpTimeTypeExcep
 import lombok.Getter;
 
 @Getter
-public enum WakeUpTimeType {
+public enum WakeUpTimeType implements Describable {
 
     BEFORE_0400("오전 4시 이전"),
     _0400("오전 4시"),

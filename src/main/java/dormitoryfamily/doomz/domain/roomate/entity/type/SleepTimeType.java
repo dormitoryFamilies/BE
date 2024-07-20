@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingTimeTypeExc
 import lombok.Getter;
 
 @Getter
-public enum SleepTimeType {
+public enum SleepTimeType implements Describable {
 
     BEFORE_2100("오후 9시 이전"),
     _2100("오후 9시"),
