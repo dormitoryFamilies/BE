@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request;
+package dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request;
 
 import jakarta.validation.constraints.NotBlank;
 
