@@ -5,7 +5,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidCleaningHabitTypeEx
 import lombok.Getter;
 
 @Getter
-public enum CleaningFrequencyType {
+public enum CleaningFrequencyType implements Describable {
 
     IMMEDIATELY("바로바로"),
     OCCASIONALLY("가끔"),

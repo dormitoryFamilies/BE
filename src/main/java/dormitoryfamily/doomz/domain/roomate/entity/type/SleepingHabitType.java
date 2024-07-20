@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingHabitTypeEx
 import lombok.Getter;
 
 @Getter
-public enum SleepingHabitType {
+public enum SleepingHabitType implements Describable {
 
     TEETH_GRINDING("이갈이"),
     SNORING("코골이"),
