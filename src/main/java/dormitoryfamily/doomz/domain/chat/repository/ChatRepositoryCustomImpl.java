@@ -32,7 +32,7 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
                 )
                 .orderBy(getOrderByExpression(sortType))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         return createSlice(content, pageable);
