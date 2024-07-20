@@ -1,10 +1,9 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceLifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
-import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterPreferenceOrderException;
 import dormitoryfamily.doomz.domain.roomate.repository.preferencelifestyle.PreferenceRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,9 @@ public class PreferenceLifestyleService {
 
     private final PreferenceRepository preferenceRepository;
 
-    public void savePreferenceLifestyle(PreferenceLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void setPreferenceOrder(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        checkAlreadySetPreferenceOrder(loginMember);
+        ifAlreadySetPreferenceOrderDeleteBy(loginMember);
 
         savePreference(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), 1);
         savePreference(loginMember, requestDto.secondPreferenceType(), requestDto.secondPreference(), 2);
@@ -34,9 +33,10 @@ public class PreferenceLifestyleService {
         preferenceRepository.save(new PreferenceLifestyle(member, preferenceType, preferenceDetail, order));
     }
 
-    private void checkAlreadySetPreferenceOrder(Member loginMember) {
+    private void ifAlreadySetPreferenceOrderDeleteBy(Member loginMember) {
+        // 이미 저장한 상태라면 삭제
         if (preferenceRepository.existsByMemberId(loginMember.getId())) {
-            throw new AlreadyRegisterPreferenceOrderException();
+            preferenceRepository.deleteByMember(loginMember);
         }
     }
 }

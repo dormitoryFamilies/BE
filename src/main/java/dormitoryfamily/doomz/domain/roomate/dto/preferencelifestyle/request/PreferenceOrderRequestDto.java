@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record PreferenceLifestyleRequestDto(
+public record PreferenceOrderRequestDto(
 
         @NotBlank(message = "필수 값 입니다.")
         String firstPreferenceType,

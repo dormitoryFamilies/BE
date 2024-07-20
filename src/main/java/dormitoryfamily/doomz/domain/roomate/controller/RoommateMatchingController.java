@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.roomate.controller;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
-import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferencelifestyle.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.service.MyLifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceLifestyleService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -52,13 +52,16 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
+    /**
+     * 선호 우선순위의 등록, 수정 모두 사용
+     */
     @PostMapping("/preferences/lifestyles")
-    public ResponseEntity<ResponseDto<Void>> registerPreferenceLifestyle(
-            @RequestBody @Valid PreferenceLifestyleRequestDto requestDto,
+    public ResponseEntity<ResponseDto<Void>> setPreferenceOrder(
+            @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        preferenceLifestyleService.savePreferenceLifestyle(requestDto, principalDetails);
+        preferenceLifestyleService.setPreferenceOrder(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 }
