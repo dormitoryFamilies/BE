@@ -53,4 +53,13 @@ public class PreferenceOrderService {
 
         return PreferenceOrderResponseDto.fromEntity(preferenceOrders);
     }
+
+    /**
+     * 개발용 API
+     * 삭제 예정
+     */
+    public void deleteMyLifestyle(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        preferenceOrderRepository.deleteByMember(loginMember);
+    }
 }
