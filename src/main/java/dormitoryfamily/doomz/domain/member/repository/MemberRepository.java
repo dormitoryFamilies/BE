@@ -1,6 +1,8 @@
 package dormitoryfamily.doomz.domain.member.repository;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,9 +22,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m " +
             "WHERE m.id NOT IN (SELECT f.following.id FROM Follow f WHERE f.follower.id = :followerId) " +
-            "AND m.authority = 'ROLE_VERIFIED_STUDENT' "+
+            "AND m.authority = 'ROLE_VERIFIED_STUDENT' " +
             "ORDER BY m.createdAt DESC")
     List<Member> findAllMembersExcludingFollowed(Long followerId);
 
     boolean existsByNickname(String nickname);
+
+    @Query("SELECT m FROM Member m " +
+            "WHERE m.authority = 'ROLE_MEMBER' " +
+            "ORDER BY m.createdAt ASC")
+    Page<Member> findNonVerifiedMember(Pageable pageable);
 }
