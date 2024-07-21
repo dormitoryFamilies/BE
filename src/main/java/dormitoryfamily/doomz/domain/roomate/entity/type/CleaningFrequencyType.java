@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.member.exception.InvalidCollegeTypeException;
 import dormitoryfamily.doomz.domain.roomate.exception.InvalidCleaningHabitTypeException;
 import lombok.Getter;
 
