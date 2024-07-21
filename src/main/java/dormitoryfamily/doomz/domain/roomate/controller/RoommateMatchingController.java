@@ -49,7 +49,17 @@ public class RoommateMatchingController {
     ) {
 
         LifestyleResponseDto responseDto =
-                myLifestyleService.findMyLifestyle(principalDetails);
+                myLifestyleService.findLifestyle(principalDetails.getMember().getId());
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/lifestyles/{memberId}")
+    public ResponseEntity<ResponseDto<LifestyleResponseDto>> getLifestyle(
+            @PathVariable Long memberId
+    ) {
+
+        LifestyleResponseDto responseDto =
+                myLifestyleService.findLifestyle(memberId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
