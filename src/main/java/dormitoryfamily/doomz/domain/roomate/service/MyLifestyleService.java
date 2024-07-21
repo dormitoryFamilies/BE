@@ -1,6 +1,8 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MyLifestyleService {
 
     private final MyLifestyleRepository myLifestyleRepository;
+    private final MemberRepository memberRepository;
 
     public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails){
         Member loginMember = principalDetails.getMember();
@@ -36,19 +39,19 @@ public class MyLifestyleService {
 
     public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        MyLifestyle myLifestyle = getLifestyleByMemberId(loginMember);
+        MyLifestyle myLifestyle = getLifestyleByMember(loginMember);
 
         myLifestyle.updateMyLifestyle(requestDto);
     }
 
-    private MyLifestyle getLifestyleByMemberId(Member loginMember) {
+    private MyLifestyle getLifestyleByMember(Member loginMember) {
         return myLifestyleRepository.findByMemberId(loginMember.getId())
                 .orElseThrow(MyLifestyleNotExistsException::new);
     }
 
-    public LifestyleResponseDto findMyLifestyle(PrincipalDetails principalDetails) {
-        Member loginMember = principalDetails.getMember();
-        MyLifestyle myLifestyle = getLifestyleByMemberId(loginMember);
+    public LifestyleResponseDto findLifestyle(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        MyLifestyle myLifestyle = getLifestyleByMember(member);
 
         return LifestyleResponseDto.fromEntity(myLifestyle);
     }
