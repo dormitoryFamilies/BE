@@ -6,10 +6,10 @@ import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
-import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
+import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterMyLifestyleException;
-import dormitoryfamily.doomz.domain.roomate.exception.MyLifestyleNotExistsException;
-import dormitoryfamily.doomz.domain.roomate.repository.mylifestyle.MyLifestyleRepository;
+import dormitoryfamily.doomz.domain.roomate.exception.LifestyleNotExistsException;
+import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,41 +18,41 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class MyLifestyleService {
+public class LifestyleService {
 
-    private final MyLifestyleRepository myLifestyleRepository;
+    private final LifestyleRepository lifestyleRepository;
     private final MemberRepository memberRepository;
 
     public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails){
         Member loginMember = principalDetails.getMember();
         checkAlreadySetLifestyle(loginMember);
-        MyLifestyle myLifeStyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
+        Lifestyle lifeStyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
 
-        myLifestyleRepository.save(myLifeStyle);
+        lifestyleRepository.save(lifeStyle);
     }
 
     private void checkAlreadySetLifestyle(Member loginMember) {
-        if (myLifestyleRepository.existsByMemberId(loginMember.getId())) {
+        if (lifestyleRepository.existsByMemberId(loginMember.getId())) {
             throw new AlreadyRegisterMyLifestyleException();
         }
     }
 
     public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        MyLifestyle myLifestyle = getLifestyleByMember(loginMember);
+        Lifestyle lifestyle = getLifestyleByMember(loginMember);
 
-        myLifestyle.updateMyLifestyle(requestDto);
+        lifestyle.updateMyLifestyle(requestDto);
     }
 
-    private MyLifestyle getLifestyleByMember(Member loginMember) {
-        return myLifestyleRepository.findByMemberId(loginMember.getId())
-                .orElseThrow(MyLifestyleNotExistsException::new);
+    private Lifestyle getLifestyleByMember(Member loginMember) {
+        return lifestyleRepository.findByMemberId(loginMember.getId())
+                .orElseThrow(LifestyleNotExistsException::new);
     }
 
     public LifestyleResponseDto findLifestyle(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        MyLifestyle myLifestyle = getLifestyleByMember(member);
+        Lifestyle lifestyle = getLifestyleByMember(member);
 
-        return LifestyleResponseDto.fromEntity(myLifestyle);
+        return LifestyleResponseDto.fromEntity(lifestyle);
     }
 }

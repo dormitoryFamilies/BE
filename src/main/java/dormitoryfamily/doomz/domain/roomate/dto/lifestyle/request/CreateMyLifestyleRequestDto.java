@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.roomate.entity.MyLifestyle;
+import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -56,8 +56,8 @@ public record CreateMyLifestyleRequestDto(
         String insectTolerance
 
 ) {
-    public static MyLifestyle toEntity(Member member, CreateMyLifestyleRequestDto requestDto) {
-        return MyLifestyle.builder()
+    public static Lifestyle toEntity(Member member, CreateMyLifestyleRequestDto requestDto) {
+        return Lifestyle.builder()
                 .member(member)
                 .sleepTimeType(SleepTimeType.fromDescription(requestDto.sleepTime()))
                 .wakeUpTimeType(WakeUpTimeType.fromDescription(requestDto.wakeUpTime()))
