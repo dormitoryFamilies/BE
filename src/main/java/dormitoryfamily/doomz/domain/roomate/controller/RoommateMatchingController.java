@@ -53,7 +53,7 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/lifestyles/{memberId}")
+    @GetMapping("/lifestyles/members/{memberId}")
     public ResponseEntity<ResponseDto<LifestyleResponseDto>> getLifestyle(
             @PathVariable Long memberId
     ) {
@@ -64,9 +64,35 @@ public class RoommateMatchingController {
     }
 
     /**
+     * 개발용 삭제 API
+     * 실제 서비스시 삭제 예정
+     */
+    @DeleteMapping("/my/lifestyles")
+    public ResponseEntity<ResponseDto<Void>> deleteMyLifestyle(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        lifestyleService.deleteMyLifestyle(principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    /**
+     * 개발용 삭제 API
+     * 실제 서비스시 삭제 예정
+     */
+    @DeleteMapping("/my/preference-orders")
+    public ResponseEntity<ResponseDto<Void>> deleteMyPreferenceOrder(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        preferenceOrderService.deleteMyLifestyle(principalDetails);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    /**
      * 선호 우선순위의 등록, 수정 모두 사용
      */
-    @PostMapping("/my/preferences/lifestyles")
+    @PostMapping("/my/preference-orders")
     public ResponseEntity<ResponseDto<Void>> setPreferenceOrder(
             @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -76,7 +102,7 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/my/preferences/lifestyles")
+    @GetMapping("/my/preference-orders")
     public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getMyPreferenceOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
@@ -86,7 +112,7 @@ public class RoommateMatchingController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/preferences/lifestyles/{memberId}")
+    @GetMapping("/preference-orders/members/{memberId}")
     public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getPreferenceOrder(
             @PathVariable Long memberId
     ) {
