@@ -75,4 +75,14 @@ public class RoommateMatchingController {
                 preferenceOrderService.findPreferenceOrder(principalDetails.getMember().getId());
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/preferences/lifestyles/{memberId}")
+    public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getPreferenceOrder(
+            @PathVariable Long memberId
+    ) {
+
+        PreferenceOrderResponseDto responseDto =
+                preferenceOrderService.findPreferenceOrder(memberId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }
