@@ -25,13 +25,4 @@ public enum CleaningFrequencyType implements Describable {
         }
         throw new InvalidCleaningHabitTypeException();
     }
-
-    public CleaningFrequencyType abc(String str) {
-        for (CleaningFrequencyType type : CleaningFrequencyType.values()) {
-            if (type.description.equals(str)) {
-                return type;
-            }
-        }
-        throw new InvalidCollegeTypeException();
-    }
 }
