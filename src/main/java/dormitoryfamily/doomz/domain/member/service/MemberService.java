@@ -96,4 +96,10 @@ public class MemberService {
 
         return MemberProfileListResponseDto.from(memberInfoDtos);
     }
+
+    public RoommateMatchingMemberProfileResponseDto findRoommateProfile(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotExistsException::new);
+        return RoommateMatchingMemberProfileResponseDto.fromEntity(member);
+    }
 }
