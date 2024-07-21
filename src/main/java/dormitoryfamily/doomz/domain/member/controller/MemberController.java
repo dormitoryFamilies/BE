@@ -98,4 +98,24 @@ public class MemberController {
         memberService.setUpProfile(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    @GetMapping("/matching-profiles/members/{memberId}")
+    public ResponseEntity<ResponseDto<RoommateMatchingMemberProfileResponseDto>> getRoommateProfile(
+            @PathVariable Long memberId
+    ) {
+
+        RoommateMatchingMemberProfileResponseDto responseDto =
+                memberService.findRoommateProfile(memberId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/my/matching-profiles")
+    public ResponseEntity<ResponseDto<RoommateMatchingMemberProfileResponseDto>> getMyRoommateProfile(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+
+        RoommateMatchingMemberProfileResponseDto responseDto =
+                memberService.findRoommateProfile(principalDetails.getMember().getId());
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }
