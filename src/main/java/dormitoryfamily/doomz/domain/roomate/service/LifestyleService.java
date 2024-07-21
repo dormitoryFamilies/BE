@@ -55,4 +55,14 @@ public class LifestyleService {
 
         return LifestyleResponseDto.fromEntity(lifestyle);
     }
+
+    /**
+     * 개발용 API
+     * 삭제 예정
+     */
+    @Transactional
+    public void deleteMyLifestyle(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        lifestyleRepository.deleteByMember(loginMember);
+    }
 }
