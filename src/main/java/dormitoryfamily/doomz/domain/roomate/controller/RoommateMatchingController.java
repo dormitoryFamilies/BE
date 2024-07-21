@@ -5,7 +5,7 @@ import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifest
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
-import dormitoryfamily.doomz.domain.roomate.service.MyLifestyleService;
+import dormitoryfamily.doomz.domain.roomate.service.LifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class RoommateMatchingController {
 
-    private final MyLifestyleService myLifestyleService;
+    private final LifestyleService lifestyleService;
     private final PreferenceOrderService preferenceOrderService;
 
     @PostMapping("/my/lifestyles")
@@ -29,7 +29,7 @@ public class RoommateMatchingController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        myLifestyleService.saveMyLifestyle(requestDto, principalDetails);
+        lifestyleService.saveMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.created());
     }
 
@@ -39,7 +39,7 @@ public class RoommateMatchingController {
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
 
-        myLifestyleService.updateMyLifestyle(requestDto, principalDetails);
+        lifestyleService.updateMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -49,7 +49,7 @@ public class RoommateMatchingController {
     ) {
 
         LifestyleResponseDto responseDto =
-                myLifestyleService.findLifestyle(principalDetails.getMember().getId());
+                lifestyleService.findLifestyle(principalDetails.getMember().getId());
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -59,7 +59,7 @@ public class RoommateMatchingController {
     ) {
 
         LifestyleResponseDto responseDto =
-                myLifestyleService.findLifestyle(memberId);
+                lifestyleService.findLifestyle(memberId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 

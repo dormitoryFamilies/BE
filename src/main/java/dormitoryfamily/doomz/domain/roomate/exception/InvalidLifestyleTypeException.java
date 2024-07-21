@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class InvalidLifestyleTypeException extends ApplicationException {
 
-    private static final ErrorCode ERROR_CODE = ErrorCode.LIFESTYLE_NOT_EXISTS;
+    private static final ErrorCode ERROR_CODE = ErrorCode.LIFESTYLE_TYPE_NOT_EXISTS;
     private final String value;
 
     public InvalidLifestyleTypeException(String value) {
