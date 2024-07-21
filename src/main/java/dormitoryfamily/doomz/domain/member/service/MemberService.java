@@ -13,10 +13,11 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class MemberService {
         loginMember.setUpProfile(requestDto);
     }
 
-    public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails){
+    public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
         List<Member> members = memberRepository.findAllMembersExcludingFollowed(loginMember.getId());
@@ -101,5 +102,10 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
         return RoommateMatchingMemberProfileResponseDto.fromEntity(member);
+    }
+
+    public NonVerifiedStudentCardsResponseDto getNonVerifiedStudentCards(Pageable pageable) {
+        Page<Member> nonVerifiedMembersPage = memberRepository.findNonVerifiedMember(pageable);
+        return NonVerifiedStudentCardsResponseDto.fromResponseDto(nonVerifiedMembersPage);
     }
 }
