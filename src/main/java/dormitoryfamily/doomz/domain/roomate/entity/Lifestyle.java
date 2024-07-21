@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MyLifestyle {
+public class Lifestyle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -113,29 +113,29 @@ public class MyLifestyle {
     private String drunkHabit;
 
     @Builder
-    public MyLifestyle(Member member,
-                       SleepTimeType sleepTimeType,
-                       WakeUpTimeType wakeUpTimeType,
-                       SleepingHabitType sleepingHabitType,
-                       SleepingSensitivityType sleepingSensitivityType,
-                       SmokingType smokingType,
-                       DrinkingFrequencyType drinkingFrequencyType,
-                       ShowerTimeType showerTimeType,
-                       ShowerDurationType showerDurationType,
-                       CleaningFrequencyType cleaningFrequencyType,
-                       HeatToleranceType heatToleranceType,
-                       ColdToleranceType coldToleranceType,
-                       MBTIType mbtiType,
-                       VisitHomeFrequencyType visitHomeFrequencyType,
-                       LateNightSnackType lateNightSnackType,
-                       SnackInRoomType snackInRoomType,
-                       PhoneSoundType phoneSoundType,
-                       PerfumeUsageType perfumeUsageType,
-                       StudyLocationType studyLocationType,
-                       ExamPreparationType examPreparationType,
-                       ExerciseType exerciseType,
-                       InsectToleranceType insectToleranceType,
-                       String drunkHabit
+    public Lifestyle(Member member,
+                     SleepTimeType sleepTimeType,
+                     WakeUpTimeType wakeUpTimeType,
+                     SleepingHabitType sleepingHabitType,
+                     SleepingSensitivityType sleepingSensitivityType,
+                     SmokingType smokingType,
+                     DrinkingFrequencyType drinkingFrequencyType,
+                     ShowerTimeType showerTimeType,
+                     ShowerDurationType showerDurationType,
+                     CleaningFrequencyType cleaningFrequencyType,
+                     HeatToleranceType heatToleranceType,
+                     ColdToleranceType coldToleranceType,
+                     MBTIType mbtiType,
+                     VisitHomeFrequencyType visitHomeFrequencyType,
+                     LateNightSnackType lateNightSnackType,
+                     SnackInRoomType snackInRoomType,
+                     PhoneSoundType phoneSoundType,
+                     PerfumeUsageType perfumeUsageType,
+                     StudyLocationType studyLocationType,
+                     ExamPreparationType examPreparationType,
+                     ExerciseType exerciseType,
+                     InsectToleranceType insectToleranceType,
+                     String drunkHabit
     ) {
         this.member = member;
         this.sleepTimeType = sleepTimeType;
