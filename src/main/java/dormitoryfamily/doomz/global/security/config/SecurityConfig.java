@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/reissue", "/api/logout").permitAll()
                 .requestMatchers("/","/stomp/**").permitAll()
                 .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasRole("VISITOR")
+                .requestMatchers("/api/verify/**").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().hasRole("VERIFIED_STUDENT"));
 
