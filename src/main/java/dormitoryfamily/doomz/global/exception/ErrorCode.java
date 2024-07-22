@@ -30,7 +30,7 @@ public enum ErrorCode {
     NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
     NOT_INITIALIZE_PROFILE(HttpStatus.UNAUTHORIZED, "초기 프로필 설정을 하지 않았습니다."),
     INVALID_MEMBER_DORMITORY_TYPE(HttpStatus.BAD_REQUEST, "해당 멤버 기숙사는 존재하지 않습니다."),
-    NOT_ROLE_VISITOR(HttpStatus.FORBIDDEN, "ROLE_VISITOR 권한만 요청할 수 있습니다."),
+    NOT_ROLE_VISITOR_OR_REJECTED_MEMBER(HttpStatus.FORBIDDEN, "ROLE_VISITOR 또는 ROLE_REJECTED_MEMBER 권한만 요청할 수 있습니다."),
     NOT_ROLE_MEMBER(HttpStatus.BAD_REQUEST, "대상의 권한이 ROLE_MEMBER 가 아닙니다."),
 
     // comment

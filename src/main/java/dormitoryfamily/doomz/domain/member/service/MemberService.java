@@ -7,7 +7,6 @@ import dormitoryfamily.doomz.domain.member.dto.response.*;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.entity.type.RoleType;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
 import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException;
 import dormitoryfamily.doomz.domain.member.exception.NotRoleMemberException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
@@ -38,11 +37,14 @@ public class MemberService {
         return new NicknameCheckResponseDto(isDuplicated);
     }
 
-    public void setUpProfile(
-            MemberSetUpProfileRequestDto requestDto,
-            PrincipalDetails principalDetails) {
+    public void setUpProfile(MemberSetUpProfileRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = getMember(principalDetails);
         loginMember.setUpProfile(requestDto);
+    }
+
+    private Member getMember(PrincipalDetails principalDetails) {
+        return memberRepository.findById(principalDetails.getMember().getId())
+                .orElseThrow(MemberNotExistsException::new);
     }
 
     public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails) {
@@ -54,14 +56,6 @@ public class MemberService {
                 .map(MemberInfoResponseDto::fromEntity)
                 .toList();
         return MemberProfileListResponseDto.from(memberInfoDtos);
-    }
-
-    private Member getMember(PrincipalDetails principalDetails) {
-        if (principalDetails == null) {
-            return null;
-        }
-        return memberRepository.findById(principalDetails.getMember().getId())
-                .orElseThrow(MemberNotFoundException::new);
     }
 
     public MemberDetailsResponseDto getMemberProfile(Long memberId, PrincipalDetails principalDetails) {
@@ -112,14 +106,22 @@ public class MemberService {
     }
 
     public void approveStudentCard(Long memberId) {
+        Member member = validateIsRoleMemberOrRejectedMember(memberId);
+        member.authenticateStudentCard();
+    }
+
+
+    public void rejectStudentCard(Long memberId) {
+        Member member = validateIsRoleMemberOrRejectedMember(memberId);
+        member.rejectStudentCard();
+    }
+
+    private Member validateIsRoleMemberOrRejectedMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
         if (member.getAuthority() != RoleType.ROLE_MEMBER) {
             throw new NotRoleMemberException();
         }
-
-        member.authenticateStudentCard();
+        return member;
     }
-
-
 }
