@@ -22,6 +22,7 @@ import static dormitoryfamily.doomz.domain.chatRoom.entity.type.ChatMemberStatus
 
 @Entity
 @Getter
+@Table(name = "chat_room", indexes = @Index(name = "idx_room_uuid", columnList = "room_uuid"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom extends BaseTimeEntity {
 
