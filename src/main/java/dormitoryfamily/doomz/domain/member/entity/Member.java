@@ -118,6 +118,10 @@ public class Member extends BaseTimeEntity {
         this.authority = RoleType.ROLE_MEMBER;
     }
 
+    public void authenticateStudentCard() {
+        authority = RoleType.ROLE_VERIFIED_STUDENT;
+    }
+
     @PrePersist
     private void init() {
         followingCount = 0;
