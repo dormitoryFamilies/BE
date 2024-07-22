@@ -130,4 +130,12 @@ public class MemberController {
         memberService.approveStudentCard(memberId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    @PutMapping("/verify/reject/members/{memberId}")
+    public ResponseEntity<ResponseDto<Void>> rejectStudentCards(
+            @PathVariable Long memberId
+    ) {
+        memberService.rejectStudentCard(memberId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }

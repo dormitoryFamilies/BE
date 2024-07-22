@@ -42,6 +42,8 @@ public class JWTAccessDeniedHandler implements AccessDeniedHandler {
             message = "프로필 초기 설정이 필요합니다.";
         } else if (request.isUserInRole("ROLE_MEMBER")) {
             message = "학생증 인증이 완료되지 않았습니다.";
+        } else if (request.isUserInRole("ROLE_REJECTED_MEMBER")) {
+            message = "학생증 승인이 거부되었습니다.";
         } else {
             message = "접근 권한이 없는 사용자입니다.";
         }
