@@ -107,9 +107,6 @@ public class Member extends BaseTimeEntity {
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
-        if (authority != RoleType.ROLE_VISITOR && authority != RoleType.ROLE_REJECTED_MEMBER) {
-            throw new NotVisitorOrRejectedMemberRoleException();
-        }
         this.nickname = requestDto.nickname();
         this.studentCardImageUrl = requestDto.studentCardImageUrl();
         this.collegeType = CollegeType.fromDescription(requestDto.collegeType());
