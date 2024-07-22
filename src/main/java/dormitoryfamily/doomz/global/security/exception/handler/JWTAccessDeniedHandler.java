@@ -34,8 +34,11 @@ public class JWTAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding("UTF-8");
 
         String message;
+        String requestURI = request.getRequestURI();
 
-        if (request.isUserInRole("ROLE_VISITOR")) {
+        if (requestURI.startsWith("/api/verify/") && !request.isUserInRole("ROLE_ADMIN")) {
+            message = "관리자 권한이 필요합니다.";
+        } else if (request.isUserInRole("ROLE_VISITOR")) {
             message = "프로필 초기 설정이 필요합니다.";
         } else if (request.isUserInRole("ROLE_MEMBER")) {
             message = "학생증 인증이 완료되지 않았습니다.";
@@ -44,7 +47,7 @@ public class JWTAccessDeniedHandler implements AccessDeniedHandler {
         }
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("code", "403");
+        responseData.put("code", Integer.parseInt("403"));
         responseData.put("errorMessage", message);
 
         String responseBody = objectMapper.writeValueAsString(responseData);
