@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.member.entity;
 import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.entity.type.*;
-import dormitoryfamily.doomz.domain.member.exception.NotVisitorRoleException;
+import dormitoryfamily.doomz.domain.member.exception.NotVisitorOrRejectedMemberRoleException;
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -46,6 +46,7 @@ public class Member extends BaseTimeEntity {
     private GenderType genderType;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private RoleType authority;
 
     private String profileUrl;
@@ -106,8 +107,8 @@ public class Member extends BaseTimeEntity {
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto) {
-        if (authority != RoleType.ROLE_VISITOR) {
-            throw new NotVisitorRoleException();
+        if (authority != RoleType.ROLE_VISITOR && authority != RoleType.ROLE_REJECTED_MEMBER) {
+            throw new NotVisitorOrRejectedMemberRoleException();
         }
         this.nickname = requestDto.nickname();
         this.studentCardImageUrl = requestDto.studentCardImageUrl();
@@ -120,6 +121,10 @@ public class Member extends BaseTimeEntity {
 
     public void authenticateStudentCard() {
         authority = RoleType.ROLE_VERIFIED_STUDENT;
+    }
+
+    public void rejectStudentCard() {
+        authority = RoleType.ROLE_REJECTED_MEMBER;
     }
 
     @PrePersist

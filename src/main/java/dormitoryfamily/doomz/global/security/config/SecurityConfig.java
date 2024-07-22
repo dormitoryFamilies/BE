@@ -71,7 +71,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/reissue", "/api/logout").permitAll()
                 .requestMatchers("/","/stomp/**").permitAll()
-                .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasRole("VISITOR")
+                .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasAnyRole("VISITOR", "REJECTED_MEMBER")
                 .requestMatchers("/api/verify/**").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().hasRole("VERIFIED_STUDENT"));
@@ -97,7 +97,8 @@ public class SecurityConfig {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
         roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_VERIFIED_STUDENT\n"
                 + "ROLE_VERIFIED_STUDENT > ROLE_MEMBER\n"
-                + "ROLE_MEMBER > ROLE_VISITOR");
+                + "ROLE_MEMBER > ROLE_VISITOR\n"
+                + "ROLE_MEMBER > ROLE_REJECTED_MEMBER");
         return roleHierarchy;
     }
 }
