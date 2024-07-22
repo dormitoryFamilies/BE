@@ -8,8 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static dormitoryfamily.doomz.global.exception.ErrorCode.LIFESTYLE_NOT_EXISTS;
-import static dormitoryfamily.doomz.global.exception.ErrorCode.WRONG_PROPERTY;
+import static dormitoryfamily.doomz.global.exception.ErrorCode.*;
 
 @RestControllerAdvice
 public class RoommateMatchingControllerAdvice {
@@ -31,6 +30,6 @@ public class RoommateMatchingControllerAdvice {
 
         return ResponseEntity
                 .status(status)
-                .body(ResponseDto.errorWithMessage(status, "[" + wrongPreferenceType + "] " + LIFESTYLE_NOT_EXISTS.getMessage()));
+                .body(ResponseDto.errorWithMessage(status, "[" + wrongPreferenceType + "] " + LIFESTYLE_TYPE_NOT_EXISTS.getMessage()));
     }
 }
