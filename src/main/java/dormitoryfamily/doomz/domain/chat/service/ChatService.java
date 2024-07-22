@@ -158,7 +158,6 @@ public class ChatService {
 
     private List<ChatResponseDto> CreateChatResponseDtoList(Set<ChatDto> chatSet, ChatRoom chatRoom, Member loginMember) {
         List<ChatDto> chatList = new ArrayList<>(chatSet);
-        Collections.reverse(chatList);
         return chatList.stream()
                 .map(chat -> {
                     Member chatMember = Objects.equals(chat.senderId(), chatRoom.getInitiator().getId()) ?
