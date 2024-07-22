@@ -9,6 +9,7 @@ import dormitoryfamily.doomz.domain.member.entity.type.RoleType;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException;
 import dormitoryfamily.doomz.domain.member.exception.NotRoleMemberException;
+import dormitoryfamily.doomz.domain.member.exception.NotVisitorOrRejectedMemberRoleException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
@@ -39,6 +40,11 @@ public class MemberService {
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = getMember(principalDetails);
+        RoleType authority = loginMember.getAuthority();
+
+        if (authority != RoleType.ROLE_VISITOR && authority != RoleType.ROLE_REJECTED_MEMBER) {
+            throw new NotVisitorOrRejectedMemberRoleException();
+        }
         loginMember.setUpProfile(requestDto);
     }
 
@@ -106,19 +112,18 @@ public class MemberService {
     }
 
     public void approveStudentCard(Long memberId) {
-        Member member = validateIsRoleMemberOrRejectedMember(memberId);
+        Member member = validateIsRoleMember(memberId);
         member.authenticateStudentCard();
     }
 
 
     public void rejectStudentCard(Long memberId) {
-        Member member = validateIsRoleMemberOrRejectedMember(memberId);
+        Member member = validateIsRoleMember(memberId);
         member.rejectStudentCard();
     }
 
-    private Member validateIsRoleMemberOrRejectedMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotExistsException::new);
+    private Member validateIsRoleMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
         if (member.getAuthority() != RoleType.ROLE_MEMBER) {
             throw new NotRoleMemberException();
         }
