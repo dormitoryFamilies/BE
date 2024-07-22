@@ -114,12 +114,20 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/verify/student-cards")
+    @GetMapping("/verify/members")
     public ResponseEntity<ResponseDto<NonVerifiedStudentCardsResponseDto>> getStudentCards(
             Pageable pageable
     ) {
         NonVerifiedStudentCardsResponseDto responseDtos =
                 memberService.getNonVerifiedStudentCards(pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDtos));
+    }
+
+    @PutMapping("/verify/approve/members/{memberId}")
+    public ResponseEntity<ResponseDto<Void>> approveStudentCards(
+            @PathVariable Long memberId
+    ) {
+        memberService.approveStudentCard(memberId);
+        return ResponseEntity.ok(ResponseDto.ok());
     }
 }

@@ -5,9 +5,11 @@ import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequest
 import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.dto.response.*;
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.entity.type.RoleType;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
 import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException;
+import dormitoryfamily.doomz.domain.member.exception.NotRoleMemberException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
@@ -108,4 +110,16 @@ public class MemberService {
         Page<Member> nonVerifiedMembersPage = memberRepository.findNonVerifiedMember(pageable);
         return NonVerifiedStudentCardsResponseDto.fromResponseDto(nonVerifiedMembersPage);
     }
+
+    public void approveStudentCard(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotExistsException::new);
+        if (member.getAuthority() != RoleType.ROLE_MEMBER) {
+            throw new NotRoleMemberException();
+        }
+
+        member.authenticateStudentCard();
+    }
+
+
 }
