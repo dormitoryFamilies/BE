@@ -93,7 +93,7 @@ public class MemberControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ResponseDto<Void>> handleNotVisitorRoleException(NotVisitorRoleException e) {
+    public ResponseEntity<ResponseDto<Void>> handleNotVisitorRoleException(NotVisitorOrRejectedMemberRoleException e) {
         HttpStatus status = e.getErrorCode().getHttpStatus();
 
         return ResponseEntity
