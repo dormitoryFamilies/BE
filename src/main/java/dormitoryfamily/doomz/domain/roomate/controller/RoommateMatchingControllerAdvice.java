@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.controller;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
 import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
 import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceDetailParameterException;
 import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceTypeParameterException;
@@ -53,5 +54,15 @@ public class RoommateMatchingControllerAdvice {
         return ResponseEntity
                 .status(status)
                 .body(ResponseDto.errorWithMessage(status, "[" + requiredValue + "]의 " + MISSING_REQUIRED_DETAIL_PARAMETER.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleDuplicatePreferenceOrderException(DuplicatePreferenceOrderException e) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String duplicatePreference = e.getDuplicatePreference();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, "[" + duplicatePreference + "] " + DUPLICATE_PREFERENCE_ORDER_PARAMETER.getMessage()));
     }
 }
