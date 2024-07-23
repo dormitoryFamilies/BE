@@ -49,6 +49,7 @@ public class LifestyleService {
                 .orElseThrow(LifestyleNotExistsException::new);
     }
 
+    @Transactional(readOnly = true)
     public LifestyleResponseDto findLifestyle(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Lifestyle lifestyle = getLifestyleByMember(member);
