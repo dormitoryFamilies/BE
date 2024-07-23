@@ -39,7 +39,7 @@ public class MemberService {
     }
 
     public void setUpProfile(MemberSetUpProfileRequestDto requestDto, PrincipalDetails principalDetails) {
-        Member loginMember = getMember(principalDetails);
+        Member loginMember = getLoginMember(principalDetails);
         RoleType authority = loginMember.getAuthority();
 
         if (authority != RoleType.ROLE_VISITOR && authority != RoleType.ROLE_REJECTED_MEMBER) {
@@ -48,7 +48,7 @@ public class MemberService {
         loginMember.setUpProfile(requestDto);
     }
 
-    private Member getMember(PrincipalDetails principalDetails) {
+    private Member getLoginMember(PrincipalDetails principalDetails) {
         return memberRepository.findById(principalDetails.getMember().getId())
                 .orElseThrow(MemberNotExistsException::new);
     }
@@ -112,21 +112,21 @@ public class MemberService {
     }
 
     public void approveStudentCard(Long memberId) {
-        Member member = validateIsRoleMember(memberId);
+        Member member = getMemberById(memberId);
+        validateIsRoleMember(member);
         member.authenticateStudentCard();
     }
 
 
     public void rejectStudentCard(Long memberId) {
-        Member member = validateIsRoleMember(memberId);
+        Member member = getMemberById(memberId);
+        validateIsRoleMember(member);
         member.rejectStudentCard();
     }
 
-    private Member validateIsRoleMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
+    private void validateIsRoleMember(Member member) {
         if (member.getAuthority() != RoleType.ROLE_MEMBER) {
             throw new NotRoleMemberException();
         }
-        return member;
     }
 }
