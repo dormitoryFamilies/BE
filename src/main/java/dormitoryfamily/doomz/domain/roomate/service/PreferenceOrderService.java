@@ -61,6 +61,7 @@ public class PreferenceOrderService {
         return preferenceOrderRepository.existsByMemberId(loginMember.getId());
     }
 
+    @Transactional(readOnly = true)
     public PreferenceOrderResponseDto findPreferenceOrder(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         List<PreferenceOrder> preferenceOrders =
