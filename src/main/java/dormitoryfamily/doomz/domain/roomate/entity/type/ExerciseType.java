@@ -17,7 +17,7 @@ public enum ExerciseType {
     }
 
     public static ExerciseType fromDescription(String description) {
-        if(description == null || description.trim().isEmpty()) {
+        if(description == null) {
             return null;
         }
 

@@ -17,7 +17,7 @@ public enum StudyLocationType {
     }
 
     public static StudyLocationType fromDescription(String description) {
-        if(description == null || description.trim().isEmpty()) {
+        if(description == null) {
             return null;
         }
 

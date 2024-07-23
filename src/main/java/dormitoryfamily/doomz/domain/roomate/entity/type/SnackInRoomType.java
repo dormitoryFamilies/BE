@@ -16,7 +16,7 @@ public enum SnackInRoomType {
     }
 
     public static SnackInRoomType fromDescription(String description) {
-        if(description == null || description.trim().isEmpty()) {
+        if(description == null) {
             return null;
         }
 
