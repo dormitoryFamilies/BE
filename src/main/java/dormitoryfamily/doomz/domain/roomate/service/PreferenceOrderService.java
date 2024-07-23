@@ -3,11 +3,12 @@ package dormitoryfamily.doomz.domain.roomate.service;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
-import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.CreatePreferenceOrderRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
 import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterPreferenceOrderException;
+import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
 import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceDetailParameterException;
 import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceTypeParameterException;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.fromType;
@@ -33,9 +35,10 @@ public class PreferenceOrderService {
     private static final Integer PRIORITY_LEVEL_3 = 3;
     private static final Integer PRIORITY_LEVEL_4 = 4;
 
-    public void setPreferenceOrder(CreatePreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void setPreferenceOrder(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         ifAlreadySavePreferenceOrderBy(loginMember);
+        checkForDuplicatePreferenceOrder(requestDto);
 
         savePreference(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), PRIORITY_LEVEL_1);
         savePreference(loginMember, requestDto.secondPreferenceType(), requestDto.secondPreference(), PRIORITY_LEVEL_2);
@@ -63,8 +66,9 @@ public class PreferenceOrderService {
         return PreferenceOrderResponseDto.fromEntity(preferenceOrders);
     }
 
-    public void updatePreferenceOrder(CreatePreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void updatePreferenceOrder(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
+        checkForDuplicatePreferenceOrder(requestDto);
 
         // 1순위 값이 있다면 변경
         if (isPreferencePairValid(requestDto.firstPreferenceType(), requestDto.firstPreference())) {
@@ -103,6 +107,27 @@ public class PreferenceOrderService {
         }
     }
 
+    /**
+     * 중복 타입이 DTO 에 포함되어 있는지 여부 확인 메소드
+     */
+    private void checkForDuplicatePreferenceOrder(PreferenceOrderRequestDto requestDto) {
+        HashSet<String> preferences = new HashSet<>();
+
+        preferences.add(requestDto.firstPreferenceType());
+        if (!preferences.add(requestDto.secondPreferenceType())) {
+            throw new DuplicatePreferenceOrderException(requestDto.secondPreferenceType());
+        }
+        if (!preferences.add(requestDto.thirdPreferenceType())) {
+            throw new DuplicatePreferenceOrderException(requestDto.thirdPreferenceType());
+        }
+        if (!preferences.add(requestDto.fourthPreferenceType())) {
+            throw new DuplicatePreferenceOrderException(requestDto.fourthPreferenceType());
+        }
+    }
+
+    /**
+     * 요청 DTO 에 타입과 값이 모두 존재하는지 여부 확인 메소드
+     */
     private boolean isPreferencePairValid(String type, String detail) {
         if (type == null && detail == null) {
             return false;
