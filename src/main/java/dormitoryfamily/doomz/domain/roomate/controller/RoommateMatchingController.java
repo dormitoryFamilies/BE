@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.roomate.controller;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
-import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.CreatePreferenceOrderRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.service.LifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
@@ -85,16 +85,16 @@ public class RoommateMatchingController {
 
     @PostMapping("/my/preference-orders")
     public ResponseEntity<ResponseDto<Void>> setPreferenceOrder(
-            @RequestBody @Valid CreatePreferenceOrderRequestDto requestDto,
+            @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         preferenceOrderService.setPreferenceOrder(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @PatchMapping("/my/preference-orders")
+    @PutMapping("/my/preference-orders")
     public ResponseEntity<ResponseDto<Void>> updatePreferenceOrder(
-            @RequestBody CreatePreferenceOrderRequestDto requestDto,
+            @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         preferenceOrderService.updatePreferenceOrder(requestDto, principalDetails);

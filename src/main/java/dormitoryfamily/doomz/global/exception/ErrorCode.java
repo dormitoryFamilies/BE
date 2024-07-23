@@ -101,6 +101,7 @@ public enum ErrorCode {
     WRONG_PROPERTY(HttpStatus.BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
     MISSING_REQUIRED_TYPE_PARAMETER(HttpStatus.BAD_REQUEST, "타입을 누락했습니다."),
     MISSING_REQUIRED_DETAIL_PARAMETER(HttpStatus.BAD_REQUEST, "값을 누락했습니다."),
+    DUPLICATE_PREFERENCE_ORDER_PARAMETER(HttpStatus.BAD_REQUEST, "타입이 중복됩니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
