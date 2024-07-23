@@ -7,8 +7,7 @@ import lombok.Getter;
 public enum SleepingSensitivityType implements Describable {
 
     DARK("어두움"),
-    LIGHT("밝음"),
-    NONE("없음");
+    LIGHT("밝음");
 
     private final String description;
 
