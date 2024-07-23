@@ -70,7 +70,7 @@ public class SecurityConfig {
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/reissue", "/api/logout").permitAll()
-                .requestMatchers("/","/stomp/**").permitAll()
+                .requestMatchers("/", "/stomp/**").permitAll()
                 .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasAnyRole("VISITOR", "REJECTED_MEMBER")
                 .requestMatchers("/api/verify/**").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -95,10 +95,13 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_VERIFIED_STUDENT\n"
-                + "ROLE_VERIFIED_STUDENT > ROLE_MEMBER\n"
-                + "ROLE_MEMBER > ROLE_VISITOR\n"
-                + "ROLE_MEMBER > ROLE_REJECTED_MEMBER");
+        roleHierarchy.setHierarchy("""
+                ROLE_ADMIN > ROLE_VERIFIED_STUDENT
+                ROLE_VERIFIED_STUDENT > ROLE_MEMBER
+                ROLE_MEMBER > ROLE_VISITOR
+                ROLE_MEMBER > ROLE_REJECTED_MEMBER
+                """);
         return roleHierarchy;
     }
+
 }
