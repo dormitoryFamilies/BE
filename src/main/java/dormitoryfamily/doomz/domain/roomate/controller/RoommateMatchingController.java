@@ -88,7 +88,7 @@ public class RoommateMatchingController {
             @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        preferenceOrderService.setPreferenceOrder(requestDto, principalDetails);
+        preferenceOrderService.setPreferenceOrders(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.created());
     }
 
@@ -97,7 +97,7 @@ public class RoommateMatchingController {
             @RequestBody @Valid PreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        preferenceOrderService.updatePreferenceOrder(requestDto, principalDetails);
+        preferenceOrderService.updatePreferenceOrders(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
