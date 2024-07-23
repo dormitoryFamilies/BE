@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.roomate.controller;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
-import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
+import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.CreatePreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.service.LifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
@@ -28,7 +28,6 @@ public class RoommateMatchingController {
             @RequestBody @Valid CreateMyLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         lifestyleService.saveMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.created());
     }
@@ -38,7 +37,6 @@ public class RoommateMatchingController {
             @RequestBody @Valid UpdateMyLifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         lifestyleService.updateMyLifestyle(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
@@ -47,7 +45,6 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<LifestyleResponseDto>> getMyLifestyle(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         LifestyleResponseDto responseDto =
                 lifestyleService.findLifestyle(principalDetails.getMember().getId());
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
@@ -57,7 +54,6 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<LifestyleResponseDto>> getLifestyle(
             @PathVariable Long memberId
     ) {
-
         LifestyleResponseDto responseDto =
                 lifestyleService.findLifestyle(memberId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
@@ -71,7 +67,6 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<Void>> deleteMyLifestyle(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         lifestyleService.deleteMyLifestyle(principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
@@ -84,21 +79,25 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<Void>> deleteMyPreferenceOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         preferenceOrderService.deleteMyLifestyle(principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    /**
-     * 선호 우선순위의 등록, 수정 모두 사용
-     */
     @PostMapping("/my/preference-orders")
     public ResponseEntity<ResponseDto<Void>> setPreferenceOrder(
-            @RequestBody @Valid PreferenceOrderRequestDto requestDto,
+            @RequestBody @Valid CreatePreferenceOrderRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         preferenceOrderService.setPreferenceOrder(requestDto, principalDetails);
+        return ResponseEntity.ok(ResponseDto.created());
+    }
+
+    @PatchMapping("/my/preference-orders")
+    public ResponseEntity<ResponseDto<Void>> updatePreferenceOrder(
+            @RequestBody CreatePreferenceOrderRequestDto requestDto,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        preferenceOrderService.updatePreferenceOrder(requestDto, principalDetails);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -106,7 +105,6 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getMyPreferenceOrder(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-
         PreferenceOrderResponseDto responseDto =
                 preferenceOrderService.findPreferenceOrder(principalDetails.getMember().getId());
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
@@ -116,7 +114,6 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<PreferenceOrderResponseDto>> getPreferenceOrder(
             @PathVariable Long memberId
     ) {
-
         PreferenceOrderResponseDto responseDto =
                 preferenceOrderService.findPreferenceOrder(memberId);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
