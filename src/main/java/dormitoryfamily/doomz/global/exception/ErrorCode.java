@@ -99,6 +99,8 @@ public enum ErrorCode {
     INSECT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
     LIFESTYLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
     WRONG_PROPERTY(HttpStatus.BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
+    MISSING_REQUIRED_TYPE_PARAMETER(HttpStatus.BAD_REQUEST, "타입을 누락했습니다."),
+    MISSING_REQUIRED_DETAIL_PARAMETER(HttpStatus.BAD_REQUEST, "값을 누락했습니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

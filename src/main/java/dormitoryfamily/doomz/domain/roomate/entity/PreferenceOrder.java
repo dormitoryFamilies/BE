@@ -43,4 +43,9 @@ public class PreferenceOrder {
         this.lifestyleDetail = lifestyleDetail;
         this.preferenceOrder = preferenceOrder;
     }
+
+    public void updateOrder(LifestyleType type, Enum<?> detail) {
+        lifestyleType = type;
+        lifestyleDetail = detail;
+    }
 }
