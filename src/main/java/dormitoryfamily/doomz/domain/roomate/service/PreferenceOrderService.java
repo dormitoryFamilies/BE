@@ -9,8 +9,7 @@ import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
 import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterPreferenceOrderException;
 import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
-import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceDetailParameterException;
-import dormitoryfamily.doomz.domain.roomate.exception.MissingPreferenceTypeParameterException;
+import dormitoryfamily.doomz.domain.roomate.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +34,9 @@ public class PreferenceOrderService {
     private static final Integer PRIORITY_LEVEL_3 = 3;
     private static final Integer PRIORITY_LEVEL_4 = 4;
 
-    public void setPreferenceOrder(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        ifAlreadySavePreferenceOrderBy(loginMember);
+        checkAlreadySavedPreferenceOrder(loginMember);
         checkForDuplicatePreferenceOrder(requestDto);
 
         savePreference(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), PRIORITY_LEVEL_1);
@@ -52,10 +51,14 @@ public class PreferenceOrderService {
         preferenceOrderRepository.save(new PreferenceOrder(member, preferenceType, preferenceDetail, order));
     }
 
-    private void ifAlreadySavePreferenceOrderBy(Member loginMember) {
-        if (preferenceOrderRepository.existsByMemberId(loginMember.getId())) {
+    private void checkAlreadySavedPreferenceOrder(Member loginMember) {
+        if (isExistPreferenceOrder(loginMember)) {
             throw new AlreadyRegisterPreferenceOrderException();
         }
+    }
+
+    private boolean isExistPreferenceOrder(Member loginMember) {
+        return preferenceOrderRepository.existsByMemberId(loginMember.getId());
     }
 
     public PreferenceOrderResponseDto findPreferenceOrder(Long memberId) {
@@ -66,49 +69,31 @@ public class PreferenceOrderService {
         return PreferenceOrderResponseDto.fromEntity(preferenceOrders);
     }
 
-    public void updatePreferenceOrder(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void updatePreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
+        checkAlreadySetPreferenceOrder(loginMember);
         checkForDuplicatePreferenceOrder(requestDto);
 
-        // 1순위 값이 있다면 변경
-        if (isPreferencePairValid(requestDto.firstPreferenceType(), requestDto.firstPreference())) {
-            LifestyleType firstLifestyleType = fromType(requestDto.firstPreferenceType());
+        updatePreferenceOrder(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), PRIORITY_LEVEL_1);
+        updatePreferenceOrder(loginMember, requestDto.secondPreferenceType(), requestDto.secondPreference(), PRIORITY_LEVEL_2);
+        updatePreferenceOrder(loginMember, requestDto.thirdPreferenceType(), requestDto.thirdPreference(), PRIORITY_LEVEL_3);
+        updatePreferenceOrder(loginMember, requestDto.fourthPreferenceType(), requestDto.fourthPreference(), PRIORITY_LEVEL_4);
+    }
 
-            PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, PRIORITY_LEVEL_1);
-            foundOrder.updateOrder(firstLifestyleType, firstLifestyleType.getLifestyleValue(requestDto.firstPreference())
-            );
-        }
-
-        // 2순위 값이 있다면 변경
-        if (isPreferencePairValid(requestDto.secondPreferenceType(), requestDto.secondPreference())) {
-            LifestyleType secondLifestyleType = fromType(requestDto.secondPreferenceType());
-
-            PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, PRIORITY_LEVEL_2);
-            foundOrder.updateOrder(secondLifestyleType, secondLifestyleType.getLifestyleValue(requestDto.secondPreference())
-            );
-        }
-
-        // 3순위 값이 있다면 변경
-        if (isPreferencePairValid(requestDto.thirdPreferenceType(), requestDto.thirdPreference())) {
-            LifestyleType thirdPreferenceType = fromType(requestDto.thirdPreferenceType());
-
-            PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, PRIORITY_LEVEL_3);
-            foundOrder.updateOrder(thirdPreferenceType, thirdPreferenceType.getLifestyleValue(requestDto.thirdPreference())
-            );
-        }
-
-        // 4순위 값이 있다면 변경
-        if (isPreferencePairValid(requestDto.fourthPreferenceType(), requestDto.fourthPreference())) {
-            LifestyleType fourthPreferenceType = fromType(requestDto.fourthPreferenceType());
-
-            PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, PRIORITY_LEVEL_4);
-            foundOrder.updateOrder(fourthPreferenceType, fourthPreferenceType.getLifestyleValue(requestDto.fourthPreference())
-            );
+    private void checkAlreadySetPreferenceOrder(Member loginMember) {
+        if (!isExistPreferenceOrder(loginMember)) {
+            throw new PreferenceOrderNotExistsException();
         }
     }
 
+    private void updatePreferenceOrder(Member loginMember, String preferenceTypeStr, String preferenceStr, Integer order) {
+        PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, order);
+        LifestyleType firstLifestyleType = fromType(preferenceTypeStr);
+        foundOrder.updateOrder(firstLifestyleType, firstLifestyleType.getLifestyleValue(preferenceStr));
+    }
+
     /**
-     * 중복 타입이 DTO 에 포함되어 있는지 여부 확인 메소드
+     * DTO 에 중복 타입이 포함되어 있는지 여부 확인
      */
     private void checkForDuplicatePreferenceOrder(PreferenceOrderRequestDto requestDto) {
         HashSet<String> preferences = new HashSet<>();
@@ -123,20 +108,6 @@ public class PreferenceOrderService {
         if (!preferences.add(requestDto.fourthPreferenceType())) {
             throw new DuplicatePreferenceOrderException(requestDto.fourthPreferenceType());
         }
-    }
-
-    /**
-     * 요청 DTO 에 타입과 값이 모두 존재하는지 여부 확인 메소드
-     */
-    private boolean isPreferencePairValid(String type, String detail) {
-        if (type == null && detail == null) {
-            return false;
-        } else if (type != null && detail == null) {
-            throw new MissingPreferenceDetailParameterException(type);
-        } else if (type == null && detail != null) {
-            throw new MissingPreferenceTypeParameterException(detail);
-        }
-        return true;
     }
 
     /**
