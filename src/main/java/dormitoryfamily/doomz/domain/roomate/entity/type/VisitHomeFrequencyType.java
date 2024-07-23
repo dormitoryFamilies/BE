@@ -18,7 +18,7 @@ public enum VisitHomeFrequencyType {
     }
 
     public static VisitHomeFrequencyType fromDescription(String description) {
-        if(description == null || description.trim().isEmpty()) {
+        if(description == null) {
             return null;
         }
 

@@ -20,7 +20,7 @@ public enum ShowerDurationType {
     }
 
     public static ShowerDurationType fromDescription(String description) {
-        if(description == null || description.trim().isEmpty()) {
+        if(description == null) {
             return null;
         }
 
