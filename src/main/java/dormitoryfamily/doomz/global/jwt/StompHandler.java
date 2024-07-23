@@ -32,30 +32,28 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-
-        String headerAuth = null;
-
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        if(accessor.getCommand() == StompCommand.CONNECT) {
-            headerAuth = accessor.getFirstNativeHeader(HEADER_STRING_ACCESS);
+
+        if (accessor.getCommand() == StompCommand.CONNECT) {
+            String headerAuth = accessor.getFirstNativeHeader(HEADER_STRING_ACCESS);
+
+            if (headerAuth == null || !headerAuth.startsWith(TOKEN_PREFIX)) {
+                throw new AccessTokenNotExistsException();
+            }
+
+            String jwt = headerAuth.replace(TOKEN_PREFIX, "");
+            jwtUtil.isExpired(jwt);
+
+            String category = jwtUtil.getCategory(jwt);
+            if (!category.equals(CATEGORY_ACCESS)) {
+                throw new NotAccessTokenException();
+            }
+
+            // 스프링 시큐리티 인증 토큰 생성
+            Authentication authentication = getUserAuthentication(jwt);
+            // 세션에 사용자 등록
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
-        if (headerAuth == null || !headerAuth.startsWith(TOKEN_PREFIX)) {
-            throw new AccessTokenNotExistsException();
-        }
-
-        String jwt = headerAuth.replace(TOKEN_PREFIX, "");
-        jwtUtil.isExpired(jwt);
-
-        String category = jwtUtil.getCategory(jwt);
-        if (!category.equals(CATEGORY_ACCESS)) {
-            throw new NotAccessTokenException();
-        }
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authentication = getUserAuthentication(jwt);
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return message;
     }
