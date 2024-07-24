@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
@@ -51,7 +51,7 @@ public class LifestyleService {
 
     @Transactional(readOnly = true)
     public LifestyleResponseDto findLifestyle(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
         Lifestyle lifestyle = getLifestyleByMember(member);
 
         return LifestyleResponseDto.fromEntity(lifestyle);

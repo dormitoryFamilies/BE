@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.global.jwt.refresh.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
@@ -94,6 +94,6 @@ public class RefreshTokenService {
 
     private Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotExistsException::new);
     }
 }

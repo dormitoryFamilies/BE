@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
@@ -63,7 +63,7 @@ public class PreferenceOrderService {
 
     @Transactional(readOnly = true)
     public PreferenceOrderResponseDto findPreferenceOrder(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
         List<PreferenceOrder> preferenceOrders =
                 preferenceOrderRepository.findAllByMember(member);
 
