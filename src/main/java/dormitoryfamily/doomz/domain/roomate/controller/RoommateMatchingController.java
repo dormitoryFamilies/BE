@@ -7,7 +7,6 @@ import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.Preferen
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.service.LifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
-import dormitoryfamily.doomz.domain.roomate.service.RecommendationService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
