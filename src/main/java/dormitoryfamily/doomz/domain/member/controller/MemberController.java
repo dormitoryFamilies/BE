@@ -34,7 +34,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("members/{memberId}")
+    @GetMapping("/members/{memberId}/profiles")
     public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> findMemberProfile(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -44,7 +44,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/my/profile")
+    @GetMapping("/my/profiles")
     public ResponseEntity<ResponseDto<MyProfileResponseDto>> getMyProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
@@ -52,7 +52,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @PutMapping("/my/profile")
+    @PutMapping("/my/profiles")
     public ResponseEntity<ResponseDto<Void>> modifyMyProfile(
             @RequestBody MyProfileModifyRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -94,7 +94,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/matching-profiles/members/{memberId}")
+    @GetMapping("/matchings/members/{memberId}/profiles")
     public ResponseEntity<ResponseDto<RoommateMatchingMemberProfileResponseDto>> getRoommateProfile(
             @PathVariable Long memberId
     ) {
@@ -104,7 +104,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/my/matching-profiles")
+    @GetMapping("/my/matchings/profiles")
     public ResponseEntity<ResponseDto<RoommateMatchingMemberProfileResponseDto>> getMyRoommateProfile(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
@@ -123,7 +123,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDtos));
     }
 
-    @PutMapping("/verify/approve/members/{memberId}")
+    @PutMapping("/verify/members/{memberId}/approvals")
     public ResponseEntity<ResponseDto<Void>> approveStudentCards(
             @PathVariable Long memberId
     ) {
@@ -131,7 +131,7 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @PutMapping("/verify/reject/members/{memberId}")
+    @PutMapping("/verify/members/{memberId}/rejections")
     public ResponseEntity<ResponseDto<Void>> rejectStudentCards(
             @PathVariable Long memberId
     ) {
