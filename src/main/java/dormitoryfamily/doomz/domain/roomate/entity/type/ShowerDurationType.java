@@ -6,12 +6,11 @@ import lombok.Getter;
 @Getter
 public enum ShowerDurationType {
 
+    _05("5분"),
     _10("10분"),
+    _15("15분"),
     _20("20분"),
-    _30("30분"),
-    _40("40분"),
-    _50("50분"),
-    _60("60분");
+    _25("25분");
 
     private final String description;
 
