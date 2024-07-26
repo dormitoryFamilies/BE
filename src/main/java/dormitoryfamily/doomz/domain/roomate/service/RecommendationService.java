@@ -1,14 +1,13 @@
 package dormitoryfamily.doomz.domain.roomate.service;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.dto.recommendation.RecommendationResponseDto;
 import dormitoryfamily.doomz.domain.roomate.entity.Candidate;
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.Recommendation;
-import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleAttribute;
-import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
 import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.CandidateRepository;
@@ -24,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
+import static dormitoryfamily.doomz.domain.roomate.util.ScoreCalculator.calculateScoreForUser;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -35,124 +37,68 @@ public class RecommendationService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
 
-    /*
-        스토어드 프로시저를 사용하려고 했지만 enum 타입
-     */
-    public RecommendationResponseDto findTop5Candidates(PrincipalDetails principalDetails) {
+    //todo 1. 상대방의 선호 우선순위와 내 라이프스타일 비교
+    //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
+    //todo 5. 리포지토리 테스트 코드 짜보기
+    //todo 6. 예외처리
+    // - 하루 횟수 초과시 : 예외처리 하고 나면, 다시 등록할 경우 기존거 삭제하고 다시 등록하는 로직 수행하기
+    // - 프로필 등록, 선호 우선순위 등록을 안했을 시
+    // - 아무도 라이프 스타일 등록 안했다면 어떻게 되나?
+    // - 2~3명만 해당되면?
+    //todo 7. 하루에 한 번만 가능
+    public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
-        // 로그인 사용자의 선호 우선순위를 우선순위 순으로 정렬한 뒤 조회(1~4순위)
-        List<PreferenceOrder> targetPreferenceOrders = preferenceOrderRepository.findAllByMemberOrderByPreferenceOrderAsc(loginMember);
+        List<PreferenceOrder> preferenceOrders =
+                preferenceOrderRepository.findAllByMemberOrderByPreferenceOrderAsc(loginMember);
+        List<Lifestyle> lifestyles = lifestyleRepository.findAll();
 
-        List<Lifestyle> allLifeStyles = lifestyleRepository.findAll();
+        List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(lifestyles, preferenceOrders);
 
-        List<Map.Entry<Long, Integer>> scores = allLifeStyles.stream()
+        Recommendation recommendation = new Recommendation(loginMember);
+        List<Candidate> candidates = createCandidates(scores, recommendation);
+        recommendationRepository.save(recommendation);
+        candidateRepository.saveAll(candidates);
+
+        return RecommendationResponseDto.fromEntity(recommendation, candidates);
+    }
+
+    /**
+     * 선호 우선순위와 라이프 스타일을 비교하여 점수를 계산해 높은 점수 순으로 사용자 id 반환하는 메소드
+     *
+     * @param lifestyles       전체 사용자의 라이프 스타일
+     * @param preferenceOrders 비교 대상의 선호 우선순위(1 ~ 4순위)
+     * @return 높은 점수 순으로 정렬된 회원 아이디 리스트
+     */
+    private static List<Map.Entry<Long, Double>> findTopMatchingCandidates(
+            List<Lifestyle> lifestyles,
+            List<PreferenceOrder> preferenceOrders
+    ) {
+        return lifestyles.stream()
                 .map(lifestyle -> {
-                    int score = calculateScore(targetPreferenceOrders, lifestyle);
+                    double score = calculateScoreForUser(preferenceOrders, lifestyle);
                     return new AbstractMap.SimpleEntry<>(lifestyle.getMember().getId(), score);
                 })
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(20)
+                .limit(RECOMMENDATIONS_MAX_COUNT)
                 .collect(Collectors.toList());
-
-        System.out.println("scores = " + scores);
-
-        // 점수 내는 알고리즘 만들기
-
-        // Recommendation 엔티티 생성 및 저장
-
-        // DB에서 preferenceOrder 찾아서 점수 내기
-
-        // TOP 5 만들어서 Candidate 생성 및 저장
-
-        // DTO로 반환
-
-        Member m1 = memberRepository.findById(655L).get();
-        Member m2 = memberRepository.findById(656L).get();
-        Member m3 = memberRepository.findById(657L).get();
-        Member m4 = memberRepository.findById(658L).get();
-        Member m5 = memberRepository.findById(659L).get();
-
-        Recommendation recommendation = new Recommendation(loginMember);
-        Candidate c1 = Candidate.builder()
-                .recommendation(recommendation)
-                .candidateMember(m1)
-                .candidateScore(10).build();
-        Candidate c2 = Candidate.builder()
-                .recommendation(recommendation)
-                .candidateMember(m2)
-                .candidateScore(16).build();
-        Candidate c3 = Candidate.builder()
-                .recommendation(recommendation)
-                .candidateMember(m3)
-                .candidateScore(20).build();
-        Candidate c4 = Candidate.builder()
-                .recommendation(recommendation)
-                .candidateMember(m4)
-                .candidateScore(3).build();
-        Candidate c5 = Candidate.builder()
-                .recommendation(recommendation)
-                .candidateMember(m5)
-                .candidateScore(9).build();
-
-        List<Candidate> candidateList = List.of(c1, c2, c3, c4, c5);
-
-        candidateRepository.save(c1);
-        candidateRepository.save(c2);
-        candidateRepository.save(c3);
-        candidateRepository.save(c4);
-        candidateRepository.save(c5);
-
-        recommendationRepository.save(recommendation);
-
-        return RecommendationResponseDto.fromEntity(recommendation, candidateList);
     }
 
-    private int calculateScore(List<PreferenceOrder> PreferenceOrders, Lifestyle lifestyle) {
-        int score = 0;
-
-        for (PreferenceOrder preferenceOrder : PreferenceOrders) {
-            score += calculateIndividualScore(preferenceOrder, lifestyle);
-        }
-
-        return score;
-    }
-
-    private int calculateIndividualScore(PreferenceOrder preferenceOrder, Lifestyle lifestyle) {
-        LifestyleType preferredLifestyleType = preferenceOrder.getLifestyleType();
-
-        Enum<?> preferredLifestyleDetail = preferenceOrder.getLifestyleDetail();
-        Enum<?> comparedLifestyle = getComparedLifestyle(preferredLifestyleType, lifestyle);
-
-        return 9 - Math.abs(((LifestyleAttribute) preferredLifestyleDetail).getIndex() - ((LifestyleAttribute) comparedLifestyle).getIndex());
-    }
-
-    private Enum<?> getComparedLifestyle(LifestyleType preferredLifestyle, Lifestyle targetLifestyle) {
-        switch (preferredLifestyle) {
-            case SLEEP_TIME:
-                return targetLifestyle.getSleepTimeType();
-            case WAKE_UP_TIME:
-                return targetLifestyle.getWakeUpTimeType();
-            case SMOKING:
-                return targetLifestyle.getSmokingType();
-            case SLEEPING_HABIT:
-                return targetLifestyle.getSleepingHabitType();
-            case SLEEPING_SENSITIVITY:
-                return targetLifestyle.getSleepingSensitivityType();
-            case DRINKING_FREQUENCY:
-                return targetLifestyle.getDrinkingFrequencyType();
-            case CLEANING_FREQUENCY:
-                return targetLifestyle.getCleaningFrequencyType();
-            case HEAT_TOLERANCE:
-                return targetLifestyle.getHeatToleranceType();
-            case COLD_TOLERANCE:
-                return targetLifestyle.getColdToleranceType();
-            case PERFUME_USAGE:
-                return targetLifestyle.getPerfumeUsageType();
-            case EXAM_PREPARATION:
-                return targetLifestyle.getExamPreparationType();
-            default:
-                return null;
-        }
+    /**
+     * @param scores         회원 아이디와 점수 리스트
+     * @param recommendation Recommendation 레코드
+     * @return 생성된 Candidate 레코드 리스트
+     */
+    private List<Candidate> createCandidates(List<Map.Entry<Long, Double>> scores, Recommendation recommendation) {
+        return scores.stream()
+                .map(entry -> {
+                    Member candidate = memberRepository.findById(entry.getKey())
+                            .orElseThrow(MemberNotExistsException::new);
+                    return Candidate.builder()
+                            .recommendation(recommendation)
+                            .candidateMember(candidate)
+                            .candidateScore(entry.getValue())
+                            .build();
+                }).toList();
     }
 }
