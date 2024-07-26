@@ -126,7 +126,7 @@ public class RoommateMatchingController {
     public ResponseEntity<ResponseDto<RecommendationResponseDto>> suggestCandidates(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        RecommendationResponseDto responseDto = recommendationService.suggestRoommates(principalDetails);
+        RecommendationResponseDto responseDto = recommendationService.findTop5Candidates(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
