@@ -5,8 +5,10 @@ import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifest
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
+import dormitoryfamily.doomz.domain.roomate.dto.recommendation.RecommendationResponseDto;
 import dormitoryfamily.doomz.domain.roomate.service.LifestyleService;
 import dormitoryfamily.doomz.domain.roomate.service.PreferenceOrderService;
+import dormitoryfamily.doomz.domain.roomate.service.RecommendationService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import jakarta.validation.Valid;
@@ -22,6 +24,7 @@ public class RoommateMatchingController {
 
     private final LifestyleService lifestyleService;
     private final PreferenceOrderService preferenceOrderService;
+    private final RecommendationService recommendationService;
 
     @PostMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerMyLifestyle(
@@ -116,6 +119,14 @@ public class RoommateMatchingController {
     ) {
         PreferenceOrderResponseDto responseDto =
                 preferenceOrderService.findPreferenceOrder(memberId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @PostMapping("/matchings/recommendations")
+    public ResponseEntity<ResponseDto<RecommendationResponseDto>> suggestCandidates(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        RecommendationResponseDto responseDto = recommendationService.suggestRoommates(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
