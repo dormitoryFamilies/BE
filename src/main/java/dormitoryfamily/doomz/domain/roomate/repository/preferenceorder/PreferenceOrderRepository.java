@@ -3,9 +3,9 @@ package dormitoryfamily.doomz.domain.roomate.repository.preferenceorder;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PreferenceOrderRepository extends JpaRepository<PreferenceOrder, Long> {
 
@@ -13,5 +13,8 @@ public interface PreferenceOrderRepository extends JpaRepository<PreferenceOrder
 
     void deleteByMember(Member member);
 
-    Optional<PreferenceOrder> findByMember(Member member);
+    List<PreferenceOrder> findAllByMemberOrderByPreferenceOrderAsc(Member member);
+
+    @Query("SELECT p FROM PreferenceOrder p WHERE p.member = :member AND p.preferenceOrder = :preferenceOrder")
+    PreferenceOrder findByMemberAndPreferenceOrder(Member member, Integer preferenceOrder);
 }
