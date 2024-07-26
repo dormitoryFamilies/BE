@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 
 import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.fromType;
 

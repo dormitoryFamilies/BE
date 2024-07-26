@@ -28,10 +28,10 @@ public class Candidate {
     @JoinColumn(name = "candidate_member_id")
     private Member candidateMember;
 
-    private Integer candidateScore;
+    private Double candidateScore;
 
     @Builder
-    public Candidate(Recommendation recommendation, Member candidateMember, Integer candidateScore) {
+    public Candidate(Recommendation recommendation, Member candidateMember, Double candidateScore) {
         this.recommendation = recommendation;
         this.candidateMember = candidateMember;
         this.candidateScore = candidateScore;

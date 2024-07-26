@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
+import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
 import lombok.Getter;
 
@@ -45,8 +46,7 @@ public enum LifestyleType {
         throw new InvalidLifestyleTypeException(type);
     }
 
-    public Enum<?> getLifestyleValue(String value) {
-
+    public Enum<?> getLifestyleValueFrom(String value) {
         return switch (this) {
             case SLEEP_TIME -> SleepTimeType.fromDescription(value);
             case WAKE_UP_TIME -> WakeUpTimeType.fromDescription(value);
@@ -69,6 +69,23 @@ public enum LifestyleType {
             case EXAM_PREPARATION -> ExamPreparationType.fromDescription(value);
             case EXERCISE -> ExerciseType.fromDescription(value);
             case INSECT_TOLERANCE -> InsectToleranceType.fromDescription(value);
+            default -> null;
+        };
+    }
+
+    public static Enum<?> getComparedLifestyleAttribute(LifestyleType preferredType, Lifestyle lifestyle) {
+        return switch (preferredType) {
+            case SLEEP_TIME -> lifestyle.getSleepTimeType();
+            case WAKE_UP_TIME -> lifestyle.getWakeUpTimeType();
+            case SMOKING -> lifestyle.getSmokingType();
+            case SLEEPING_HABIT -> lifestyle.getSleepingHabitType();
+            case SLEEPING_SENSITIVITY -> lifestyle.getSleepingSensitivityType();
+            case DRINKING_FREQUENCY -> lifestyle.getDrinkingFrequencyType();
+            case CLEANING_FREQUENCY -> lifestyle.getCleaningFrequencyType();
+            case HEAT_TOLERANCE -> lifestyle.getHeatToleranceType();
+            case COLD_TOLERANCE -> lifestyle.getColdToleranceType();
+            case PERFUME_USAGE -> lifestyle.getPerfumeUsageType();
+            case EXAM_PREPARATION -> lifestyle.getExamPreparationType();
             default -> null;
         };
     }
