@@ -24,14 +24,14 @@ public class Recommendation extends BaseTimeEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "target_member_id")
-    private Member targetMember;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "recommendation", orphanRemoval = true)
     private final List<Candidate> candidates = new ArrayList<>();
 
     @Builder
-    public Recommendation(Member targetMember) {
-        this.targetMember = targetMember;
+    public Recommendation(Member member) {
+        this.member = member;
     }
 }
