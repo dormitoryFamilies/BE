@@ -39,14 +39,10 @@ public class RecommendationService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
 
-    //todo 2. 비교할 때 내 자신은 제외하기
     //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
     //todo 5. 리포지토리 테스트 코드 짜보기
     //todo 6. 예외처리
     // - 하루 횟수 초과시 : 예외처리 하고 나면, 다시 등록할 경우 기존거 삭제하고 다시 등록하는 로직 수행하기
-    // - 아무도 라이프 스타일 등록 안했다면 어떻게 되나?
-    // - 2~3명만 해당되면?
-    // - 선호 라이프스타일을 등록하지 않은 사람도 되나?
     //todo 7. 하루에 한 번만 가능
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
@@ -60,8 +56,6 @@ public class RecommendationService {
 
         //상위 점수대 회원 산출
         List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
-
-        System.out.println("scores = " + scores);
 
         Recommendation recommendation = new Recommendation(loginMember);
         List<Candidate> candidates = createCandidates(scores, recommendation);
@@ -101,7 +95,8 @@ public class RecommendationService {
         return allUsersLifestyles.stream()
                 .map(userLifestyle -> {
 
-                    List<PreferenceOrder> userPreferences = getPreferenceOrders(userLifestyle.getMember());
+                    List<PreferenceOrder> userPreferences = preferenceOrderRepository
+                            .findAllByMemberOrderByPreferenceOrderAsc(userLifestyle.getMember());
 
                     double scoreFromMyView = calculateScoreForUser(myPreferences, userLifestyle);
                     double scoreFromTheirView = calculateScoreForUser(userPreferences, myLifestyle);
