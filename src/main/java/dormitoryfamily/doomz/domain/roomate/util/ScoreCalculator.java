@@ -16,13 +16,13 @@ public class ScoreCalculator {
     /**
      * 사용자 한 명에 대한 점수 계산
      *
-     * @param PreferenceOrders 우선순위들(1~4순위 포함)
+     * @param preferenceOrders 4개의 우선순위(1~4순위)
      * @param lifestyle        비교할 사용자의 라이프 스타일
      */
-    public static double calculateScoreForUser(List<PreferenceOrder> PreferenceOrders, Lifestyle lifestyle) {
+    public static double calculateScoreForUser(List<PreferenceOrder> preferenceOrders, Lifestyle lifestyle) {
         double userScore = 0;
-        for (PreferenceOrder preferenceOrder : PreferenceOrders) {
-            userScore += calculateScoreForOrder(preferenceOrder, lifestyle);
+        for (PreferenceOrder preferenceOder : preferenceOrders) {
+            userScore += calculateScoreForOrder(preferenceOder, lifestyle);
         }
         return userScore;
     }
@@ -30,17 +30,17 @@ public class ScoreCalculator {
     /**
      * 순위별 해당 항목에 대한 점수 계산
      *
-     * @param preferenceOrder 우선순위 1개
+     * @param preferenceOrder 연산 대상의 우선순위 1개
      * @param lifestyle       비교할 사용자의 라이프 스타일
      */
     private static double calculateScoreForOrder(PreferenceOrder preferenceOrder, Lifestyle lifestyle) {
         LifestyleType preferredLifestyle = preferenceOrder.getLifestyleType();
         Integer order = preferenceOrder.getPreferenceOrder();
 
-        LifestyleAttribute myStyle = (LifestyleAttribute) preferenceOrder.getLifestyleDetail();
-        LifestyleAttribute anotherStyle = (LifestyleAttribute) getComparedLifestyleAttribute(preferredLifestyle, lifestyle);
+        LifestyleAttribute baseLifestyle = (LifestyleAttribute) preferenceOrder.getLifestyleDetail();
+        LifestyleAttribute otherLifestyle = (LifestyleAttribute) getComparedLifestyleAttribute(preferredLifestyle, lifestyle);
 
-        return applyWeightedScore(order, getScore(myStyle, anotherStyle));
+        return applyWeightedScore(order, getScore(baseLifestyle, otherLifestyle));
     }
 
     private static int getScore(LifestyleAttribute myStyle, LifestyleAttribute anotherStyle) {

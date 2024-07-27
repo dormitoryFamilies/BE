@@ -8,6 +8,7 @@ import dormitoryfamily.doomz.domain.roomate.entity.Candidate;
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.Recommendation;
+import dormitoryfamily.doomz.domain.roomate.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.CandidateRepository;
@@ -38,6 +39,7 @@ public class RecommendationService {
     private final LifestyleRepository lifestyleRepository;
 
     //todo 1. 상대방의 선호 우선순위와 내 라이프스타일 비교
+    //todo 2. 비교할 때 내 자신은 제외하기
     //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
     //todo 5. 리포지토리 테스트 코드 짜보기
     //todo 6. 예외처리
@@ -49,11 +51,19 @@ public class RecommendationService {
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
-        List<PreferenceOrder> preferenceOrders =
-                preferenceOrderRepository.findAllByMemberOrderByPreferenceOrderAsc(loginMember);
-        List<Lifestyle> lifestyles = lifestyleRepository.findAll();
+        //나의 선호 우선순위와 라이프스타일 조회
+        List<PreferenceOrder> myPreferences = preferenceOrderRepository
+                .findAllByMemberOrderByPreferenceOrderAsc(loginMember);
+        Lifestyle myLifestyle = lifestyleRepository.findByMemberId(loginMember.getId())
+                .orElseThrow(LifestyleNotExistsException::new);
 
-        List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(lifestyles, preferenceOrders);
+        //전체 사용자의 라이프 스타일 조회
+        List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAll();
+
+        //상위 점수대 회원 산출
+        List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
+
+        System.out.println("scores = " + scores);
 
         Recommendation recommendation = new Recommendation(loginMember);
         List<Candidate> candidates = createCandidates(scores, recommendation);
@@ -66,18 +76,28 @@ public class RecommendationService {
     /**
      * 선호 우선순위와 라이프 스타일을 비교하여 점수를 계산해 높은 점수 순으로 사용자 id 반환하는 메소드
      *
-     * @param lifestyles       전체 사용자의 라이프 스타일
-     * @param preferenceOrders 비교 대상의 선호 우선순위(1 ~ 4순위)
+     * @param myPreferences      나의 선호 우선순위(1 ~ 4순위)
+     * @param myLifestyle        나의 라이프 스타일
+     * @param allUsersLifestyles 전체 사용자의 라이프 스타일
      * @return 높은 점수 순으로 정렬된 회원 아이디 리스트
      */
-    private static List<Map.Entry<Long, Double>> findTopMatchingCandidates(
-            List<Lifestyle> lifestyles,
-            List<PreferenceOrder> preferenceOrders
+    private List<Map.Entry<Long, Double>> findTopMatchingCandidates(
+            List<PreferenceOrder> myPreferences,
+            Lifestyle myLifestyle,
+            List<Lifestyle> allUsersLifestyles
     ) {
-        return lifestyles.stream()
-                .map(lifestyle -> {
-                    double score = calculateScoreForUser(preferenceOrders, lifestyle);
-                    return new AbstractMap.SimpleEntry<>(lifestyle.getMember().getId(), score);
+        return allUsersLifestyles.stream()
+                .map(userLifestyle -> {
+
+                    List<PreferenceOrder> userPreferences = preferenceOrderRepository
+                            .findAllByMemberOrderByPreferenceOrderAsc(userLifestyle.getMember());
+
+                    double scoreFromMyView = calculateScoreForUser(myPreferences, userLifestyle);
+                    double scoreFromTheirView = calculateScoreForUser(userPreferences, myLifestyle);
+
+                    double totalScore = scoreFromMyView + scoreFromTheirView;
+
+                    return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);
                 })
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                 .limit(RECOMMENDATIONS_MAX_COUNT)
