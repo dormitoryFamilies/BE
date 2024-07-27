@@ -9,6 +9,7 @@ import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.Recommendation;
 import dormitoryfamily.doomz.domain.roomate.exception.LifestyleNotExistsException;
+import dormitoryfamily.doomz.domain.roomate.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.CandidateRepository;
@@ -38,24 +39,21 @@ public class RecommendationService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
 
-    //todo 1. 상대방의 선호 우선순위와 내 라이프스타일 비교
     //todo 2. 비교할 때 내 자신은 제외하기
     //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
     //todo 5. 리포지토리 테스트 코드 짜보기
     //todo 6. 예외처리
     // - 하루 횟수 초과시 : 예외처리 하고 나면, 다시 등록할 경우 기존거 삭제하고 다시 등록하는 로직 수행하기
-    // - 프로필 등록, 선호 우선순위 등록을 안했을 시
     // - 아무도 라이프 스타일 등록 안했다면 어떻게 되나?
     // - 2~3명만 해당되면?
+    // - 선호 라이프스타일을 등록하지 않은 사람도 되나?
     //todo 7. 하루에 한 번만 가능
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
         //나의 선호 우선순위와 라이프스타일 조회
-        List<PreferenceOrder> myPreferences = preferenceOrderRepository
-                .findAllByMemberOrderByPreferenceOrderAsc(loginMember);
-        Lifestyle myLifestyle = lifestyleRepository.findByMemberId(loginMember.getId())
-                .orElseThrow(LifestyleNotExistsException::new);
+        List<PreferenceOrder> myPreferences = getPreferenceOrders(loginMember);
+        Lifestyle myLifestyle = getLifestyle(loginMember);
 
         //전체 사용자의 라이프 스타일 조회
         List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAll();
@@ -71,6 +69,20 @@ public class RecommendationService {
         candidateRepository.saveAll(candidates);
 
         return RecommendationResponseDto.fromEntity(recommendation, candidates);
+    }
+
+    private List<PreferenceOrder> getPreferenceOrders(Member loginMember) {
+        List<PreferenceOrder> myPreferences = preferenceOrderRepository
+                .findAllByMemberOrderByPreferenceOrderAsc(loginMember);
+        if (myPreferences.isEmpty()) {
+            throw new PreferenceOrderNotExistsException();
+        }
+        return myPreferences;
+    }
+
+    private Lifestyle getLifestyle(Member loginMember) {
+        return lifestyleRepository.findByMemberId(loginMember.getId())
+                .orElseThrow(LifestyleNotExistsException::new);
     }
 
     /**
@@ -89,8 +101,7 @@ public class RecommendationService {
         return allUsersLifestyles.stream()
                 .map(userLifestyle -> {
 
-                    List<PreferenceOrder> userPreferences = preferenceOrderRepository
-                            .findAllByMemberOrderByPreferenceOrderAsc(userLifestyle.getMember());
+                    List<PreferenceOrder> userPreferences = getPreferenceOrders(userLifestyle.getMember());
 
                     double scoreFromMyView = calculateScoreForUser(myPreferences, userLifestyle);
                     double scoreFromTheirView = calculateScoreForUser(userPreferences, myLifestyle);
