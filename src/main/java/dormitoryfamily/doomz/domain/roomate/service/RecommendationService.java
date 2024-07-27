@@ -55,8 +55,8 @@ public class RecommendationService {
         List<PreferenceOrder> myPreferences = getPreferenceOrders(loginMember);
         Lifestyle myLifestyle = getLifestyle(loginMember);
 
-        //전체 사용자의 라이프 스타일 조회
-        List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAll();
+        //나를 제외한 전체 사용자의 라이프 스타일 조회
+        List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAllExcludingMember(loginMember);
 
         //상위 점수대 회원 산출
         List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
