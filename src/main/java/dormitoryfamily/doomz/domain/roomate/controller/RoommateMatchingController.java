@@ -129,4 +129,13 @@ public class RoommateMatchingController {
         RecommendationResponseDto responseDto = recommendationService.findTopCandidates(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
+    @GetMapping("/matchings/recommendations")
+    public ResponseEntity<ResponseDto<RecommendationResponseDto>> getRecommendedCandidates(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        RecommendationResponseDto responseDto =
+                recommendationService.findRecommendedCandidates(principalDetails);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }
