@@ -10,6 +10,7 @@ import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.Recommendation;
 import dormitoryfamily.doomz.domain.roomate.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.exception.PreferenceOrderNotExistsException;
+import dormitoryfamily.doomz.domain.roomate.exception.matching.RecommendationNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.CandidateRepository;
@@ -126,5 +127,15 @@ public class RecommendationService {
                             .candidateScore(entry.getValue())
                             .build();
                 }).toList();
+    }
+
+    public RecommendationResponseDto findRecommendedCandidates(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        Recommendation recommendation = recommendationRepository.findByMemberId(loginMember.getId())
+                .orElseThrow(RecommendationNotExistsException::new);
+        List<Candidate> candidates = candidateRepository
+                .findAllByRecommendationIdOrderByCandidateScoreDesc(recommendation.getId());
+
+        return RecommendationResponseDto.fromEntity(recommendation, candidates);
     }
 }

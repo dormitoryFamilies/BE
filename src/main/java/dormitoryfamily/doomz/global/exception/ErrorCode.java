@@ -104,7 +104,6 @@ public enum ErrorCode {
     WRONG_PROPERTY(BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
     DUPLICATE_PREFERENCE_ORDER_PARAMETER(BAD_REQUEST, "타입이 중복됩니다."),
 
-
     //matching request
     CANNOT_MATCHING_YOURSELF(CONFLICT, "자기 자신에게 매칭 신청을 할 수 없습니다."),
     ALREADY_MATCHING_REQUEST_EXISTS(CONFLICT, "이미 해당 사용자와 매칭 신청이 존재합니다."),
@@ -122,6 +121,7 @@ public enum ErrorCode {
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
+
     private final HttpStatus httpStatus;
     private final String message;
 
