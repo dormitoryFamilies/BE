@@ -15,15 +15,17 @@ import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleReposi
 import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.CandidateRepository;
 import dormitoryfamily.doomz.domain.roomate.repository.recommendation.RecommendationRepository;
+import dormitoryfamily.doomz.domain.roomate.util.TimeIntervalCalculator;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.AbstractMap;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
@@ -42,11 +44,11 @@ public class RecommendationService {
 
     //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
     //todo 5. 리포지토리 테스트 코드 짜보기
-    //todo 6. 예외처리
-    // - 하루 횟수 초과시 : 예외처리 하고 나면, 다시 등록할 경우 기존거 삭제하고 다시 등록하는 로직 수행하기
-    //todo 7. 하루에 한 번만 가능
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
+
+        //기존 매칭 추천을 조회하거나, 새로운 매칭 추천 생성
+        Recommendation recommendation = getOrCreateRecommendation(loginMember);
 
         //나의 선호 우선순위와 라이프스타일 조회
         List<PreferenceOrder> myPreferences = getPreferenceOrders(loginMember);
@@ -56,14 +58,27 @@ public class RecommendationService {
         List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAllExcludingMember(loginMember);
 
         //상위 점수대 회원 산출
-        List<Map.Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
-
-        Recommendation recommendation = new Recommendation(loginMember);
+        List<Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
         List<Candidate> candidates = createCandidates(scores, recommendation);
-        recommendationRepository.save(recommendation);
+
+        //기존 후보 레코드 삭제 후 새롭게 저장
+        candidateRepository.deleteAllByRecommendation(recommendation);
         candidateRepository.saveAll(candidates);
 
         return RecommendationResponseDto.fromEntity(recommendation, candidates);
+    }
+
+    private Recommendation getOrCreateRecommendation(Member loginMember) {
+        return recommendationRepository.findByMemberId(loginMember.getId())
+                .map(existingRecommendation -> {
+                    //매칭 가능 시간인지 체크
+                    TimeIntervalCalculator.validateRecommendationInterval(existingRecommendation);
+                    existingRecommendation.updateRecommendedAt();
+                    return existingRecommendation;
+                }).orElseGet(() -> {
+                    Recommendation newRecommendation = new Recommendation(loginMember);
+                    return recommendationRepository.save(newRecommendation);
+                });
     }
 
     private List<PreferenceOrder> getPreferenceOrders(Member loginMember) {
@@ -88,7 +103,7 @@ public class RecommendationService {
      * @param allUsersLifestyles 전체 사용자의 라이프 스타일
      * @return 높은 점수 순으로 정렬된 회원 아이디 리스트
      */
-    private List<Map.Entry<Long, Double>> findTopMatchingCandidates(
+    private List<Entry<Long, Double>> findTopMatchingCandidates(
             List<PreferenceOrder> myPreferences,
             Lifestyle myLifestyle,
             List<Lifestyle> allUsersLifestyles
@@ -101,12 +116,11 @@ public class RecommendationService {
 
                     double scoreFromMyView = calculateScoreForUser(myPreferences, userLifestyle);
                     double scoreFromTheirView = calculateScoreForUser(userPreferences, myLifestyle);
-
                     double totalScore = scoreFromMyView + scoreFromTheirView;
 
                     return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);
                 })
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .sorted(Entry.comparingByValue(Comparator.reverseOrder()))
                 .limit(RECOMMENDATIONS_MAX_COUNT)
                 .collect(Collectors.toList());
     }
@@ -116,7 +130,7 @@ public class RecommendationService {
      * @param recommendation Recommendation 레코드
      * @return 생성된 Candidate 레코드 리스트
      */
-    private List<Candidate> createCandidates(List<Map.Entry<Long, Double>> scores, Recommendation recommendation) {
+    private List<Candidate> createCandidates(List<Entry<Long, Double>> scores, Recommendation recommendation) {
         return scores.stream()
                 .map(entry -> {
                     Member candidate = memberRepository.findById(entry.getKey())

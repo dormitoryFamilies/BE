@@ -9,7 +9,6 @@ import java.util.List;
 
 import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.getComparedLifestyleAttribute;
 import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.*;
-import static dormitoryfamily.doomz.domain.roomate.util.ScoreProperties.*;
 
 public class ScoreCalculator {
 

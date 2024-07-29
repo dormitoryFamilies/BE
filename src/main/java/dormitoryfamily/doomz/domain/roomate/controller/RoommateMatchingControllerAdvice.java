@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.roomate.controller;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
 import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.matching.TooManyRequestException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,16 @@ public class RoommateMatchingControllerAdvice {
         return ResponseEntity
                 .status(status)
                 .body(ResponseDto.errorWithMessage(status, "[" + duplicatePreference + "] " + DUPLICATE_PREFERENCE_ORDER_PARAMETER.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> handleTooManyRequestException(TooManyRequestException e) {
+        HttpStatus status = e.getErrorCode().getHttpStatus();
+        long remainingMinutes = e.getRemainingMinutes();
+
+        return ResponseEntity
+                .status(status)
+                .body(ResponseDto.errorWithMessage(status, e.getMessage() +
+                        " 남은 시간 [" + remainingMinutes + "분]"));
     }
 }
