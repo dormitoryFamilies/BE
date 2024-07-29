@@ -142,6 +142,7 @@ public class RecommendationService {
                 }).toList();
     }
 
+    @Transactional(readOnly = true)
     public RecommendationResponseDto findRecommendedCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Recommendation recommendation = recommendationRepository.findByMemberId(loginMember.getId())
