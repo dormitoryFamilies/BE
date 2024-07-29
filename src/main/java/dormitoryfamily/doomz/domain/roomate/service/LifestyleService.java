@@ -7,8 +7,8 @@ import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.CreateMyLifest
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.dto.lifestyle.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
-import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterMyLifestyleException;
-import dormitoryfamily.doomz.domain.roomate.exception.LifestyleNotExistsException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.AlreadyRegisterMyLifestyleException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.repository.lifestyle.LifestyleRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;

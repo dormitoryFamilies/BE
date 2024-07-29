@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidPhoneSoundTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidPhoneSoundTypeException;
 import lombok.Getter;
 
 @Getter

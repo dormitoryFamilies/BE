@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidSmokingTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidSmokingTypeException;
 import lombok.Getter;
 
 @Getter

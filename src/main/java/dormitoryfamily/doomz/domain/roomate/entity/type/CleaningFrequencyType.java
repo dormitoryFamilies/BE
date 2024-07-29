@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidCleaningHabitTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidCleaningHabitTypeException;
 import lombok.Getter;
 
 @Getter

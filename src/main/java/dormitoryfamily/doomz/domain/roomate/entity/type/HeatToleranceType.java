@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidHeatToleranceTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidHeatToleranceTypeException;
 import lombok.Getter;
 
 @Getter

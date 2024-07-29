@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidExamPreparationTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidExamPreparationTypeException;
 import lombok.Getter;
 
 @Getter

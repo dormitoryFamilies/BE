@@ -7,10 +7,10 @@ import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.request.Preferen
 import dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
-import dormitoryfamily.doomz.domain.roomate.exception.AlreadyRegisterPreferenceOrderException;
-import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
-import dormitoryfamily.doomz.domain.roomate.exception.PreferenceOrderNotExistsException;
-import dormitoryfamily.doomz.domain.roomate.repository.preferenceorder.PreferenceOrderRepository;
+import dormitoryfamily.doomz.domain.roomate.exception.preference.AlreadyRegisterPreferenceOrderException;
+import dormitoryfamily.doomz.domain.roomate.exception.preference.DuplicatePreferenceOrderException;
+import dormitoryfamily.doomz.domain.roomate.exception.preference.PreferenceOrderNotExistsException;
+import dormitoryfamily.doomz.domain.roomate.repository.preference.PreferenceOrderRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidShowerTimeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidShowerTimeTypeException;
 import lombok.Getter;
 
 @Getter
