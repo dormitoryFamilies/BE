@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.matchingResult.service;
 
 import dormitoryfamily.doomz.domain.matchingRequest.exception.*;
-import dormitoryfamily.doomz.domain.matchingRequest.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.matchingRequest.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.matchingResult.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.matchingResult.exception.MatchingResultNotExistException;
@@ -84,6 +83,4 @@ public class MatchingResultService {
         loginMember.markAsUnmatched();
         targetMember.markAsUnmatched();
     }
-
-
 }
