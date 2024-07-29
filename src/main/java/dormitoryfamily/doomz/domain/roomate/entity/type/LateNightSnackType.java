@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidLateNightSnackTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidLateNightSnackTypeException;
 import lombok.Getter;
 
 @Getter

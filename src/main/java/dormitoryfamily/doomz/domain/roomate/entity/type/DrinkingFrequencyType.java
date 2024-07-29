@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidDrinkingFrequencyTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidDrinkingFrequencyTypeException;
 import lombok.Getter;
 
 @Getter

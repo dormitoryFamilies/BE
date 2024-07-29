@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidLifestyleTypeException;
 import lombok.Getter;
 
 @Getter

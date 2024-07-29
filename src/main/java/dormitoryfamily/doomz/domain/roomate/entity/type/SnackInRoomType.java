@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidSnackInRoomTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidSnackInRoomTypeException;
 import lombok.Getter;
 
 @Getter

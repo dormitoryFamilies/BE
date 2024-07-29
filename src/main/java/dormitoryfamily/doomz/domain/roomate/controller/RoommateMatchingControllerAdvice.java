@@ -1,9 +1,9 @@
 package dormitoryfamily.doomz.domain.roomate.controller;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import dormitoryfamily.doomz.domain.roomate.exception.DuplicatePreferenceOrderException;
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidLifestyleTypeException;
-import dormitoryfamily.doomz.domain.roomate.exception.matching.TooManyRequestException;
+import dormitoryfamily.doomz.domain.roomate.exception.preference.DuplicatePreferenceOrderException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidLifestyleTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.recommendation.TooManyRequestException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

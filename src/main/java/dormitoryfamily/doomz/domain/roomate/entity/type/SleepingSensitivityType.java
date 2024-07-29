@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingSensitivityTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidSleepingSensitivityTypeException;
 import lombok.Getter;
 
 @Getter

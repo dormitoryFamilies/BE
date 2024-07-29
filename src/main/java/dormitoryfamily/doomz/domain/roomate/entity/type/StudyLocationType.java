@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidStudyLocationException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidStudyLocationException;
 import lombok.Getter;
 
 @Getter

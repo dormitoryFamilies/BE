@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidInsectToleranceTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidInsectToleranceTypeException;
 import lombok.Getter;
 
 @Getter

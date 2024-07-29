@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidPerfumeUsageTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidPerfumeUsageTypeException;
 import lombok.Getter;
 
 @Getter

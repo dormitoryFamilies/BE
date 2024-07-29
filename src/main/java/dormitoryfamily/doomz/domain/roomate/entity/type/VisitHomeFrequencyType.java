@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidVisitHomeFrequencyTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidVisitHomeFrequencyTypeException;
 import lombok.Getter;
 
 @Getter

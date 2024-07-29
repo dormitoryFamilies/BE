@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingTimeTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidSleepingTimeTypeException;
 import lombok.Getter;
 
 @Getter

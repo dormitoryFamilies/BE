@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity.type;
 
-import dormitoryfamily.doomz.domain.roomate.exception.InvalidExerciseTypeException;
+import dormitoryfamily.doomz.domain.roomate.exception.lifestyle.InvalidExerciseTypeException;
 import lombok.Getter;
 
 @Getter
