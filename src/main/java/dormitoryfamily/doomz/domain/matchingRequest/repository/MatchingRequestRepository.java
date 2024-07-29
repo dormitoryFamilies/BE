@@ -21,4 +21,6 @@ public interface MatchingRequestRepository extends JpaRepository<MatchingRequest
             "OR (m.sender = :targetMember AND m.receiver = :loginMember)")
     Optional<MatchingRequest> findByMembers(Member loginMember, Member targetMember);
 
+    Optional<MatchingRequest> findBySenderAndReceiver(Member targetMember, Member loginMember);
+
 }

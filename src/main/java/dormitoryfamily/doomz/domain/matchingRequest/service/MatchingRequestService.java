@@ -1,9 +1,7 @@
 package dormitoryfamily.doomz.domain.matchingRequest.service;
 
 import dormitoryfamily.doomz.domain.matchingRequest.entity.MatchingRequest;
-import dormitoryfamily.doomz.domain.matchingRequest.exception.CannotMatchingYourselfException;
-import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestAlreadyExitsException;
-import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestNotExistException;
+import dormitoryfamily.doomz.domain.matchingRequest.exception.*;
 import dormitoryfamily.doomz.domain.matchingRequest.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
@@ -39,8 +37,16 @@ public class MatchingRequestService {
     }
 
     private void validateMatchingRequest(Member loginMember, Member targetMember){
+        checkIfAlreadyMatchedMember(loginMember, targetMember);
         checkDistinctMembers(loginMember, targetMember);
-        checkIfAlreadyRequested(loginMember, targetMember);
+        checkDormitoryMatch(loginMember, targetMember);
+        checkMatchingRequestAlreadyExits(loginMember, targetMember);
+    }
+
+    private void checkIfAlreadyMatchedMember(Member loginMember, Member targetMember) {
+        if (targetMember.isRoommateMatched() || loginMember.isRoommateMatched()) {
+            throw new AlreadyMatchedMemberException();
+        }
     }
 
     private void checkDistinctMembers(Member loginMember, Member targetMember){
@@ -49,7 +55,13 @@ public class MatchingRequestService {
         }
     }
 
-    private void checkIfAlreadyRequested(Member loginMember, Member targetMember){
+    private void checkDormitoryMatch(Member loginMember, Member targetMember) {
+        if (!Objects.equals(loginMember.getDormitoryType(), targetMember.getDormitoryType())){
+            throw new MemberDormitoryMismatchException();
+        }
+    }
+
+    private void checkMatchingRequestAlreadyExits(Member loginMember, Member targetMember){
         if(matchingRequestRepository.existsByMembers(loginMember, targetMember)){
             throw new MatchingRequestAlreadyExitsException();
         }
@@ -58,12 +70,23 @@ public class MatchingRequestService {
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId){
         Member loginMember = principalDetails.getMember();
         Member targetMember = getMemberById(memberId);
+
         MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
         matchingRequestRepository.delete(matchingRequest);
     }
 
     public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember){
         return matchingRequestRepository.findByMembers(loginMember, targetMember)
+                .orElseThrow(MatchingRequestNotExistException::new);
+    }
+
+    public void deleteMatchingRequest(Member loginMember, Member targetMember){
+        MatchingRequest matchingRequest = getMatchingSenderAndReceiver(loginMember, targetMember);
+        matchingRequestRepository.delete(matchingRequest);
+    }
+
+    public MatchingRequest getMatchingSenderAndReceiver(Member loginMember, Member targetMember){
+        return matchingRequestRepository.findBySenderAndReceiver(targetMember, loginMember)
                 .orElseThrow(MatchingRequestNotExistException::new);
     }
 }

@@ -104,12 +104,17 @@ public enum ErrorCode {
 
     //matching request
     CANNOT_MATCHING_YOURSELF(CONFLICT, "자기 자신에게 매칭 신청을 할 수 없습니다."),
-    ALREADY_MATCHING_REQUEST_EXISTS(CONFLICT, "이미 매칭 신청 상태인 사용자입니다."),
-    MATCHING_REQUEST_NOT_EXISTS(NOT_FOUND, "해당 매칭 신청은 존재하지 않습니다."),
+    ALREADY_MATCHING_REQUEST_EXISTS(CONFLICT, "이미 해당 사용자와 매칭 신청이 존재합니다."),
+    MATCHING_REQUEST_NOT_EXISTS(NOT_FOUND, "해당 사용자와의 매칭 신청이 존재하지 않습니다."),
+    ALREADY_MATCHED_MEMBER(CONFLICT, "이미 룸메이트 매칭이 완료된 사용자입니다."),
+    MEMBER_DORMITORY_MISMATCH(CONFLICT, "기숙사가 달라 매칭이 불가능한 사용자입니다."),
+
+    //matching result
+    MATCHING_RESULT_NOT_EXISTS(CONFLICT,"해당 사용자와 룸메이트 매칭이 이루어지지 않은 상태입니다." ),
+
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
-
     private final HttpStatus httpStatus;
     private final String message;
 
