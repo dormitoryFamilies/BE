@@ -4,7 +4,7 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidExerciseTypeExcepti
 import lombok.Getter;
 
 @Getter
-public enum ExerciseType implements Describable {
+public enum ExerciseType {
 
     NONE("안해요"),
     DORMITORY("긱사에서"),

@@ -4,15 +4,17 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingSensitivity
 import lombok.Getter;
 
 @Getter
-public enum SleepingSensitivityType implements Describable {
+public enum SleepingSensitivityType implements LifestyleAttribute {
 
-    DARK("어두움"),
-    LIGHT("밝음");
+    DARK("어두움", 0),
+    LIGHT("밝음", 8);
 
     private final String description;
+    private final int index;
 
-    SleepingSensitivityType(String description) {
+    SleepingSensitivityType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static SleepingSensitivityType fromDescription(String description) {

@@ -4,16 +4,18 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidHeatToleranceTypeEx
 import lombok.Getter;
 
 @Getter
-public enum HeatToleranceType implements Describable {
+public enum HeatToleranceType implements LifestyleAttribute {
 
-    LOW("적게 탐"),
-    MEDIUM("조금 탐"),
-    HIGH("많이 탐");
+    LOW("적게 탐", 0),
+    MEDIUM("조금 탐", 4),
+    HIGH("많이 탐", 8);
 
     private final String description;
+    private final int index;
 
-    HeatToleranceType(String description) {
+    HeatToleranceType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static HeatToleranceType fromDescription(String description) {

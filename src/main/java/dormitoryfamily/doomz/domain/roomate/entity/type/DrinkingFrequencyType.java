@@ -4,17 +4,19 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidDrinkingFrequencyTy
 import lombok.Getter;
 
 @Getter
-public enum DrinkingFrequencyType implements Describable {
+public enum DrinkingFrequencyType implements LifestyleAttribute {
 
-    NONE("없음"),
-    OCCASIONAL("가끔"),
-    FREQUENT("종종"),
-    REGULAR("자주");
+    NONE("없음", 0),
+    OCCASIONAL("가끔", 3),
+    FREQUENT("종종", 5),
+    REGULAR("자주", 8);
 
     private final String description;
+    private final int index;
 
-    DrinkingFrequencyType(String description) {
+    DrinkingFrequencyType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static DrinkingFrequencyType fromDescription(String description) {

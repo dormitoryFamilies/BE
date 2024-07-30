@@ -4,17 +4,19 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSleepingHabitTypeEx
 import lombok.Getter;
 
 @Getter
-public enum SleepingHabitType implements Describable {
+public enum SleepingHabitType implements LifestyleAttribute {
 
-    TEETH_GRINDING("이갈이"),
-    SNORING("코골이"),
-    SLEEP_TALKING("잠꼬대"),
-    NONE("없음");
+    TEETH_GRINDING("이갈이", 8),
+    SNORING("코골이", 8),
+    SLEEP_TALKING("잠꼬대", 8),
+    NONE("없음", 0);
 
     private final String description;
+    private final int index;
 
-    SleepingHabitType(String description) {
+    SleepingHabitType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static SleepingHabitType fromDescription(String description) {

@@ -4,15 +4,17 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidSmokingTypeExceptio
 import lombok.Getter;
 
 @Getter
-public enum SmokingType implements Describable {
+public enum SmokingType implements LifestyleAttribute {
 
-    NON_SMOKER("비흡연"),
-    SMOKER("흡연");
+    NON_SMOKER("비흡연", 0),
+    SMOKER("흡연", 8);
 
     private final String description;
+    private final int index;
 
-    SmokingType(String description) {
+    SmokingType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static SmokingType fromDescription(String description) {
