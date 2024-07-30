@@ -1,7 +1,6 @@
-package dormitoryfamily.doomz.domain.matchingResult.controller;
+package dormitoryfamily.doomz.domain.matching.controller;
 
-import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestNotExistException;
-import dormitoryfamily.doomz.domain.matchingResult.exception.MatchingResultNotExistException;
+import dormitoryfamily.doomz.domain.matching.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

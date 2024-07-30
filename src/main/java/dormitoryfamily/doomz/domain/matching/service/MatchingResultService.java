@@ -1,10 +1,10 @@
-package dormitoryfamily.doomz.domain.matchingResult.service;
+package dormitoryfamily.doomz.domain.matching.service;
 
-import dormitoryfamily.doomz.domain.matchingRequest.exception.*;
-import dormitoryfamily.doomz.domain.matchingRequest.service.MatchingRequestService;
-import dormitoryfamily.doomz.domain.matchingResult.entity.MatchingResult;
-import dormitoryfamily.doomz.domain.matchingResult.exception.MatchingResultNotExistException;
-import dormitoryfamily.doomz.domain.matchingResult.repository.MatchingResultRepository;
+import dormitoryfamily.doomz.domain.matching.entity.MatchingResult;
+import dormitoryfamily.doomz.domain.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.matching.exception.MemberDormitoryMismatchException;
+import dormitoryfamily.doomz.domain.matching.exception.MatchingResultNotExistException;
+import dormitoryfamily.doomz.domain.matching.repository.MatchingResultRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
@@ -28,13 +28,13 @@ public class MatchingResultService {
         Member loginMember = principalDetails.getMember();
         Member targetMember = getMemberById(memberId);
 
-        validateMatchingResult(loginMember, targetMember);
+        validateMatchingCapability(loginMember, targetMember);
 
         MatchingResult matchingResult = MatchingResult.createMatchingResult(loginMember, targetMember);
         matchingResultRepository.save(matchingResult);
 
         updateMemberMatchingStatus(loginMember, targetMember);
-        matchingRequestService.deleteMatchingRequest(loginMember, targetMember);
+        matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
     }
 
     private Member getMemberById(Long memberId) {
@@ -42,7 +42,7 @@ public class MatchingResultService {
                 .orElseThrow(MemberNotExistsException::new);
     }
 
-    private void validateMatchingResult(Member loginMember, Member targetMember){
+    private void validateMatchingCapability(Member loginMember, Member targetMember){
         checkIfAlreadyMatchedMember(loginMember, targetMember);
         checkDormitoryMatch(loginMember, targetMember);
     }

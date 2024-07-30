@@ -1,8 +1,8 @@
-package dormitoryfamily.doomz.domain.matchingRequest.controller;
+package dormitoryfamily.doomz.domain.matching.controller;
 
-import dormitoryfamily.doomz.domain.matchingRequest.exception.CannotMatchingYourselfException;
-import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestAlreadyExitsException;
-import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestNotExistException;
+import dormitoryfamily.doomz.domain.matching.exception.CannotMatchingYourselfException;
+import dormitoryfamily.doomz.domain.matching.exception.MatchingRequestAlreadyExitsException;
+import dormitoryfamily.doomz.domain.matching.exception.MatchingRequestNotExistException;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

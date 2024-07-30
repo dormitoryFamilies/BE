@@ -65,10 +65,7 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
-                  String studentCardImageUrl,
-                  Integer followingCount,
-                  Integer followerCount,
-                  boolean isRoommateMatched
+                  String studentCardImageUrl
     ) {
         this.name = name;
         this.email = email;
@@ -81,9 +78,9 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
-        this.followingCount = followingCount;
-        this.followerCount = followerCount;
-        this.isRoommateMatched = isRoommateMatched;
+        this.followingCount = 0;
+        this.followerCount = 0;
+        this.isRoommateMatched = false;
         this.authority = RoleType.ROLE_VISITOR;
     }
 
@@ -135,9 +132,4 @@ public class Member extends BaseTimeEntity {
         isRoommateMatched = false;
     }
 
-    @PrePersist
-    private void init() {
-        followingCount = 0;
-        followerCount = 0;
-    }
 }
