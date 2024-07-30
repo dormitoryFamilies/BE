@@ -18,7 +18,7 @@ public class Lifestyle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "my_lifestyle_id")
+    @Column(name = "lifestyle_id")
     private Long id;
 
     @OneToOne

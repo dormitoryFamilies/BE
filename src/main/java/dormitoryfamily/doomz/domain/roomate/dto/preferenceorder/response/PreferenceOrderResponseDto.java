@@ -3,61 +3,30 @@ package dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.type.Describable;
 
-import java.util.List;
-
 public record PreferenceOrderResponseDto(
 
-        String firstPreferenceType,
-        String firstPreference,
+        String firstPreferenceOrder,
 
-        String secondPreferenceType,
-        String secondPreference,
+        String secondPreferenceOrder,
 
-        String thirdPreferenceType,
-        String thirdPreference,
+        String thirdPreferenceOrder,
 
-        String fourthPreferenceType,
-        String fourthPreference
+        String fourthPreferenceOrder
 
 ) {
-    public static PreferenceOrderResponseDto fromEntity(List<PreferenceOrder> preferenceOrders) {
-        String firstPreferenceType = null;
-        String firstPreference = null;
-        String secondPreferenceType = null;
-        String secondPreference = null;
-        String thirdPreferenceType = null;
-        String thirdPreference = null;
-        String fourthPreferenceType = null;
-        String fourthPreference = null;
-
-        for (PreferenceOrder preferenceOrder : preferenceOrders) {
-            String preferenceTypeDetail = ((Describable) preferenceOrder.getLifestyleDetail()).getDescription();
-
-            switch (preferenceOrder.getPreferenceOrder()) {
-                case 1 -> {
-                    firstPreferenceType = preferenceOrder.getLifestyleType().name();
-                    firstPreference = preferenceTypeDetail;
-                }
-                case 2 -> {
-                    secondPreferenceType = preferenceOrder.getLifestyleType().name();
-                    secondPreference = preferenceTypeDetail;
-                }
-                case 3 -> {
-                    thirdPreferenceType = preferenceOrder.getLifestyleType().name();
-                    thirdPreference = preferenceTypeDetail;
-                }
-                case 4 -> {
-                    fourthPreferenceType = preferenceOrder.getLifestyleType().name();
-                    fourthPreference = preferenceTypeDetail;
-                }
-            }
-        }
-
+    public static PreferenceOrderResponseDto fromEntity(PreferenceOrder preference) {
         return new PreferenceOrderResponseDto(
-                firstPreferenceType, firstPreference,
-                secondPreferenceType, secondPreference,
-                thirdPreferenceType, thirdPreference,
-                fourthPreferenceType, fourthPreference
+                formatPreference(preference.getFirstPreferenceOrder()),
+                formatPreference(preference.getSecondPreferenceOrder()),
+                formatPreference(preference.getThirdPreferenceOrder()),
+                formatPreference(preference.getFourthPreferenceOrder())
         );
+    }
+
+    private static String formatPreference(Enum<?> preference) {
+        if (preference instanceof Describable describable) {
+            return preference.getClass().getSimpleName() + ":" + describable.getDescription();
+        }
+        return preference.name();
     }
 }
