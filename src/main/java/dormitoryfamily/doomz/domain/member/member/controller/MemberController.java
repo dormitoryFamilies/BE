@@ -26,14 +26,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/members")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> findAllMembers(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        MemberProfileListResponseDto responseDto = memberService.findAllMembers(principalDetails);
-        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
-    }
-
     @GetMapping("/members/{memberId}/profiles")
     public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> findMemberProfile(
             @PathVariable Long memberId,
@@ -61,7 +53,16 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
-    @GetMapping("/members/search")
+    @GetMapping("/matchings/members")
+    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> findAllMembers(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
+    ) {
+        MemberProfilePagingListResponseDto responseDto = memberService.findAllMembers(principalDetails, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/matchings/members/search")
     public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails

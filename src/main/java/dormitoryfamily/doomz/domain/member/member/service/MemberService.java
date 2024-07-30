@@ -1,16 +1,16 @@
-package dormitoryfamily.doomz.domain.member.member.service;
+package dormitoryfamily.doomz.domain.member.service;
 
-import dormitoryfamily.doomz.domain.member.follow.repository.FollowRepository;
-import dormitoryfamily.doomz.domain.member.member.dto.request.MemberSetUpProfileRequestDto;
-import dormitoryfamily.doomz.domain.member.member.dto.request.MyProfileModifyRequestDto;
-import dormitoryfamily.doomz.domain.member.member.dto.response.*;
-import dormitoryfamily.doomz.domain.member.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.member.entity.type.RoleType;
-import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.member.exception.NicknameDuplicatedException;
-import dormitoryfamily.doomz.domain.member.member.exception.NotRoleMemberException;
-import dormitoryfamily.doomz.domain.member.member.exception.NotVisitorOrRejectedMemberRoleException;
-import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.follow.repository.FollowRepository;
+import dormitoryfamily.doomz.domain.member.dto.request.MemberSetUpProfileRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.request.MyProfileModifyRequestDto;
+import dormitoryfamily.doomz.domain.member.dto.response.*;
+import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.entity.type.RoleType;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.exception.NicknameDuplicatedException;
+import dormitoryfamily.doomz.domain.member.exception.NotRoleMemberException;
+import dormitoryfamily.doomz.domain.member.exception.NotVisitorOrRejectedMemberRoleException;
+import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final RoommateWishRepository roommateWishRepository;
 
     public NicknameCheckResponseDto checkNickname(String nickname) {
         boolean isDuplicated = memberRepository.existsByNickname(nickname);
@@ -55,13 +57,20 @@ public class MemberService {
 
     public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
+        List<Member> members = memberRepository.findVerifiedMembersByKeyword(requestDto.q());
+        List<AllMembersResponseDto> memberDtos = convertToDtoList(members, loginMember);
 
-        List<Member> members = memberRepository.findAllMembersExcludingFollowed(loginMember.getId());
+        return MemberProfileListResponseDto.from(memberDtos);
+    }
 
-        List<MemberInfoResponseDto> memberInfoDtos = members.stream()
-                .map(MemberInfoResponseDto::fromEntity)
-                .toList();
-        return MemberProfileListResponseDto.from(memberInfoDtos);
+    private List<AllMembersResponseDto> convertToDtoList(List<Member> members, Member loginMember) {
+        return members.stream()
+                .map(member -> {
+                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, member);
+                    boolean isRoommateWished = roommateWishRepository.existsByWisherAndWished(loginMember, member);
+                    return AllMembersResponseDto.fromEntity(member, isFollowing, isRoommateWished);
+                })
+                .collect(Collectors.toList());
     }
 
     public MemberDetailsResponseDto getMemberProfile(Long memberId, PrincipalDetails principalDetails) {
@@ -88,18 +97,6 @@ public class MemberService {
         member.updateProfile(requestDto);
     }
 
-    public MemberProfileListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
-        Member loginMember = principalDetails.getMember();
-
-        List<Member> members = memberRepository.findMembersExcludingFollowed(loginMember.getId(), requestDto.q());
-
-        List<MemberInfoResponseDto> memberInfoDtos = members.stream()
-                .map(MemberInfoResponseDto::fromEntity)
-                .toList();
-
-        return MemberProfileListResponseDto.from(memberInfoDtos);
-    }
-
     public RoommateMatchingMemberProfileResponseDto findRoommateProfile(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
@@ -116,7 +113,6 @@ public class MemberService {
         validateIsRoleMember(member);
         member.authenticateStudentCard();
     }
-
 
     public void rejectStudentCard(Long memberId) {
         Member member = getMemberById(memberId);

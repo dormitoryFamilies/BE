@@ -13,11 +13,11 @@ public record MemberProfilePagingListResponseDto(
         boolean isLast,
         List<? extends MemberBaseResponseDto> memberProfiles
 ) {
-    public static MemberProfilePagingListResponseDto from(Page<Follow> follows, List<? extends MemberBaseResponseDto> memberProfiles){
+    public static <T> MemberProfilePagingListResponseDto from(Page<T> pages, List<? extends MemberBaseResponseDto> memberProfiles) {
         return new MemberProfilePagingListResponseDto(
-                follows.getTotalPages(),
-                follows.getNumber(),
-                follows.isLast(),
+                pages.getTotalPages(),
+                pages.getNumber(),
+                pages.isLast(),
                 memberProfiles);
     }
 

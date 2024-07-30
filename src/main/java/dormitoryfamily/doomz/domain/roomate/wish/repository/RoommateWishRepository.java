@@ -13,4 +13,6 @@ public interface RoommateWishRepository extends JpaRepository<RoommateWish, Long
     Optional<RoommateWish> findByWisherAndWished(Member wisher, Member wished);
 
     Slice<RoommateWish> findByWisherOrderByCreatedAtDesc(Member wisher, Pageable pageable);
+
+    boolean existsByWisherAndWished(Member wisher, Member wished);
 }
