@@ -41,8 +41,6 @@ public class RecommendationService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
 
-    //todo 4. PreferenceOrder 하나의 엔티티로 변경해야 하는지 결정하기
-    //todo 5. 리포지토리 테스트 코드 짜보기
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
