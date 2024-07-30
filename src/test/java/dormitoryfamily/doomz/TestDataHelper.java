@@ -10,6 +10,9 @@ import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
 import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
 import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
 import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
+import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
+import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
+import dormitoryfamily.doomz.domain.roomate.entity.type.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -17,18 +20,46 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 public class TestDataHelper {
 
-    // 멤머 더미 데이터 생성
+    /**
+     * 멤머 더미 데이터 생성
+     */
     public static Map<String, Member> createDummyMembers() {
-        return Map.of(
-                "홍길동", createMember(1L, "홍길동", "의적단", "abc@naver.com", "123456789", CollegeType.ENGINEERING, DepartmentType.TELECOMMUNICATION_ENGINEERING, MemberDormitoryType.JINRIGWAN, LocalDate.of(2000, 1, 1), GenderType.MALE, "S3/profile/images", "S3/studentCardImageUrl/images", 0, 0),
-                "임꺽정", createMember(2L, "임꺽정", "산적왕", "rim@gmail.com", "987654321", CollegeType.HUMANITIES, DepartmentType.PSYCHOLOGY, MemberDormitoryType.YEJIGWAN, LocalDate.of(1990, 12, 1), GenderType.FEMALE, "S3/profile/images", "S3/studentCardImageUrl/images", 0, 0),
-                "이순신", createMember(3L, "이순신", "바다영웅", "hero@daum.net", "1122334455", CollegeType.BIOHEALTH, DepartmentType.BIOHEALTH, MemberDormitoryType.INUIGWAN, LocalDate.of(2000, 5, 5), GenderType.MALE, "S3/profile/images", "S3/studentCardImageUrl/images", 100, 100)
+        return Map.ofEntries(
+                entry("홍길동", createMember(1L, "홍길동(진리관)", "공대여신", "hong1@example.com", "1234567890", CollegeType.ENGINEERING, DepartmentType.KOREAN_LITERATURE, MemberDormitoryType.JINRIGWAN, LocalDate.of(1990, 2, 11), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile1.jpg", "https://s3.amazonaws.com/yourbucket/student1.jpg", 12, 4)),
+                entry("김영희", createMember(2L, "김영희(정의관)", "철학소녀", "kim2@example.com", "0987654321", CollegeType.HUMANITIES, DepartmentType.PHILOSOPHY, MemberDormitoryType.JEONGUIGWAN, LocalDate.of(1992, 5, 18), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile2.jpg", "https://s3.amazonaws.com/yourbucket/student2.jpg", 34, 7)),
+                entry("이철수", createMember(3L, "이철수(개척관)", "자연남자", "lee3@example.com", "1122334455", CollegeType.NATURAL_SCIENCES, DepartmentType.HISTORY, MemberDormitoryType.GAECHEOKGWAN, LocalDate.of(1995, 3, 12), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile3.jpg", "https://s3.amazonaws.com/yourbucket/student3.jpg", 23, 12)),
+                entry("박민수", createMember(4L, "박민수(계영원)", "사회과학자", "park4@example.com", "2233445566", CollegeType.SOCIAL_SCIENCES, DepartmentType.GERMAN_LANGUAGE_CULTURE, MemberDormitoryType.GYEYOUNGWON, LocalDate.of(1988, 8, 30), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile4.jpg", "https://s3.amazonaws.com/yourbucket/student4.jpg", 56, 22)),
+                entry("정수진", createMember(5L, "정수진(지선관)", "경영왕자", "jung5@example.com", "3344556677", CollegeType.BUSINESS, DepartmentType.FRENCH_LANGUAGE_CULTURE, MemberDormitoryType.JISEONGWAN, LocalDate.of(1991, 11, 22), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile5.jpg", "https://s3.amazonaws.com/yourbucket/student5.jpg", 67, 13)),
+                entry("오세진", createMember(6L, "오세진(명덕관)", "전자천재", "oh6@example.com", "4455667788", CollegeType.ELECTRONICS_INFORMATION, DepartmentType.RUSSIAN_LANGUAGE_CULTURE, MemberDormitoryType.MYEONGDEOKGWAN, LocalDate.of(1994, 7, 15), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile6.jpg", "https://s3.amazonaws.com/yourbucket/student6.jpg", 45, 19)),
+                entry("이정환", createMember(7L, "이정환(신민관)", "농업천재", "lee7@example.com", "5566778899", CollegeType.AGRICULTURE_LIFE_ENVIRONMENT, DepartmentType.ARCHAEOLOGY_ART_HISTORY, MemberDormitoryType.SINMINGWAN, LocalDate.of(1989, 1, 5), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile7.jpg", "https://s3.amazonaws.com/yourbucket/student7.jpg", 28, 9)),
+                entry("김민지", createMember(8L, "김민지(인의관)", "약학소녀", "kim8@example.com", "6677889900", CollegeType.PHARMACY, DepartmentType.ENGLISH_LITERATURE, MemberDormitoryType.INUIGWAN, LocalDate.of(1996, 12, 1), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile8.jpg", "https://s3.amazonaws.com/yourbucket/student8.jpg", 90, 30)),
+                entry("박지훈", createMember(9L, "박지훈(예지관)", "의학천재", "park9@example.com", "7788990011", CollegeType.MEDICINE, DepartmentType.CHINESE_LITERATURE, MemberDormitoryType.YEJIGWAN, LocalDate.of(1993, 4, 17), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile9.jpg", "https://s3.amazonaws.com/yourbucket/student9.jpg", 12, 5)),
+                entry("강수진", createMember(10L, "강수진(등용관)", "생명공학자", "kang10@example.com", "8899001122", CollegeType.BIOHEALTH_SHARED, DepartmentType.PHILOSOPHY, MemberDormitoryType.DEUNGYONGGWAN, LocalDate.of(1990, 9, 23), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile10.jpg", "https://s3.amazonaws.com/yourbucket/student10.jpg", 40, 18)),
+                entry("이민호", createMember(11L, "이민호(진리관)", "전공왕자", "lee11@example.com", "9900112233", CollegeType.SELF_DEVELOPMENT_MAJOR, DepartmentType.HISTORY, MemberDormitoryType.JINRIGWAN, LocalDate.of(1992, 2, 14), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile11.jpg", "https://s3.amazonaws.com/yourbucket/student11.jpg", 50, 25)),
+                entry("김하늘", createMember(12L, "김하늘(정의관)", "융합여신", "kim12@example.com", "1011223344", CollegeType.CONVERGENCE_DEPARTMENTS, DepartmentType.GERMAN_LANGUAGE_CULTURE, MemberDormitoryType.JEONGUIGWAN, LocalDate.of(1995, 5, 28), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile12.jpg", "https://s3.amazonaws.com/yourbucket/student12.jpg", 75, 35)),
+                entry("박철수", createMember(13L, "박철수(개척관)", "공대천재", "park13@example.com", "1122334455", CollegeType.ENGINEERING, DepartmentType.ARCHAEOLOGY_ART_HISTORY, MemberDormitoryType.GAECHEOKGWAN, LocalDate.of(1988, 11, 9), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile13.jpg", "https://s3.amazonaws.com/yourbucket/student13.jpg", 65, 29)),
+                entry("홍서연", createMember(14L, "홍서연(계영원)", "인문대여신", "hong14@example.com", "2233445566", CollegeType.HUMANITIES, DepartmentType.KOREAN_LITERATURE, MemberDormitoryType.GYEYOUNGWON, LocalDate.of(1991, 3, 21), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile14.jpg", "https://s3.amazonaws.com/yourbucket/student14.jpg", 80, 40)),
+                entry("최민수", createMember(15L, "최민수(지선관)", "바이오천재", "choi15@example.com", "3344556677", CollegeType.BIOHEALTH, DepartmentType.FRENCH_LANGUAGE_CULTURE, MemberDormitoryType.JISEONGWAN, LocalDate.of(1994, 7, 11), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile15.jpg", "https://s3.amazonaws.com/yourbucket/student15.jpg", 37, 20)),
+                entry("유리", createMember(16L, "유리(명덕관)", "화학천재", "yoo16@example.com", "4455667788", CollegeType.NATURAL_SCIENCES, DepartmentType.KOREAN_LITERATURE, MemberDormitoryType.MYEONGDEOKGWAN, LocalDate.of(1994, 7, 16), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile16.jpg", "https://s3.amazonaws.com/yourbucket/student16.jpg", 14, 5)),
+                entry("민혁", createMember(17L, "민혁(신민관)", "전기천재", "min17@example.com", "5566778899", CollegeType.ENGINEERING, DepartmentType.PHILOSOPHY, MemberDormitoryType.SINMINGWAN, LocalDate.of(1993, 8, 17), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile17.jpg", "https://s3.amazonaws.com/yourbucket/student17.jpg", 44, 15)),
+                entry("민수", createMember(18L, "민수(인의관)", "컴퓨터천재", "min18@example.com", "6677889900", CollegeType.ELECTRONICS_INFORMATION, DepartmentType.GERMAN_LANGUAGE_CULTURE, MemberDormitoryType.INUIGWAN, LocalDate.of(1990, 4, 25), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile18.jpg", "https://s3.amazonaws.com/yourbucket/student18.jpg", 33, 11)),
+                entry("소희", createMember(19L, "소희(예지관)", "생물학천재", "soh19@example.com", "7788990011", CollegeType.BIOHEALTH, DepartmentType.RUSSIAN_LANGUAGE_CULTURE, MemberDormitoryType.YEJIGWAN, LocalDate.of(1991, 5, 10), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile19.jpg", "https://s3.amazonaws.com/yourbucket/student19.jpg", 20, 8)),
+                entry("진수", createMember(20L, "진수(등용관)", "물리학천재", "jin20@example.com", "8899001122", CollegeType.NATURAL_SCIENCES, DepartmentType.CHINESE_LITERATURE, MemberDormitoryType.DEUNGYONGGWAN, LocalDate.of(1993, 1, 21), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile20.jpg", "https://s3.amazonaws.com/yourbucket/student20.jpg", 17, 6)),
+                entry("현주", createMember(21L, "현주(진리관)", "화학여신", "hyun21@example.com", "9900112233", CollegeType.NATURAL_SCIENCES, DepartmentType.KOREAN_LITERATURE, MemberDormitoryType.JINRIGWAN, LocalDate.of(1995, 11, 30), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile21.jpg", "https://s3.amazonaws.com/yourbucket/student21.jpg", 55, 22)),
+                entry("진혁", createMember(22L, "진혁(정의관)", "수학천재", "jin22@example.com", "1011223344", CollegeType.NATURAL_SCIENCES, DepartmentType.PHILOSOPHY, MemberDormitoryType.JEONGUIGWAN, LocalDate.of(1991, 7, 15), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile22.jpg", "https://s3.amazonaws.com/yourbucket/student22.jpg", 25, 10)),
+                entry("가영", createMember(23L, "가영(개척관)", "영문학천재", "ka23@example.com", "1122334455", CollegeType.HUMANITIES, DepartmentType.ENGLISH_LITERATURE, MemberDormitoryType.GAECHEOKGWAN, LocalDate.of(1988, 9, 9), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile23.jpg", "https://s3.amazonaws.com/yourbucket/student23.jpg", 42, 18)),
+                entry("민재", createMember(24L, "민재(계영원)", "독문학천재", "min24@example.com", "2233445566", CollegeType.HUMANITIES, DepartmentType.GERMAN_LANGUAGE_CULTURE, MemberDormitoryType.GYEYOUNGWON, LocalDate.of(1994, 3, 3), GenderType.MALE, "https://s3.amazonaws.com/yourbucket/profile24.jpg", "https://s3.amazonaws.com/yourbucket/student24.jpg", 63, 27)),
+                entry("서진", createMember(25L, "서진(지선관)", "불문학천재", "seo25@example.com", "3344556677", CollegeType.HUMANITIES, DepartmentType.FRENCH_LANGUAGE_CULTURE, MemberDormitoryType.JISEONGWAN, LocalDate.of(1996, 12, 23), GenderType.FEMALE, "https://s3.amazonaws.com/yourbucket/profile25.jpg", "https://s3.amazonaws.com/yourbucket/student25.jpg", 71, 29))
         );
     }
 
-    // 게시글 더미 데이터 생성
+    /**
+     * 게시글 더미 데이터 생성
+     */
     public static List<Article> createDummyArticles(Map<String, Member> members) {
         return Arrays.asList(
                 // 본관
@@ -45,12 +76,53 @@ public class TestDataHelper {
         );
     }
 
-    // 게시글 이미지 더미 데이터 생성
+    /**
+     * 게시글 이미지 더미 데이터 생성
+     */
     public static List<ArticleImage> createDummyArticleImages(List<Article> articles) {
         return List.of(
                 new ArticleImage(articles.get(0), "S3/studentCardImageUrl/images1"),
                 new ArticleImage(articles.get(0), "S3/studentCardImageUrl/images2"),
                 new ArticleImage(articles.get(0), "S3/studentCardImageUrl/images3")
+        );
+    }
+
+    /**
+     * 라이프 스타일 더미 데이터 생성
+     */
+    public static List<Lifestyle> createDummyLifestyles(Map<String, Member> members) {
+        return Arrays.asList(
+                createLifestyle(members.get("홍길동"), SleepTimeType._2200, WakeUpTimeType._0700, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.FREQUENT, null, ShowerDurationType._05, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.HIGH, null, null, LateNightSnackType.SOMETIMES, SnackInRoomType.ALLOWED, null, PerfumeUsageType.SOMETIMES, null, ExamPreparationType.PREPARING, ExerciseType.GYM, null, "취침 후에 말 많이 함"),
+                createLifestyle(members.get("김영희"), SleepTimeType._2300, WakeUpTimeType._0600, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.REGULAR, ShowerTimeType.MORNING, ShowerDurationType._20, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.INFJ, null, LateNightSnackType.OFTEN, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.OFTEN, StudyLocationType.OFF_DORMITORY, ExamPreparationType.PREPARING, null, InsectToleranceType.SMALL_ONLY, "소란 피움"),
+                createLifestyle(members.get("이철수"), SleepTimeType._2400, WakeUpTimeType._0800, SleepingHabitType.TEETH_GRINDING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.OCCASIONAL, null, null, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.LOW, ColdToleranceType.MEDIUM, MBTIType.ISFP, VisitHomeFrequencyType.RARELY, LateNightSnackType.NEVER, SnackInRoomType.ALLOWED, null, PerfumeUsageType.OFTEN, null, ExamPreparationType.NONE, ExerciseType.DORMITORY, InsectToleranceType.CANNOT, "말싸움"),
+                createLifestyle(members.get("박민수"), SleepTimeType.BEFORE_2100, WakeUpTimeType.BEFORE_0500, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.NONE, null, ShowerDurationType._10, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.HIGH, MBTIType.ESTJ, null, LateNightSnackType.SOMETIMES, SnackInRoomType.ALLOWED, PhoneSoundType.VARIABLE, PerfumeUsageType.OFTEN, null, ExamPreparationType.PREPARING, ExerciseType.NONE, InsectToleranceType.EXPERT, "술 먹고 춤 춤"),
+                createLifestyle(members.get("정수진"), SleepTimeType._0100, WakeUpTimeType._0900, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.NON_SMOKER, DrinkingFrequencyType.FREQUENT, null, ShowerDurationType._15, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.MEDIUM, MBTIType.ISTP, null, null, SnackInRoomType.ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.SOMETIMES, null, ExamPreparationType.NONE, ExerciseType.GYM, InsectToleranceType.SMALL_ONLY, "소리지름"),
+                createLifestyle(members.get("오세진"), SleepTimeType.BEFORE_2100, WakeUpTimeType._0700, SleepingHabitType.NONE, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.REGULAR, ShowerTimeType.MORNING, ShowerDurationType._20, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ENFJ, VisitHomeFrequencyType.EVERY_WEEK, LateNightSnackType.OFTEN, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.EARPHONES, PerfumeUsageType.OFTEN, StudyLocationType.VARIABLE, ExamPreparationType.PREPARING, null, InsectToleranceType.SMALL_ONLY, "혼잣말 많이 함"),
+                createLifestyle(members.get("이정환"), SleepTimeType._0200, WakeUpTimeType._0800, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.FREQUENT, ShowerTimeType.EVENING, null, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.LOW, ColdToleranceType.HIGH, MBTIType.INTJ, VisitHomeFrequencyType.RARELY, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, PhoneSoundType.VARIABLE, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.NONE, ExerciseType.GYM, InsectToleranceType.EXPERT, "웃음소리 큼"),
+                createLifestyle(members.get("김민지"), SleepTimeType._0300, WakeUpTimeType._0600, SleepingHabitType.SNORING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.NONE, ShowerTimeType.MORNING, ShowerDurationType._10, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.MEDIUM, ColdToleranceType.MEDIUM, MBTIType.ENTJ, VisitHomeFrequencyType.EVERY_2_3_MONTHS, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.SOMETIMES, StudyLocationType.OFF_DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.CANNOT, "잠꼬대 심함"),
+                createLifestyle(members.get("박지훈"), SleepTimeType._2200, WakeUpTimeType._0700, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.FREQUENT, ShowerTimeType.EVENING, null, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.HIGH, ColdToleranceType.LOW, null, VisitHomeFrequencyType.RARELY, LateNightSnackType.SOMETIMES, SnackInRoomType.ALLOWED, PhoneSoundType.EARPHONES, PerfumeUsageType.OFTEN, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.NONE, null, "울음소리 큼"),
+                createLifestyle(members.get("강수진"), SleepTimeType.BEFORE_2100, WakeUpTimeType.BEFORE_0500, SleepingHabitType.SNORING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.REGULAR, ShowerTimeType.MORNING, ShowerDurationType._20, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.MEDIUM, null, VisitHomeFrequencyType.EVERY_WEEK, null, SnackInRoomType.NOT_ALLOWED, null, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, null, null),
+                createLifestyle(members.get("이민호"), SleepTimeType._0100, WakeUpTimeType._0800, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.NONE, null, null, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.HIGH, MBTIType.ENTP, VisitHomeFrequencyType.EVERY_2_3_MONTHS, LateNightSnackType.OFTEN, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.SOMETIMES, StudyLocationType.OFF_DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.EXPERT, "장난침"),
+                createLifestyle(members.get("김하늘"), SleepTimeType._2200, WakeUpTimeType._0700, SleepingHabitType.SNORING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.FREQUENT, ShowerTimeType.MORNING, ShowerDurationType._25, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.LOW, ColdToleranceType.MEDIUM, MBTIType.ENFJ, VisitHomeFrequencyType.RARELY, LateNightSnackType.NEVER, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.VARIABLE, PerfumeUsageType.SOMETIMES, null, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.SMALL_ONLY, "웃음소리 큼"),
+                createLifestyle(members.get("박철수"), SleepTimeType._2400, WakeUpTimeType._0600, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.NONE, ShowerTimeType.EVENING, null, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ISTP, null, LateNightSnackType.SOMETIMES, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.SOMETIMES, StudyLocationType.DORMITORY, ExamPreparationType.NONE, ExerciseType.GYM, InsectToleranceType.CANNOT, "말싸움"),
+                createLifestyle(members.get("홍서연"), SleepTimeType.BEFORE_2100, WakeUpTimeType._0800, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.FREQUENT, ShowerTimeType.MORNING, ShowerDurationType._10, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.MEDIUM, ColdToleranceType.MEDIUM, null, VisitHomeFrequencyType.EVERY_2_3_MONTHS, LateNightSnackType.NEVER, SnackInRoomType.ALLOWED, null, PerfumeUsageType.SOMETIMES, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.EXPERT, "취침 후에 말 많이 함"),
+                createLifestyle(members.get("최민수"), SleepTimeType._0300, WakeUpTimeType._0600, SleepingHabitType.TEETH_GRINDING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.NONE, ShowerTimeType.MORNING, null, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.LOW, ColdToleranceType.MEDIUM, MBTIType.ENTJ, VisitHomeFrequencyType.RARELY, LateNightSnackType.SOMETIMES, SnackInRoomType.NOT_ALLOWED, null, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, null, "소란 피움"),
+                createLifestyle(members.get("유리"), SleepTimeType.AFTER_0300, WakeUpTimeType._0700, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.NONE, ShowerTimeType.EVENING, ShowerDurationType._25, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.HIGH, MBTIType.INFP, VisitHomeFrequencyType.EVERY_2_3_MONTHS, LateNightSnackType.SOMETIMES, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.NONE, StudyLocationType.VARIABLE, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.EXPERT, "잠꼬대 심함"),
+                createLifestyle(members.get("민혁"), SleepTimeType._0300, WakeUpTimeType._0600, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.REGULAR, ShowerTimeType.MORNING, ShowerDurationType._20, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ISFJ, VisitHomeFrequencyType.EVERY_MONTH, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, PhoneSoundType.EARPHONES, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.CANNOT, "울음소리 큼"),
+                createLifestyle(members.get("민수"), SleepTimeType._2400, WakeUpTimeType._0800, SleepingHabitType.TEETH_GRINDING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.OCCASIONAL, null, ShowerDurationType._25, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.LOW, ColdToleranceType.MEDIUM, MBTIType.INTP, VisitHomeFrequencyType.RARELY, LateNightSnackType.NEVER, SnackInRoomType.ALLOWED, null, PerfumeUsageType.OFTEN, null, ExamPreparationType.NONE, ExerciseType.GYM, InsectToleranceType.CANNOT, null),
+                createLifestyle(members.get("소희"), SleepTimeType._0300, WakeUpTimeType._1100, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.NONE, null, ShowerDurationType._15, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.HIGH, MBTIType.ESTJ, null, LateNightSnackType.SOMETIMES, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.NONE, null, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.SMALL_ONLY, "소리지름"),
+                createLifestyle(members.get("진수"), SleepTimeType.AFTER_0300, WakeUpTimeType._0600, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.REGULAR, ShowerTimeType.MORNING, ShowerDurationType._20, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ISFJ, VisitHomeFrequencyType.EVERY_MONTH, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, null, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, null, "술 먹고 춤 춤"),
+                createLifestyle(members.get("현주"), SleepTimeType._2200, WakeUpTimeType._0700, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.FREQUENT, ShowerTimeType.MORNING, ShowerDurationType._25, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.HIGH, null, null, LateNightSnackType.OFTEN, SnackInRoomType.NOT_ALLOWED, PhoneSoundType.VARIABLE, PerfumeUsageType.NONE, StudyLocationType.VARIABLE, ExamPreparationType.PREPARING, ExerciseType.GYM, null, "장난침"),
+                createLifestyle(members.get("진혁"), SleepTimeType._2400, WakeUpTimeType._0800, SleepingHabitType.TEETH_GRINDING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.OCCASIONAL, ShowerTimeType.EVENING, ShowerDurationType._25, CleaningFrequencyType.ALL_AT_ONCE, HeatToleranceType.LOW, ColdToleranceType.MEDIUM, null, null, LateNightSnackType.NEVER, SnackInRoomType.ALLOWED, PhoneSoundType.SPEAKER, PerfumeUsageType.OFTEN, StudyLocationType.OFF_DORMITORY, ExamPreparationType.NONE, ExerciseType.GYM, InsectToleranceType.CANNOT, "말싸움"),
+                createLifestyle(members.get("가영"), SleepTimeType.BEFORE_2100, WakeUpTimeType._0700, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.REGULAR, null, ShowerDurationType._20, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ISFJ, null, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, PhoneSoundType.EARPHONES, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.CANNOT, null),
+                createLifestyle(members.get("민재"), SleepTimeType._0300, WakeUpTimeType._0800, SleepingHabitType.SLEEP_TALKING, SleepingSensitivityType.DARK, SmokingType.NON_SMOKER, DrinkingFrequencyType.NONE, null, ShowerDurationType._10, CleaningFrequencyType.OCCASIONALLY, HeatToleranceType.MEDIUM, ColdToleranceType.HIGH, MBTIType.ENFJ, null, LateNightSnackType.SOMETIMES, SnackInRoomType.NOT_ALLOWED, null, PerfumeUsageType.NONE, StudyLocationType.VARIABLE, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.SMALL_ONLY, "소란 피움"),
+                createLifestyle(members.get("서진"), SleepTimeType.AFTER_0300, WakeUpTimeType._0600, SleepingHabitType.SNORING, SleepingSensitivityType.LIGHT, SmokingType.SMOKER, DrinkingFrequencyType.REGULAR, null, ShowerDurationType._20, CleaningFrequencyType.IMMEDIATELY, HeatToleranceType.HIGH, ColdToleranceType.LOW, MBTIType.ISFJ, null, LateNightSnackType.OFTEN, SnackInRoomType.ALLOWED, PhoneSoundType.EARPHONES, PerfumeUsageType.NONE, StudyLocationType.DORMITORY, ExamPreparationType.PREPARING, ExerciseType.GYM, InsectToleranceType.CANNOT, null)
+        );
+    }
+
+    public static List<PreferenceOrder> createDummyPreferenceOrders(Map<String, Member> members) {
+        return Arrays.asList(
+
         );
     }
 
@@ -90,5 +162,33 @@ public class TestDataHelper {
                 .build();
         ReflectionTestUtils.setField(article, "id", id);
         return article;
+    }
+
+    private static Lifestyle createLifestyle(Member member, SleepTimeType sleepTimeType, WakeUpTimeType wakeUpTimeType, SleepingHabitType sleepingHabitType, SleepingSensitivityType sleepingSensitivityType, SmokingType smokingType, DrinkingFrequencyType drinkingFrequencyType, ShowerTimeType showerTimeType, ShowerDurationType showerDurationType, CleaningFrequencyType cleaningFrequencyType, HeatToleranceType heatToleranceType, ColdToleranceType coldToleranceType, MBTIType mbtiType, VisitHomeFrequencyType visitHomeFrequencyType, LateNightSnackType lateNightSnackType, SnackInRoomType snackInRoomType, PhoneSoundType phoneSoundType, PerfumeUsageType perfumeUsageType, StudyLocationType studyLocationType, ExamPreparationType examPreparationType, ExerciseType exerciseType, InsectToleranceType insectToleranceType, String drunkHabit) {
+        return Lifestyle.builder()
+                .member(member)
+                .sleepTimeType(sleepTimeType)
+                .wakeUpTimeType(wakeUpTimeType)
+                .sleepingHabitType(sleepingHabitType)
+                .sleepingSensitivityType(sleepingSensitivityType)
+                .smokingType(smokingType)
+                .drinkingFrequencyType(drinkingFrequencyType)
+                .showerTimeType(showerTimeType)
+                .showerDurationType(showerDurationType)
+                .cleaningFrequencyType(cleaningFrequencyType)
+                .heatToleranceType(heatToleranceType)
+                .coldToleranceType(coldToleranceType)
+                .mbtiType(mbtiType)
+                .visitHomeFrequencyType(visitHomeFrequencyType)
+                .lateNightSnackType(lateNightSnackType)
+                .snackInRoomType(snackInRoomType)
+                .phoneSoundType(phoneSoundType)
+                .perfumeUsageType(perfumeUsageType)
+                .studyLocationType(studyLocationType)
+                .examPreparationType(examPreparationType)
+                .exerciseType(exerciseType)
+                .insectToleranceType(insectToleranceType)
+                .drunkHabit(drunkHabit)
+                .build();
     }
 }
