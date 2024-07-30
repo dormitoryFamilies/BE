@@ -1,6 +1,7 @@
-package dormitoryfamily.doomz.domain.matchingRequest.entity;
+package dormitoryfamily.doomz.domain.matching.entity;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MatchingRequest {
+public class MatchingResult extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,20 +19,20 @@ public class MatchingRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private Member sender;  //최초에 채팅을 보낸 사람
+    private Member sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    private Member receiver;  //최초에 채팅을 받은 사람
+    private Member receiver;
 
     @Builder
-    public MatchingRequest(Member sender, Member receiver) {
+    public MatchingResult(Member sender, Member receiver) {
         this.sender = sender;
         this.receiver = receiver;
     }
 
-    public static MatchingRequest createMatchingRequest(Member sender, Member receiver){
-        return MatchingRequest.builder()
+    public static MatchingResult createMatchingResult(Member sender, Member receiver) {
+        return MatchingResult.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .build();

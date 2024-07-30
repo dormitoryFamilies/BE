@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.matchingRequest.exception;
+package dormitoryfamily.doomz.domain.matching.exception;
 
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
