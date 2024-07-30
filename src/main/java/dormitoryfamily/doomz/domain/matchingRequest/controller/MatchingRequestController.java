@@ -1,7 +1,5 @@
 package dormitoryfamily.doomz.domain.matchingRequest.controller;
 
-import dormitoryfamily.doomz.domain.article.dto.response.CreateArticleResponseDto;
-import dormitoryfamily.doomz.domain.matchingRequest.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.matchingRequest.service.MatchingRequestService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -17,7 +15,7 @@ public class MatchingRequestController {
 
     private final MatchingRequestService matchingRequestService;
 
-    @PostMapping("members/{memberId}/matching-requests")
+    @PostMapping("/members/{memberId}/matching-requests")
     public ResponseEntity<ResponseDto<Void>> saveMatchingRequest(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -27,7 +25,7 @@ public class MatchingRequestController {
     }
 
 
-    @DeleteMapping("/matching-requests/members/{memberId}")
+    @DeleteMapping("/members/{memberId}/matching-requests")
     public ResponseEntity<ResponseDto<Void>> cancelMatchingRequest(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails

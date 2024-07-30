@@ -1,9 +1,11 @@
 package dormitoryfamily.doomz.domain.matchingRequest.service;
 
 import dormitoryfamily.doomz.domain.matchingRequest.entity.MatchingRequest;
+import dormitoryfamily.doomz.domain.matchingRequest.exception.CannotMatchingYourselfException;
+import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestAlreadyExitsException;
+import dormitoryfamily.doomz.domain.matchingRequest.exception.MatchingRequestNotExistException;
 import dormitoryfamily.doomz.domain.matchingRequest.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -43,26 +45,25 @@ public class MatchingRequestService {
 
     private void checkDistinctMembers(Member loginMember, Member targetMember){
         if(Objects.equals(loginMember.getId(), targetMember.getId())){
-            throw new InvalidMemberAccessException();
+            throw new CannotMatchingYourselfException();
         }
     }
 
     private void checkIfAlreadyRequested(Member loginMember, Member targetMember){
-        if(matchingRequestRepository.existsBySenderAndReceiver(loginMember, targetMember)){
-            throw new InvalidMemberAccessException();
+        if(matchingRequestRepository.existsByMembers(loginMember, targetMember)){
+            throw new MatchingRequestAlreadyExitsException();
         }
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId){
         Member loginMember = principalDetails.getMember();
         Member targetMember = getMemberById(memberId);
-        getMatchingRequestByMembers(loginMember, targetMember);
-        //matchingRequestRepository.delete();
+        MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
+        matchingRequestRepository.delete(matchingRequest);
     }
 
     public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember){
-        return matchingRequestRepository.findBySenderAndReceiver(loginMember, targetMember)
-                .orElseThrow(InvalidMemberAccessException::new);
+        return matchingRequestRepository.findByMembers(loginMember, targetMember)
+                .orElseThrow(MatchingRequestNotExistException::new);
     }
-
 }

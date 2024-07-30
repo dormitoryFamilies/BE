@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.matchingRequest.repository;
 import dormitoryfamily.doomz.domain.matchingRequest.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
@@ -10,7 +11,14 @@ import java.util.Optional;
 
 public interface MatchingRequestRepository extends JpaRepository<MatchingRequest, Long> {
 
-    boolean existsBySenderAndReceiver(Member Sender, Member Receiver);
+    @Query("SELECT COUNT(m) > 0 FROM MatchingRequest m " +
+            "WHERE (m.sender = :loginMember AND m.receiver = :targetMember) " +
+            "OR (m.sender = :targetMember AND m.receiver = :loginMember)")
+    boolean existsByMembers(Member loginMember, Member targetMember);
 
-    Optional<MatchingRequest> findBySenderAndReceiver(Member sender, Member receiver);
+    @Query("SELECT m FROM MatchingRequest m " +
+            "WHERE (m.sender = :loginMember AND m.receiver = :targetMember) " +
+            "OR (m.sender = :targetMember AND m.receiver = :loginMember)")
+    Optional<MatchingRequest> findByMembers(Member loginMember, Member targetMember);
+
 }
