@@ -77,6 +77,7 @@ public enum ErrorCode {
     //roommate
     ALREADY_REGISTER_MY_LIFESTYLE(CONFLICT, "나의 라이프 스타일을 이미 설정했습니다."),
     ALREADY_REGISTER_PREFERENCE_ORDER(CONFLICT, "선호 우선순위를 이미 설정했습니다."),
+    PREFERENCE_ORDER_NOT_EXISTS(NOT_FOUND, "선호 우선순위가 설정되어 있지 않습니다."),
     LIFESTYLE_TYPE_NOT_EXISTS(BAD_REQUEST, "해당 생활 타입은 존재하지 않습니다."),
     SLEEPING_TIME_NOT_EXISTS(BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
     WAKE_UP_TIME_NOT_EXISTS(BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
@@ -101,6 +102,8 @@ public enum ErrorCode {
     INSECT_TOLERANCE_NOT_EXISTS(BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
     LIFESTYLE_NOT_EXISTS(NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
     WRONG_PROPERTY(BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
+    DUPLICATE_PREFERENCE_ORDER_PARAMETER(BAD_REQUEST, "타입이 중복됩니다."),
+
 
     //matching request
     CANNOT_MATCHING_YOURSELF(CONFLICT, "자기 자신에게 매칭 신청을 할 수 없습니다."),
