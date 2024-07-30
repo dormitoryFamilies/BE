@@ -1,12 +1,14 @@
 package dormitoryfamily.doomz.domain.member.dto.response;
 
 import dormitoryfamily.doomz.domain.follow.entity.Follow;
+import dormitoryfamily.doomz.domain.roomateWish.entity.RoommateWish;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
 public record MemberProfilePagingListResponseDto(
-        int totalPageNumber,
+        Integer totalPageNumber,
         int nowPageNumber,
         boolean isLast,
         List<? extends MemberBaseResponseDto> memberProfiles
@@ -16,6 +18,14 @@ public record MemberProfilePagingListResponseDto(
                 follows.getTotalPages(),
                 follows.getNumber(),
                 follows.isLast(),
+                memberProfiles);
+    }
+
+    public static MemberProfilePagingListResponseDto from(Slice<RoommateWish> wishes, List<? extends MemberBaseResponseDto> memberProfiles){
+        return new MemberProfilePagingListResponseDto(
+                null,
+                wishes.getNumber(),
+                wishes.isLast(),
                 memberProfiles);
     }
 }

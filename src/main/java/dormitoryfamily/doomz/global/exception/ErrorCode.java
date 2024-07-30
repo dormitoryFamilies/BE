@@ -115,6 +115,10 @@ public enum ErrorCode {
     //matching result
     MATCHING_RESULT_NOT_EXISTS(CONFLICT,"해당 사용자와 룸메이트 매칭이 이루어지지 않은 상태입니다." ),
 
+    //roommate wish
+    ROOMMATE_WISH_NOT_EXIT(NOT_FOUND, "룸메이트 찜하지 않은 사용자입니다."),
+    CANNOT_WISH_YOURSELF(CONFLICT, "자기 자신을 룸메이트 찜할 수 없습니다."),
+    ALREADY_WISHED_ROOMMATE(CONFLICT, "이미 찜한 룸메이트 입니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");
