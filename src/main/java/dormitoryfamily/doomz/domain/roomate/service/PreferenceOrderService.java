@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 
 import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.fromType;
 
@@ -29,26 +28,25 @@ public class PreferenceOrderService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final MemberRepository memberRepository;
 
-    private static final Integer PRIORITY_LEVEL_1 = 1;
-    private static final Integer PRIORITY_LEVEL_2 = 2;
-    private static final Integer PRIORITY_LEVEL_3 = 3;
-    private static final Integer PRIORITY_LEVEL_4 = 4;
-
     public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySavedPreferenceOrder(loginMember);
         checkForDuplicatePreferenceOrder(requestDto);
 
-        savePreference(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), PRIORITY_LEVEL_1);
-        savePreference(loginMember, requestDto.secondPreferenceType(), requestDto.secondPreference(), PRIORITY_LEVEL_2);
-        savePreference(loginMember, requestDto.thirdPreferenceType(), requestDto.thirdPreference(), PRIORITY_LEVEL_3);
-        savePreference(loginMember, requestDto.fourthPreferenceType(), requestDto.fourthPreference(), PRIORITY_LEVEL_4);
+        preferenceOrderRepository.save(PreferenceOrder.builder()
+                .member(loginMember)
+                .firstPreferenceOrder(getPreference(requestDto.firstPreference()))
+                .secondPreferenceOrder(getPreference(requestDto.secondPreference()))
+                .thirdPreferenceOrder(getPreference(requestDto.thirdPreference()))
+                .fourthPreferenceOrder(getPreference(requestDto.fourthPreference()))
+                .build()
+        );
     }
 
-    private void savePreference(Member member, String preferenceTypeStr, String preferenceStr, Integer order) {
-        LifestyleType preferenceType = fromType(preferenceTypeStr);
-        Enum<?> preferenceDetail = preferenceType.getLifestyleValue(preferenceStr);
-        preferenceOrderRepository.save(new PreferenceOrder(member, preferenceType, preferenceDetail, order));
+    private Enum<?> getPreference(String preferenceTypeInput) {
+        String[] preferenceOrder = preferenceTypeInput.split(":");
+        LifestyleType preferenceType = fromType(preferenceOrder[0]);
+        return preferenceType.getLifestyleValue(preferenceOrder[1]);
     }
 
     private void checkAlreadySavedPreferenceOrder(Member loginMember) {
@@ -64,33 +62,27 @@ public class PreferenceOrderService {
     @Transactional(readOnly = true)
     public PreferenceOrderResponseDto findPreferenceOrder(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotExistsException::new);
-        List<PreferenceOrder> preferenceOrders =
-                preferenceOrderRepository.findAllByMember(member);
 
-        return PreferenceOrderResponseDto.fromEntity(preferenceOrders);
+        return PreferenceOrderResponseDto.fromEntity(getPreferenceOrder(member));
+    }
+
+    private PreferenceOrder getPreferenceOrder(Member member) {
+        return preferenceOrderRepository.findByMember(member)
+                .orElseThrow(PreferenceOrderNotExistsException::new);
     }
 
     public void updatePreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        checkAlreadySetPreferenceOrder(loginMember);
         checkForDuplicatePreferenceOrder(requestDto);
 
-        updatePreferenceOrder(loginMember, requestDto.firstPreferenceType(), requestDto.firstPreference(), PRIORITY_LEVEL_1);
-        updatePreferenceOrder(loginMember, requestDto.secondPreferenceType(), requestDto.secondPreference(), PRIORITY_LEVEL_2);
-        updatePreferenceOrder(loginMember, requestDto.thirdPreferenceType(), requestDto.thirdPreference(), PRIORITY_LEVEL_3);
-        updatePreferenceOrder(loginMember, requestDto.fourthPreferenceType(), requestDto.fourthPreference(), PRIORITY_LEVEL_4);
-    }
+        PreferenceOrder preferenceOrder = getPreferenceOrder(loginMember);
 
-    private void checkAlreadySetPreferenceOrder(Member loginMember) {
-        if (!isExistPreferenceOrder(loginMember)) {
-            throw new PreferenceOrderNotExistsException();
-        }
-    }
-
-    private void updatePreferenceOrder(Member loginMember, String preferenceTypeStr, String preferenceStr, Integer order) {
-        PreferenceOrder foundOrder = preferenceOrderRepository.findByMemberAndPreferenceOrder(loginMember, order);
-        LifestyleType firstLifestyleType = fromType(preferenceTypeStr);
-        foundOrder.updateOrder(firstLifestyleType, firstLifestyleType.getLifestyleValue(preferenceStr));
+        preferenceOrder.updateOrder(
+                getPreference(requestDto.firstPreference()),
+                getPreference(requestDto.secondPreference()),
+                getPreference(requestDto.thirdPreference()),
+                getPreference(requestDto.fourthPreference())
+        );
     }
 
     /**
@@ -99,15 +91,15 @@ public class PreferenceOrderService {
     private void checkForDuplicatePreferenceOrder(PreferenceOrderRequestDto requestDto) {
         HashSet<String> preferences = new HashSet<>();
 
-        preferences.add(requestDto.firstPreferenceType());
-        if (!preferences.add(requestDto.secondPreferenceType())) {
-            throw new DuplicatePreferenceOrderException(requestDto.secondPreferenceType());
+        preferences.add(requestDto.firstPreference());
+        if (!preferences.add(requestDto.secondPreference())) {
+            throw new DuplicatePreferenceOrderException(requestDto.secondPreference());
         }
-        if (!preferences.add(requestDto.thirdPreferenceType())) {
-            throw new DuplicatePreferenceOrderException(requestDto.thirdPreferenceType());
+        if (!preferences.add(requestDto.thirdPreference())) {
+            throw new DuplicatePreferenceOrderException(requestDto.thirdPreference());
         }
-        if (!preferences.add(requestDto.fourthPreferenceType())) {
-            throw new DuplicatePreferenceOrderException(requestDto.fourthPreferenceType());
+        if (!preferences.add(requestDto.fourthPreference())) {
+            throw new DuplicatePreferenceOrderException(requestDto.fourthPreference());
         }
     }
 

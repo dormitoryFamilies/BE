@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.entity;
 
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
 import dormitoryfamily.doomz.global.converter.EnumConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,27 +24,34 @@ public class PreferenceOrder {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private LifestyleType lifestyleType;
+    @Convert(converter = EnumConverter.class)
+    private Enum<?> firstPreferenceOrder;
 
     @Convert(converter = EnumConverter.class)
-    private Enum<?> lifestyleDetail;
+    private Enum<?> secondPreferenceOrder;
 
-    private Integer preferenceOrder;
+    @Convert(converter = EnumConverter.class)
+    private Enum<?> thirdPreferenceOrder;
+
+    @Convert(converter = EnumConverter.class)
+    private Enum<?> fourthPreferenceOrder;
 
     @Builder
     public PreferenceOrder(Member member,
-                           LifestyleType lifestyleType,
-                           Enum<?> lifestyleDetail,
-                           Integer preferenceOrder) {
+                           Enum<?> firstPreferenceOrder, Enum<?> secondPreferenceOrder,
+                           Enum<?> thirdPreferenceOrder, Enum<?> fourthPreferenceOrder) {
         this.member = member;
-        this.lifestyleType = lifestyleType;
-        this.lifestyleDetail = lifestyleDetail;
-        this.preferenceOrder = preferenceOrder;
+        this.firstPreferenceOrder = firstPreferenceOrder;
+        this.secondPreferenceOrder = secondPreferenceOrder;
+        this.thirdPreferenceOrder = thirdPreferenceOrder;
+        this.fourthPreferenceOrder = fourthPreferenceOrder;
     }
 
-    public void updateOrder(LifestyleType type, Enum<?> detail) {
-        lifestyleType = type;
-        lifestyleDetail = detail;
+    public void updateOrder(Enum<?> firstPreferenceOrder, Enum<?> secondPreferenceOrder,
+                            Enum<?> thirdPreferenceOrder, Enum<?> fourthPreferenceOrder) {
+        this.firstPreferenceOrder = firstPreferenceOrder;
+        this.secondPreferenceOrder = secondPreferenceOrder;
+        this.thirdPreferenceOrder = thirdPreferenceOrder;
+        this.fourthPreferenceOrder = fourthPreferenceOrder;
     }
 }
