@@ -6,7 +6,7 @@ import dormitoryfamily.doomz.domain.matchingResult.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.matchingResult.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.domain.matchingResult.repository.MatchingResultRepository;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotFoundException;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
@@ -39,7 +39,7 @@ public class MatchingResultService {
 
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberNotExistsException::new);
     }
 
     private void validateMatchingResult(Member loginMember, Member targetMember){
