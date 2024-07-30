@@ -4,15 +4,17 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidExamPreparationType
 import lombok.Getter;
 
 @Getter
-public enum ExamPreparationType implements Describable {
+public enum ExamPreparationType implements LifestyleAttribute {
 
-    PREPARING("시험 준비"),
-    NONE("해당 없어요");
+    PREPARING("시험 준비", 0),
+    NONE("해당 없어요", 8);
 
     private final String description;
+    private final int index;
 
-    ExamPreparationType(String description) {
+    ExamPreparationType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static ExamPreparationType fromDescription(String description) {

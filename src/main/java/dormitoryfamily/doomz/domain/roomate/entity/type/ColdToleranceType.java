@@ -4,16 +4,18 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidColdToleranceTypeEx
 import lombok.Getter;
 
 @Getter
-public enum ColdToleranceType implements Describable {
+public enum ColdToleranceType implements LifestyleAttribute {
 
-    LOW("적게 탐"),
-    MEDIUM("조금 탐"),
-    HIGH("많이 탐");
+    LOW("적게 탐", 0),
+    MEDIUM("조금 탐", 4),
+    HIGH("많이 탐", 8);
 
     private final String description;
+    private final int index;
 
-    ColdToleranceType(String description) {
+    ColdToleranceType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static ColdToleranceType fromDescription(String description) {

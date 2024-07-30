@@ -4,16 +4,18 @@ import dormitoryfamily.doomz.domain.roomate.exception.InvalidCleaningHabitTypeEx
 import lombok.Getter;
 
 @Getter
-public enum CleaningFrequencyType implements Describable {
+public enum CleaningFrequencyType implements LifestyleAttribute {
 
-    IMMEDIATELY("바로바로"),
-    OCCASIONALLY("가끔"),
-    ALL_AT_ONCE("몰아서");
+    IMMEDIATELY("바로바로", 0),
+    OCCASIONALLY("가끔", 4),
+    ALL_AT_ONCE("몰아서", 8);
 
     private final String description;
+    private final int index;
 
-    CleaningFrequencyType(String description) {
+    CleaningFrequencyType(String description, int index) {
         this.description = description;
+        this.index = index;
     }
 
     public static CleaningFrequencyType fromDescription(String description) {
