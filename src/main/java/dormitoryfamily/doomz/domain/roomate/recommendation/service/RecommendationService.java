@@ -1,6 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.recommendation.service;
 
 import dormitoryfamily.doomz.domain.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
@@ -29,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
+import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.ZERO;
 import static dormitoryfamily.doomz.domain.roomate.util.ScoreCalculator.calculateScoreForUser;
 
 @Service
@@ -41,8 +43,8 @@ public class RecommendationService {
     private final MemberRepository memberRepository;
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
+    private final MatchingRequestService matchingRequestService;
 
-    //todo. 매칭이 가능한 사람인지 확인하기
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadyMatched(loginMember);
@@ -109,11 +111,13 @@ public class RecommendationService {
             PreferenceOrder myPreference, Lifestyle myLifestyle, List<Lifestyle> allUsersLifestyles
     ) {
         return allUsersLifestyles.stream()
+                .filter(userLifestyle -> !matchingRequestService.isMatchingRequestAlreadyExits(myPreference.getMember(), userLifestyle.getMember()))
                 .map(userLifestyle -> {
+
                     double scoreFromMyView = calculateScoreForUser(myPreference, userLifestyle);
                     double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
                             .map(userPreference -> calculateScoreForUser(userPreference, myLifestyle))
-                            .orElse(0.0);
+                            .orElse(ZERO);
 
                     double totalScore = scoreFromMyView + scoreFromTheirView;
 
