@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.matching.service;
 
+import dormitoryfamily.doomz.domain.matching.dto.response.MatchingRequestCountResponseDto;
 import dormitoryfamily.doomz.domain.matching.exception.*;
 import dormitoryfamily.doomz.domain.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.matching.repository.MatchingRequestRepository;
@@ -129,6 +130,12 @@ public class MatchingRequestService {
 
     private boolean isRoommateMatchAvailable(Member loginMember, Member member) {
         return !member.isRoommateMatched() && Objects.equals(loginMember.getDormitoryType(), member.getDormitoryType());
+    }
+
+    public MatchingRequestCountResponseDto countMyReceivedRequest(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        long count = matchingRequestRepository.countMatchingRequestsByReceiver(loginMember);
+        return MatchingRequestCountResponseDto.from(loginMember, count);
     }
 }
 

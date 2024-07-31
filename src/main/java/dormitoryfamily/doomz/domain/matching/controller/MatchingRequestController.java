@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.matching.controller;
 
+import dormitoryfamily.doomz.domain.matching.dto.response.MatchingRequestCountResponseDto;
 import dormitoryfamily.doomz.domain.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -43,6 +44,14 @@ public class MatchingRequestController {
             Pageable pageable
     ){
         MemberProfilePagingListResponseDto responseDto = matchingRequestService.findMyMatchingRequest(principalDetails, status, pageable);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/my/matching-requests/count")
+    public ResponseEntity<ResponseDto<MatchingRequestCountResponseDto>> countMyReceivedRequest(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        MatchingRequestCountResponseDto responseDto = matchingRequestService.countMyReceivedRequest(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
