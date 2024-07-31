@@ -1,10 +1,10 @@
 package dormitoryfamily.doomz.domain.roomate.util;
 
-import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
-import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
-import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleAttribute;
+import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
+import dormitoryfamily.doomz.domain.roomate.preference.entity.PreferenceOrder;
+import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.LifestyleAttribute;
 
-import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.*;
+import static dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.LifestyleType.*;
 import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.*;
 
 public class ScoreCalculator {

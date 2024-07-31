@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roomate.util;
 
-import dormitoryfamily.doomz.domain.roomate.entity.Recommendation;
-import dormitoryfamily.doomz.domain.roomate.exception.recommendation.TooManyRequestException;
+import dormitoryfamily.doomz.domain.roomate.recommendation.entity.Recommendation;
+import dormitoryfamily.doomz.domain.roomate.recommendation.exception.TooManyRequestException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
