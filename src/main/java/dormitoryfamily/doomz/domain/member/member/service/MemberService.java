@@ -130,4 +130,9 @@ public class MemberService {
         Member loginMember = principalDetails.getMember();
         return MatchingStatusResponseDto.from(loginMember);
     }
+
+    public MemberIdResponseDto findMyMemberId(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        return MemberIdResponseDto.from(loginMember);
+    }
 }
