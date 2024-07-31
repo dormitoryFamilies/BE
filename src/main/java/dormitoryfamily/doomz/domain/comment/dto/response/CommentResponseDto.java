@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.comment.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dormitoryfamily.doomz.domain.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.replyComment.dto.response.ReplyCommentResponseDto;
+import dormitoryfamily.doomz.domain.replycomment.dto.response.ReplyCommentResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

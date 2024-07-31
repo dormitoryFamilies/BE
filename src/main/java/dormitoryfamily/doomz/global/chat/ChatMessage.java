@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.global.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dormitoryfamily.doomz.domain.chat.entity.Chat;
-import dormitoryfamily.doomz.domain.chatRoom.entity.ChatRoom;
+import dormitoryfamily.doomz.domain.chatroom.entity.ChatRoom;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.domain.chat.controller;
 
 import dormitoryfamily.doomz.domain.chat.dto.response.SearchChatListResponseDto;
 import dormitoryfamily.doomz.domain.chat.dto.response.ChatListResponseDto;
-import dormitoryfamily.doomz.domain.chatRoom.service.ChatRoomService;
+import dormitoryfamily.doomz.domain.chatroom.service.ChatRoomService;
 import dormitoryfamily.doomz.domain.chat.service.ChatService;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.RedisPublisher;
