@@ -41,6 +41,7 @@ public class RecommendationService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
 
+    //todo. 매칭이 가능한 사람인지 확인하기
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
 
@@ -48,14 +49,14 @@ public class RecommendationService {
         Recommendation recommendation = getOrCreateRecommendation(loginMember);
 
         //나의 선호 우선순위와 라이프스타일 조회
-        List<PreferenceOrder> myPreferences = getPreferenceOrders(loginMember);
+        PreferenceOrder myPreference = getPreferenceOrder(loginMember);
         Lifestyle myLifestyle = getLifestyle(loginMember);
 
         //나를 제외한 전체 사용자의 라이프 스타일 조회
         List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAllExcludingMember(loginMember);
 
         //상위 점수대 회원 산출
-        List<Entry<Long, Double>> scores = findTopMatchingCandidates(myPreferences, myLifestyle, allUsersLifestyles);
+        List<Entry<Long, Double>> scores = findTopMatchingCandidates(myPreference, myLifestyle, allUsersLifestyles);
         List<Candidate> candidates = createCandidates(scores, recommendation);
 
         //기존 후보 레코드 삭제 후 새롭게 저장
@@ -78,13 +79,9 @@ public class RecommendationService {
                 });
     }
 
-    private List<PreferenceOrder> getPreferenceOrders(Member loginMember) {
-        List<PreferenceOrder> myPreferences = preferenceOrderRepository
-                .findAllByMemberOrderByPreferenceOrderAsc(loginMember);
-        if (myPreferences.isEmpty()) {
-            throw new PreferenceOrderNotExistsException();
-        }
-        return myPreferences;
+    private PreferenceOrder getPreferenceOrder(Member member) {
+        return preferenceOrderRepository.findByMember(member)
+                .orElseThrow(PreferenceOrderNotExistsException::new);
     }
 
     private Lifestyle getLifestyle(Member loginMember) {
@@ -95,24 +92,21 @@ public class RecommendationService {
     /**
      * 선호 우선순위와 라이프 스타일을 비교하여 점수를 계산해 높은 점수 순으로 사용자 id 반환하는 메소드
      *
-     * @param myPreferences      나의 선호 우선순위(1 ~ 4순위)
+     * @param myPreference       나의 선호 우선순위(1 ~ 4순위)
      * @param myLifestyle        나의 라이프 스타일
      * @param allUsersLifestyles 전체 사용자의 라이프 스타일
      * @return 높은 점수 순으로 정렬된 회원 아이디 리스트
      */
     private List<Entry<Long, Double>> findTopMatchingCandidates(
-            List<PreferenceOrder> myPreferences,
-            Lifestyle myLifestyle,
-            List<Lifestyle> allUsersLifestyles
+            PreferenceOrder myPreference, Lifestyle myLifestyle, List<Lifestyle> allUsersLifestyles
     ) {
         return allUsersLifestyles.stream()
                 .map(userLifestyle -> {
+                    double scoreFromMyView = calculateScoreForUser(myPreference, userLifestyle);
+                    double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
+                            .map(userPreference -> calculateScoreForUser(userPreference, myLifestyle))
+                            .orElse(0.0);
 
-                    List<PreferenceOrder> userPreferences = preferenceOrderRepository
-                            .findAllByMemberOrderByPreferenceOrderAsc(userLifestyle.getMember());
-
-                    double scoreFromMyView = calculateScoreForUser(myPreferences, userLifestyle);
-                    double scoreFromTheirView = calculateScoreForUser(userPreferences, myLifestyle);
                     double totalScore = scoreFromMyView + scoreFromTheirView;
 
                     return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);

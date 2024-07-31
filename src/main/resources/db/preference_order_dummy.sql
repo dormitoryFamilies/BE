@@ -1,369 +1,416 @@
 USE dormitoryfamily;
 
 -- 홍길동
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_홍길동(진리관)'), 'SLEEP_TIME', 'SleepTimeType:_2200', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_홍길동(진리관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_홍길동(진리관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_홍길동(진리관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:MEDIUM', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_홍길동(진리관)'),
+     'SleepTimeType:_2200',
+     'WakeUpTimeType:_0600',
+     'SleepingHabitType:SNORING',
+     'HeatToleranceType:MEDIUM');
 
 -- 김영희
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_김영희(정의관)'), 'SMOKING', 'SmokingType:NON_SMOKER', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_김영희(정의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_김영희(정의관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:IMMEDIATELY', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_김영희(정의관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_김영희(정의관)'),
+     'SmokingType:NON_SMOKER',
+     'DrinkingFrequencyType:OCCASIONAL',
+     'CleaningFrequencyType:IMMEDIATELY',
+     'SleepingSensitivityType:LIGHT');
 
 -- 이철수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_이철수(개척관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_이철수(개척관)'), 'EXAM_PREPARATION', 'ExamPreparationType:PREPARING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_이철수(개척관)'), 'COLD_TOLERANCE', 'ColdToleranceType:HIGH', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_이철수(개척관)'), 'SLEEP_TIME', 'SleepTimeType:_2300', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_이철수(개척관)'),
+     'PerfumeUsageType:SOMETIMES',
+     'ExamPreparationType:PREPARING',
+     'ColdToleranceType:HIGH',
+     'SleepTimeType:_2300');
 
 -- 박민수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_박민수(계영원)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_박민수(계영원)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_박민수(계영원)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_박민수(계영원)'), 'COLD_TOLERANCE', 'ColdToleranceType:LOW', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_박민수(계영원)'),
+     'SleepTimeType:_2400',
+     'WakeUpTimeType:_0800',
+     'SleepingHabitType:TEETH_GRINDING',
+     'ColdToleranceType:LOW');
 
 -- 정수진
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_정수진(지선관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_정수진(지선관)'), 'PERFUME_USAGE', 'PerfumeUsageType:OFTEN', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_정수진(지선관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:REGULAR', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_정수진(지선관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0900', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_정수진(지선관)'),
+     'SleepingSensitivityType:DARK',
+     'PerfumeUsageType:OFTEN',
+     'DrinkingFrequencyType:REGULAR',
+     'WakeUpTimeType:_0900');
 
 -- 오세진
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_오세진(명덕관)'), 'SMOKING', 'SmokingType:SMOKER', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_오세진(명덕관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_오세진(명덕관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:OCCASIONALLY', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_오세진(명덕관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0700', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_오세진(명덕관)'),
+     'SmokingType:SMOKER',
+     'SleepingHabitType:SLEEP_TALKING',
+     'CleaningFrequencyType:OCCASIONALLY',
+     'WakeUpTimeType:_0700');
 
 -- 이정환
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'), 'SLEEP_TIME', 'SleepTimeType:BEFORE_2100', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:BEFORE_0500', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'), 'COLD_TOLERANCE', 'ColdToleranceType:HIGH', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'),
+     'SleepTimeType:BEFORE_2100',
+     'WakeUpTimeType:BEFORE_0500',
+     'SleepingHabitType:SNORING',
+     'ColdToleranceType:HIGH');
 
 -- 김민지
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_김민지(인의관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_김민지(인의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:NONE', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_김민지(인의관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:MEDIUM', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_김민지(인의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_1000', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_김민지(인의관)'),
+     'SleepingSensitivityType:DARK',
+     'DrinkingFrequencyType:NONE',
+     'HeatToleranceType:MEDIUM',
+     'WakeUpTimeType:_1000');
 
 -- 박지훈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_박지훈(예지관)'), 'PERFUME_USAGE', 'PerfumeUsageType:NONE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_박지훈(예지관)'), 'EXAM_PREPARATION', 'ExamPreparationType:PREPARING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_박지훈(예지관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:ALL_AT_ONCE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_박지훈(예지관)'), 'SLEEP_TIME', 'SleepTimeType:_0300', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_박지훈(예지관)'),
+     'PerfumeUsageType:NONE',
+     'ExamPreparationType:PREPARING',
+     'CleaningFrequencyType:ALL_AT_ONCE',
+     'SleepTimeType:_0300');
 
 -- 강수진
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:AFTER_1300', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'), 'COLD_TOLERANCE', 'ColdToleranceType:MEDIUM', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'),
+     'SleepTimeType:_2100',
+     'WakeUpTimeType:AFTER_1300',
+     'SleepingHabitType:SNORING',
+     'ColdToleranceType:MEDIUM');
 
 -- 이민호
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_이민호(진리관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:FREQUENT', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_이민호(진리관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_이민호(진리관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_이민호(진리관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_이민호(진리관)'),
+     'DrinkingFrequencyType:FREQUENT',
+     'PerfumeUsageType:SOMETIMES',
+     'HeatToleranceType:HIGH',
+     'WakeUpTimeType:_0600');
 
 -- 김하늘
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_김하늘(정의관)'), 'EXAM_PREPARATION', 'ExamPreparationType:PREPARING', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_김하늘(정의관)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_김하늘(정의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_김하늘(정의관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_김하늘(정의관)'),
+     'ExamPreparationType:PREPARING',
+     'SleepingHabitType:TEETH_GRINDING',
+     'WakeUpTimeType:_0600',
+     'HeatToleranceType:LOW');
 
 -- 박철수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_박철수(개척관)'), 'SLEEP_TIME', 'SleepTimeType:_2200', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_박철수(개척관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_박철수(개척관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_박철수(개척관)'), 'COLD_TOLERANCE', 'ColdToleranceType:LOW', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_박철수(개척관)'),
+     'SleepTimeType:_2200',
+     'DrinkingFrequencyType:OCCASIONAL',
+     'SleepingSensitivityType:DARK',
+     'ColdToleranceType:LOW');
 
 -- 홍서연
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_홍서연(계영원)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_홍서연(계영원)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0900', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_홍서연(계영원)'), 'SLEEPING_HABIT', 'SleepingHabitType:NONE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_홍서연(계영원)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:ALL_AT_ONCE', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_홍서연(계영원)'),
+     'SleepTimeType:_2400',
+     'WakeUpTimeType:_0900',
+     'SleepingHabitType:NONE',
+     'CleaningFrequencyType:ALL_AT_ONCE');
 
 -- 최민수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_최민수(지선관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_최민수(지선관)'), 'SLEEP_TIME', 'SleepTimeType:_0100', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_최민수(지선관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_최민수(지선관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:REGULAR', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_최민수(지선관)'),
+     'PerfumeUsageType:SOMETIMES',
+     'SleepTimeType:_0100',
+     'WakeUpTimeType:_0600',
+     'DrinkingFrequencyType:REGULAR');
 
 -- 유리
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_유리(명덕관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_유리(명덕관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_유리(명덕관)'), 'COLD_TOLERANCE', 'ColdToleranceType:HIGH', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_유리(명덕관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:AFTER_1300', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_유리(명덕관)'),
+     'SleepingSensitivityType:LIGHT',
+     'HeatToleranceType:LOW',
+     'ColdToleranceType:HIGH',
+     'WakeUpTimeType:AFTER_1300');
 
 -- 민혁
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_민혁(신민관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_민혁(신민관)'), 'EXAM_PREPARATION', 'ExamPreparationType:NONE', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_민혁(신민관)'), 'PERFUME_USAGE', 'PerfumeUsageType:OFTEN', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_민혁(신민관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:FREQUENT', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_민혁(신민관)'),
+     'SleepingHabitType:SNORING',
+     'ExamPreparationType:NONE',
+     'PerfumeUsageType:OFTEN',
+     'DrinkingFrequencyType:FREQUENT');
 
 -- 민수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_민수(인의관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_민수(인의관)'), 'COLD_TOLERANCE', 'ColdToleranceType:LOW', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_민수(인의관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_민수(인의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_민수(인의관)'),
+     'HeatToleranceType:HIGH',
+     'ColdToleranceType:LOW',
+     'SleepTimeType:_2100',
+     'WakeUpTimeType:_0800');
 
 -- 소희
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_소희(예지관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_소희(예지관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_소희(예지관)'), 'SMOKING', 'SmokingType:NON_SMOKER', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_소희(예지관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_소희(예지관)'),
+     'SleepingSensitivityType:DARK',
+     'DrinkingFrequencyType:OCCASIONAL',
+     'SmokingType:NON_SMOKER',
+     'PerfumeUsageType:SOMETIMES');
 
 -- 진수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_진수(등용관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:ALL_AT_ONCE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_진수(등용관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_진수(등용관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0900', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_진수(등용관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_진수(등용관)'),
+     'CleaningFrequencyType:ALL_AT_ONCE',
+     'SleepingSensitivityType:LIGHT',
+     'WakeUpTimeType:_0900',
+     'SleepingHabitType:SLEEP_TALKING');
 
 -- 현주
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_현주(진리관)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_현주(진리관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0700', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_현주(진리관)'), 'COLD_TOLERANCE', 'ColdToleranceType:MEDIUM', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_현주(진리관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_현주(진리관)'),
+     'SleepTimeType:_2400',
+     'WakeUpTimeType:_0700',
+     'ColdToleranceType:MEDIUM',
+     'HeatToleranceType:LOW');
 
 -- 진혁
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_진혁(정의관)'), 'SLEEP_TIME', 'SleepTimeType:_2200', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_진혁(정의관)'), 'PERFUME_USAGE', 'PerfumeUsageType:OFTEN', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_진혁(정의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:REGULAR', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_진혁(정의관)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_진혁(정의관)'),
+     'SleepTimeType:_2200',
+     'PerfumeUsageType:OFTEN',
+     'DrinkingFrequencyType:REGULAR',
+     'SleepingHabitType:TEETH_GRINDING');
 
 -- 가영
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_가영(개척관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_가영(개척관)'), 'COLD_TOLERANCE', 'ColdToleranceType:HIGH', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_가영(개척관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_가영(개척관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_가영(개척관)'),
+     'SleepingSensitivityType:DARK',
+     'ColdToleranceType:HIGH',
+     'SleepTimeType:_2100',
+     'WakeUpTimeType:_0600');
 
 -- 민재
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_민재(계영원)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_민재(계영원)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_민재(계영원)'), 'COLD_TOLERANCE', 'ColdToleranceType:MEDIUM', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_민재(계영원)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_민재(계영원)'),
+     'SleepingHabitType:SLEEP_TALKING',
+     'HeatToleranceType:LOW',
+     'ColdToleranceType:MEDIUM',
+     'WakeUpTimeType:_0800');
 
 -- 서진
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_서진(지선관)'), 'EXAM_PREPARATION', 'ExamPreparationType:NONE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_서진(지선관)'), 'SMOKING', 'SmokingType:SMOKER', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_서진(지선관)'), 'PERFUME_USAGE', 'PerfumeUsageType:NONE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_서진(지선관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_서진(지선관)'),
+     'ExamPreparationType:NONE',
+     'SmokingType:SMOKER',
+     'PerfumeUsageType:NONE',
+     'DrinkingFrequencyType:OCCASIONAL');
 
 -- 수빈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_수빈(명덕관)'), 'SLEEP_TIME', 'SleepTimeType:_2200', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_수빈(명덕관)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_수빈(명덕관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_수빈(명덕관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:IMMEDIATELY', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_수빈(명덕관)'),
+     'SleepTimeType:_2200',
+     'SleepingHabitType:TEETH_GRINDING',
+     'SleepingSensitivityType:LIGHT',
+     'CleaningFrequencyType:IMMEDIATELY');
 
 -- 준수
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:AFTER_1300', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:MEDIUM', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'), 'PERFUME_USAGE', 'PerfumeUsageType:OFTEN', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'),
+     'WakeUpTimeType:AFTER_1300',
+     'HeatToleranceType:MEDIUM',
+     'PerfumeUsageType:OFTEN',
+     'SleepingHabitType:SNORING');
 
 -- 유진
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_유진(인의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:REGULAR', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_유진(인의관)'), 'SLEEP_TIME', 'SleepTimeType:_0200', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_유진(인의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_유진(인의관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_유진(인의관)'),
+     'DrinkingFrequencyType:REGULAR',
+     'SleepTimeType:_0200',
+     'WakeUpTimeType:_0600',
+     'SleepingSensitivityType:DARK');
 
 -- 성민
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:AFTER_1300', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:FREQUENT', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'),
+     'SleepTimeType:_2100',
+     'SleepingHabitType:SLEEP_TALKING',
+     'WakeUpTimeType:AFTER_1300',
+     'DrinkingFrequencyType:FREQUENT');
 
 -- 지훈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_지훈(등용관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_지훈(등용관)'), 'COLD_TOLERANCE', 'ColdToleranceType:MEDIUM', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_지훈(등용관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_지훈(등용관)'), 'SLEEPING_HABIT', 'SleepingHabitType:NONE', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_지훈(등용관)'),
+     'PerfumeUsageType:SOMETIMES',
+     'ColdToleranceType:MEDIUM',
+     'HeatToleranceType:HIGH',
+     'SleepingHabitType:NONE');
 
 -- 예린
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_예린(진리관)'), 'SLEEP_TIME', 'SleepTimeType:_2300', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_예린(진리관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_예린(진리관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:OCCASIONALLY', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_예린(진리관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_예린(진리관)'),
+     'SleepTimeType:_2300',
+     'SleepingHabitType:SLEEP_TALKING',
+     'CleaningFrequencyType:OCCASIONALLY',
+     'DrinkingFrequencyType:OCCASIONAL');
 
 -- 수연
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_수연(정의관)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_수연(정의관)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_수연(정의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_수연(정의관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_수연(정의관)'),
+     'SleepingHabitType:TEETH_GRINDING',
+     'SleepTimeType:_2400',
+     'WakeUpTimeType:_0600',
+     'HeatToleranceType:LOW');
 
 -- 경민
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_경민(개척관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_경민(개척관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_경민(개척관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:NONE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_경민(개척관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_경민(개척관)'),
+     'SleepingSensitivityType:LIGHT',
+     'PerfumeUsageType:SOMETIMES',
+     'DrinkingFrequencyType:NONE',
+     'SleepTimeType:_2100');
 
 -- 시윤
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_시윤(계영원)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_시윤(계영원)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_시윤(계영원)'), 'SLEEPING_HABIT', 'SleepingHabitType:TEETH_GRINDING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_시윤(계영원)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:IMMEDIATELY', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_시윤(계영원)'),
+     'SleepTimeType:_2400',
+     'WakeUpTimeType:_0800',
+     'SleepingHabitType:TEETH_GRINDING',
+     'CleaningFrequencyType:IMMEDIATELY');
 
 -- 다빈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_다빈(지선관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_다빈(지선관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_다빈(지선관)'), 'PERFUME_USAGE', 'PerfumeUsageType:NONE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_다빈(지선관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_다빈(지선관)'),
+     'SleepingSensitivityType:LIGHT',
+     'DrinkingFrequencyType:OCCASIONAL',
+     'PerfumeUsageType:NONE',
+     'WakeUpTimeType:_0800');
 
 -- 재현
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_재현(명덕관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_재현(명덕관)'), 'COLD_TOLERANCE', 'ColdToleranceType:LOW', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_재현(명덕관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_재현(명덕관)'), 'SLEEPING_HABIT', 'SleepingHabitType:NONE', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_재현(명덕관)'),
+     'HeatToleranceType:HIGH',
+     'ColdToleranceType:LOW',
+     'SleepTimeType:_2100',
+     'SleepingHabitType:NONE');
 
 -- 은지
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_은지(신민관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_은지(신민관)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_은지(신민관)'), 'COLD_TOLERANCE', 'ColdToleranceType:HIGH', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_은지(신민관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_은지(신민관)'),
+     'SleepingSensitivityType:LIGHT',
+     'PerfumeUsageType:SOMETIMES',
+     'ColdToleranceType:HIGH',
+     'WakeUpTimeType:_0600');
 
 -- 유빈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_유빈(인의관)'), 'EXAM_PREPARATION', 'ExamPreparationType:NONE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_유빈(인의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:OCCASIONAL', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_유빈(인의관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_유빈(인의관)'), 'SLEEP_TIME', 'SleepTimeType:_2300', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_유빈(인의관)'),
+     'ExamPreparationType:NONE',
+     'DrinkingFrequencyType:OCCASIONAL',
+     'HeatToleranceType:LOW',
+     'SleepTimeType:_2300');
 
 -- 태훈
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_태훈(예지관)'), 'SLEEP_TIME', 'SleepTimeType:_2200', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_태훈(예지관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0700', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_태훈(예지관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SNORING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_태훈(예지관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:OCCASIONALLY', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_태훈(예지관)'),
+     'SleepTimeType:_2200',
+     'WakeUpTimeType:_0700',
+     'SleepingHabitType:SNORING',
+     'CleaningFrequencyType:OCCASIONALLY');
 
 -- 도연
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_도연(등용관)'), 'SLEEP_TIME', 'SleepTimeType:_2300', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_도연(등용관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_도연(등용관)'), 'SLEEPING_HABIT', 'SleepingHabitType:SLEEP_TALKING', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_도연(등용관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:IMMEDIATELY', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_도연(등용관)'),
+     'SleepTimeType:_2300',
+     'WakeUpTimeType:_0600',
+     'SleepingHabitType:SLEEP_TALKING',
+     'CleaningFrequencyType:IMMEDIATELY');
 
 -- 하영
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_하영(진리관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_하영(진리관)'), 'SLEEPING_HABIT', 'SleepingHabitType:NONE', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_하영(진리관)'), 'SLEEP_TIME', 'SleepTimeType:_2100', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_하영(진리관)'), 'PERFUME_USAGE', 'PerfumeUsageType:OFTEN', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_하영(진리관)'),
+     'HeatToleranceType:HIGH',
+     'SleepingHabitType:NONE',
+     'SleepTimeType:_2100',
+     'PerfumeUsageType:OFTEN');
 
 -- 주연
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_주연(정의관)'), 'COLD_TOLERANCE', 'ColdToleranceType:LOW', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_주연(정의관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:LIGHT', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_주연(정의관)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:NONE', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_주연(정의관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_주연(정의관)'),
+     'ColdToleranceType:LOW',
+     'SleepingSensitivityType:LIGHT',
+     'DrinkingFrequencyType:NONE',
+     'WakeUpTimeType:_0800');
 
 -- 하준
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_하준(개척관)'), 'PERFUME_USAGE', 'PerfumeUsageType:NONE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_하준(개척관)'), 'SLEEP_TIME', 'SleepTimeType:_2400', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_하준(개척관)'), 'COLD_TOLERANCE', 'ColdToleranceType:MEDIUM', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_하준(개척관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0900', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_하준(개척관)'),
+     'PerfumeUsageType:NONE',
+     'SleepTimeType:_2400',
+     'ColdToleranceType:MEDIUM',
+     'WakeUpTimeType:_0900');
 
 -- 나연
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_나연(계영원)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_나연(계영원)'), 'PERFUME_USAGE', 'PerfumeUsageType:SOMETIMES', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_나연(계영원)'), 'DRINKING_FREQUENCY', 'DrinkingFrequencyType:REGULAR', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_나연(계영원)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0900', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_나연(계영원)'),
+     'SleepingSensitivityType:DARK',
+     'PerfumeUsageType:SOMETIMES',
+     'DrinkingFrequencyType:REGULAR',
+     'WakeUpTimeType:_0900');
 
 -- 유나
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_유나(지선관)'), 'CLEANING_FREQUENCY', 'CleaningFrequencyType:ALL_AT_ONCE', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_유나(지선관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:LOW', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_유나(지선관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0800', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_유나(지선관)'), 'SLEEP_TIME', 'SleepTimeType:_2300', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_유나(지선관)'),
+     'CleaningFrequencyType:ALL_AT_ONCE',
+     'HeatToleranceType:LOW',
+     'WakeUpTimeType:_0800',
+     'SleepTimeType:_2300');
 
 -- 재호
-INSERT INTO preference_order (member_id, lifestyle_type, lifestyle_detail, preference_order)
+INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
-    ((SELECT member_id FROM member WHERE name = 'test_재호(명덕관)'), 'SLEEPING_SENSITIVITY', 'SleepingSensitivityType:DARK', 1),
-    ((SELECT member_id FROM member WHERE name = 'test_재호(명덕관)'), 'HEAT_TOLERANCE', 'HeatToleranceType:HIGH', 2),
-    ((SELECT member_id FROM member WHERE name = 'test_재호(명덕관)'), 'SLEEP_TIME', 'SleepTimeType:_0100', 3),
-    ((SELECT member_id FROM member WHERE name = 'test_재호(명덕관)'), 'WAKE_UP_TIME', 'WakeUpTimeType:_0600', 4);
+    ((SELECT member_id FROM member WHERE name = 'test_재호(명덕관)'),
+     'SleepingSensitivityType:DARK',
+     'HeatToleranceType:HIGH',
+     'SleepTimeType:_0100',
+     'WakeUpTimeType:_0600');
+

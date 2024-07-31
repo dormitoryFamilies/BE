@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 
 import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.fromType;
 
@@ -29,6 +28,7 @@ public class PreferenceOrderService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final MemberRepository memberRepository;
 
+    //todo. 애노테이션으로 필수값인지 확인하는 유효성 검사 추가하기
     public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySavedPreferenceOrder(loginMember);
@@ -47,7 +47,7 @@ public class PreferenceOrderService {
     private Enum<?> getPreference(String preferenceTypeInput) {
         String[] preferenceOrder = preferenceTypeInput.split(":");
         LifestyleType preferenceType = fromType(preferenceOrder[0]);
-        return preferenceType.getLifestyleValue(preferenceOrder[1]);
+        return preferenceType.getLifestyleValueFrom(preferenceOrder[1]);
     }
 
     private void checkAlreadySavedPreferenceOrder(Member loginMember) {
