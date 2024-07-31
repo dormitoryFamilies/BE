@@ -17,12 +17,13 @@ public class RoommateProperties {
     /**
      * 룸메 추천
      */
-    public static final int RECOMMENDATIONS_MAX_COUNT = 50;
+    public static final int RECOMMENDATIONS_MAX_COUNT = 5;
 
     /**
      * 총점 계산 기준
      */
     public static final Integer MAX_SCORE_DIFFERENCE = 9;
+    public static final double ZERO = 0.0;
 
     /**
      * 가중치 값

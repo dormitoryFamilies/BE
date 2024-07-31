@@ -40,7 +40,9 @@ public class MatchingRequestService {
         checkIfAlreadyMatchedMember(loginMember, targetMember);
         checkDistinctMembers(loginMember, targetMember);
         checkDormitoryMatch(loginMember, targetMember);
-        checkMatchingRequestAlreadyExits(loginMember, targetMember);
+        if(isMatchingRequestAlreadyExits(loginMember, targetMember)) {
+            throw new MatchingRequestAlreadyExitsException();
+        }
     }
 
     private void checkIfAlreadyMatchedMember(Member loginMember, Member targetMember) {
@@ -61,10 +63,9 @@ public class MatchingRequestService {
         }
     }
 
-    private void checkMatchingRequestAlreadyExits(Member loginMember, Member targetMember) {
-        if (matchingRequestRepository.findByMembers(loginMember, targetMember).isPresent()) {
-            throw new MatchingRequestAlreadyExitsException();
-        }
+    public boolean isMatchingRequestAlreadyExits(Member loginMember, Member targetMember) {
+        return matchingRequestRepository.findByMembers(loginMember, targetMember).isPresent();
+
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
