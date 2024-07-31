@@ -7,6 +7,6 @@ public record MatchingRequestCountResponseDto(
         long requestReceivedCount
 ) {
     public static MatchingRequestCountResponseDto from(Member member, long count){
-        return new MatchingRequestCountResponseDto(member.getNickname(),count);
+        return new MatchingRequestCountResponseDto(member.getNickname(), count);
     }
 }

@@ -17,7 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE LOWER(m.nickname) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "AND m.authority = 'ROLE_VERIFIED_STUDENT' " +
             "ORDER BY m.createdAt DESC")
-    List<Member> findVerifiedMembersByKeyword(String keyword);
+    Page<Member> findVerifiedMembersByKeyword(String keyword, Pageable pageable);
 
     @Query("SELECT m FROM Member m " +
             "WHERE m.authority = 'ROLE_VERIFIED_STUDENT' " +

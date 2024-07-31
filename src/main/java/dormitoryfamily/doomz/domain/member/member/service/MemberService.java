@@ -55,12 +55,20 @@ public class MemberService {
                 .orElseThrow(MemberNotExistsException::new);
     }
 
-    public MemberProfileListResponseDto findAllMembers(PrincipalDetails principalDetails) {
+    public MemberProfilePagingListResponseDto findAllMembers(PrincipalDetails principalDetails, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
-        List<Member> members = memberRepository.findVerifiedMembersByKeyword(requestDto.q());
-        List<AllMembersResponseDto> memberDtos = convertToDtoList(members, loginMember);
+        Page<Member> membersPage = memberRepository.findAllVerifiedMembers(pageable);
+        List<AllMembersResponseDto> memberDtos = convertToDtoList(membersPage.getContent(), loginMember);
 
-        return MemberProfileListResponseDto.from(memberDtos);
+        return MemberProfilePagingListResponseDto.from(membersPage, memberDtos);
+    }
+
+    public MemberProfilePagingListResponseDto searchMembers(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
+        Member loginMember = principalDetails.getMember();
+        Page<Member> members = memberRepository.findVerifiedMembersByKeyword(requestDto.q(), pageable);
+        List<AllMembersResponseDto> memberDtos = convertToDtoList(members.getContent(), loginMember);
+
+        return MemberProfilePagingListResponseDto.from(members, memberDtos);
     }
 
     private List<AllMembersResponseDto> convertToDtoList(List<Member> members, Member loginMember) {

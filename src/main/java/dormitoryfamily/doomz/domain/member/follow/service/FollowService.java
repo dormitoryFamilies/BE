@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -97,13 +98,13 @@ public class FollowService {
                 .collect(Collectors.toList());
     }
 
-    public MemberProfileListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberProfilePagingListResponseDto searchFollowings(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
 
-        List<Follow> follows = followRepository.findByFollowerAndFollowingNicknameContaining(loginMember, requestDto.q());
-        List<MemberInfoResponseDto> memberInfoDtos = convertToMemberInfoResponseDtoList(follows);
+        Slice<Follow> follows = followRepository.findByFollowerAndFollowingNicknameContaining(loginMember, requestDto.q(), pageable);
+        List<MemberInfoResponseDto> memberInfoDtos = convertToMemberInfoResponseDtoList(follows.getContent());
 
-        return MemberProfileListResponseDto.from(memberInfoDtos);
+        return MemberProfilePagingListResponseDto.from(follows, memberInfoDtos);
     }
 
     public MemberProfilePagingListResponseDto findFollowers(PrincipalDetails principalDetails, Pageable pageable) {
@@ -126,12 +127,12 @@ public class FollowService {
         return FollowerMemberResponseDto.fromEntity(follower, isFollowing);
     }
 
-    public MemberProfileListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto) {
+    public MemberProfilePagingListResponseDto searchFollowers(PrincipalDetails principalDetails, SearchRequestDto requestDto, Pageable pageable) {
         Member loginMember = principalDetails.getMember();
 
-        List<Follow> follows = followRepository.findByFollowingAndFollowerNicknameContaining(loginMember, requestDto.q());
-        List<FollowerMemberResponseDto> memberProfiles = convertToFollowerMemberResponseDtoList(loginMember, follows);
+        Slice<Follow> follows = followRepository.findByFollowingAndFollowerNicknameContaining(loginMember, requestDto.q(), pageable);
+        List<FollowerMemberResponseDto> memberProfiles = convertToFollowerMemberResponseDtoList(loginMember, follows.getContent());
 
-        return MemberProfileListResponseDto.from(memberProfiles);
+        return MemberProfilePagingListResponseDto.from(follows, memberProfiles);
     }
 }

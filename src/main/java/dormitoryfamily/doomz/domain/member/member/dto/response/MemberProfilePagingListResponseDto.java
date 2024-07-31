@@ -21,11 +21,11 @@ public record MemberProfilePagingListResponseDto(
                 memberProfiles);
     }
 
-    public static MemberProfilePagingListResponseDto from(Slice<RoommateWish> wishes, List<? extends MemberBaseResponseDto> memberProfiles){
+    public static <T> MemberProfilePagingListResponseDto from(Slice<T> entities, List<? extends MemberBaseResponseDto> memberProfiles){
         return new MemberProfilePagingListResponseDto(
                 null,
-                wishes.getNumber(),
-                wishes.isLast(),
+                entities.getNumber(),
+                entities.isLast(),
                 memberProfiles);
     }
 }

@@ -49,11 +49,12 @@ public class FollowController {
     }
 
     @GetMapping("/followings/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowings(
+    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> searchFollowings(
             @ModelAttribute @Valid SearchRequestDto requestDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
     ){
-        MemberProfileListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto);
+        MemberProfilePagingListResponseDto responseDto = followService.searchFollowings(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
@@ -67,11 +68,12 @@ public class FollowController {
     }
 
     @GetMapping("/followers/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchFollowers(
+    public ResponseEntity<ResponseDto<MemberProfilePagingListResponseDto>> searchFollowers(
             @ModelAttribute @Valid SearchRequestDto requestDto,
-            @AuthenticationPrincipal PrincipalDetails principalDetails
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            Pageable pageable
     ){
-        MemberProfileListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto);
+        MemberProfilePagingListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
