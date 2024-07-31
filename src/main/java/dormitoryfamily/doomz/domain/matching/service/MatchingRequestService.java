@@ -3,15 +3,24 @@ package dormitoryfamily.doomz.domain.matching.service;
 import dormitoryfamily.doomz.domain.matching.exception.*;
 import dormitoryfamily.doomz.domain.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.matching.repository.MatchingRequestRepository;
-import dormitoryfamily.doomz.domain.member.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.matching.util.StatusType;
+import dormitoryfamily.doomz.domain.member.dto.response.MatchingRequestMemberResponseDto;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
+import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static dormitoryfamily.doomz.domain.matching.util.StatusType.*;
 
 @Service
 @Transactional
@@ -89,4 +98,37 @@ public class MatchingRequestService {
         return matchingRequestRepository.findBySenderAndReceiver(targetMember, loginMember)
                 .orElseThrow(MatchingRequestNotExistException::new);
     }
+
+    public MemberProfilePagingListResponseDto findMyMatchingRequest(PrincipalDetails principalDetails, String status, Pageable pageable) {
+        Member loginMember = principalDetails.getMember();
+        StatusType statusType = StatusType.fromString(status);
+
+        Page<MatchingRequest> matchingRequests = getMatchingRequests(loginMember, statusType, pageable);
+        List<MatchingRequestMemberResponseDto> matchingRequestMemberResponseDtos = convertToDtoList(matchingRequests.getContent(), loginMember, statusType);
+
+        return MemberProfilePagingListResponseDto.from(matchingRequests, matchingRequestMemberResponseDtos);
+    }
+
+    private Page<MatchingRequest> getMatchingRequests(Member loginMember, StatusType statusType, Pageable pageable) {
+        return statusType == StatusType.SENT
+                ? matchingRequestRepository.findBySenderOrderByCreatedAtDesc(loginMember, pageable)
+                : matchingRequestRepository.findByReceiverOrderByCreatedAtDesc(loginMember, pageable);
+    }
+
+    private List<MatchingRequestMemberResponseDto> convertToDtoList(List<MatchingRequest> matchingRequests, Member loginMember, StatusType statusType) {
+        return matchingRequests.stream()
+                .map(matchingRequest -> createResponseDto(matchingRequest, loginMember, statusType))
+                .collect(Collectors.toList());
+    }
+
+    private MatchingRequestMemberResponseDto createResponseDto(MatchingRequest matchingRequest, Member loginMember, StatusType statusType) {
+        Member targetMember = statusType == StatusType.SENT ? matchingRequest.getReceiver() : matchingRequest.getSender();
+        boolean isMatchable = isRoommateMatchAvailable(loginMember, targetMember);
+        return MatchingRequestMemberResponseDto.fromEntity(targetMember, isMatchable);
+    }
+
+    private boolean isRoommateMatchAvailable(Member loginMember, Member member) {
+        return !member.isRoommateMatched() && Objects.equals(loginMember.getDormitoryType(), member.getDormitoryType());
+    }
 }
+

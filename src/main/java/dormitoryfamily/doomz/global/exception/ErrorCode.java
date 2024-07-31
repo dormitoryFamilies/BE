@@ -117,7 +117,7 @@ public enum ErrorCode {
     MATCHING_REQUEST_NOT_EXISTS(NOT_FOUND, "해당 사용자와의 매칭 신청이 존재하지 않습니다."),
     ALREADY_MATCHED_MEMBER(CONFLICT, "이미 룸메이트 매칭이 완료된 사용자입니다."),
     MEMBER_DORMITORY_MISMATCH(CONFLICT, "기숙사가 달라 매칭이 불가능한 사용자입니다."),
-
+    MATCHING_REQUEST_STATUS_NOT_EXISTS(NOT_FOUND, "해당 매칭 신청 타입은 존재하지 않습니다."),
     //matching result
     MATCHING_RESULT_NOT_EXISTS(CONFLICT,"해당 사용자와 룸메이트 매칭이 이루어지지 않은 상태입니다." ),
 
