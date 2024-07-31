@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.security.dto;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;

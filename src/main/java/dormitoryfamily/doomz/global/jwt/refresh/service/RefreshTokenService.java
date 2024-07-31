@@ -1,8 +1,8 @@
 package dormitoryfamily.doomz.global.jwt.refresh.service;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
 import dormitoryfamily.doomz.global.jwt.refresh.exception.InvalidTokenCategoryException;

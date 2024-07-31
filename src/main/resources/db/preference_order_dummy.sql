@@ -59,7 +59,7 @@ INSERT INTO preference_order (member_id, first_preference_order, second_preferen
 VALUES
     ((SELECT member_id FROM member WHERE name = 'test_이정환(신민관)'),
      'SleepTimeType:BEFORE_2100',
-     'WakeUpTimeType:BEFORE_0500',
+     'WakeUpTimeType:BEFORE_0600',
      'SleepingHabitType:SNORING',
      'ColdToleranceType:HIGH');
 
@@ -86,7 +86,7 @@ INSERT INTO preference_order (member_id, first_preference_order, second_preferen
 VALUES
     ((SELECT member_id FROM member WHERE name = 'test_강수진(등용관)'),
      'SleepTimeType:_2100',
-     'WakeUpTimeType:AFTER_1300',
+     'WakeUpTimeType:AFTER_1200',
      'SleepingHabitType:SNORING',
      'ColdToleranceType:MEDIUM');
 
@@ -142,7 +142,7 @@ VALUES
      'SleepingSensitivityType:LIGHT',
      'HeatToleranceType:LOW',
      'ColdToleranceType:HIGH',
-     'WakeUpTimeType:AFTER_1300');
+     'WakeUpTimeType:AFTER_1200');
 
 -- 민혁
 INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
@@ -238,7 +238,7 @@ VALUES
 INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)
 VALUES
     ((SELECT member_id FROM member WHERE name = 'test_준수(신민관)'),
-     'WakeUpTimeType:AFTER_1300',
+     'WakeUpTimeType:AFTER_1200',
      'HeatToleranceType:MEDIUM',
      'PerfumeUsageType:OFTEN',
      'SleepingHabitType:SNORING');
@@ -258,7 +258,7 @@ VALUES
     ((SELECT member_id FROM member WHERE name = 'test_성민(예지관)'),
      'SleepTimeType:_2100',
      'SleepingHabitType:SLEEP_TALKING',
-     'WakeUpTimeType:AFTER_1300',
+     'WakeUpTimeType:AFTER_1200',
      'DrinkingFrequencyType:FREQUENT');
 
 -- 지훈

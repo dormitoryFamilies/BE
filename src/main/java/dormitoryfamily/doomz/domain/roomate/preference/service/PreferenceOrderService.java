@@ -1,8 +1,8 @@
 package dormitoryfamily.doomz.domain.roomate.preference.service;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.preference.dto.request.PreferenceOrderRequestDto;
 import dormitoryfamily.doomz.domain.roomate.preference.dto.response.PreferenceOrderResponseDto;
 import dormitoryfamily.doomz.domain.roomate.preference.entity.PreferenceOrder;
