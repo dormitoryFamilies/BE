@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.global.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.RECOMMENDATION_INTERVAL_HOURS;
 import static org.springframework.http.HttpStatus.*;
 
 @Getter
