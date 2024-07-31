@@ -25,7 +25,7 @@ public class MatchingResultService {
     private final MemberRepository memberRepository;
 
     public void saveMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = principalDetails.getMember();
+        Member loginMember = getMemberById(principalDetails.getMember().getId());
         Member targetMember = getMemberById(memberId);
 
         validateMatchingCapability(loginMember, targetMember);
@@ -65,7 +65,7 @@ public class MatchingResultService {
     }
 
     public void cancelMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = principalDetails.getMember();
+        Member loginMember = getMemberById(principalDetails.getMember().getId());
         Member targetMember = getMemberById(memberId);
 
         MatchingResult matchingResult = getMatchingResultByMembers(loginMember, targetMember);

@@ -125,4 +125,9 @@ public class MemberService {
             throw new NotRoleMemberException();
         }
     }
+
+    public MatchingStatusResponseDto getMyMatchingStatus(PrincipalDetails principalDetails) {
+        Member loginMember = principalDetails.getMember();
+        return MatchingStatusResponseDto.from(loginMember);
+    }
 }

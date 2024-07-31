@@ -63,11 +63,19 @@ public class MemberController {
     }
 
     @GetMapping("/matchings/members/search")
-    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembers(
+    public ResponseEntity<ResponseDto<MemberProfileListResponseDto>> searchMembersByNickname(
             @ModelAttribute @Valid SearchRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         MemberProfileListResponseDto responseDto = memberService.searchMembers(principalDetails, requestDto);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
+
+    @GetMapping("/my/matching-statuses")
+    public ResponseEntity<ResponseDto<MatchingStatusResponseDto>> getMyRoommateMatchingStatus(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        MatchingStatusResponseDto responseDto = memberService.getMyMatchingStatus(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
