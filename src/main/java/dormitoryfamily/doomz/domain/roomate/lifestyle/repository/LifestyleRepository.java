@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.lifestyle.repository;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

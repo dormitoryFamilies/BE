@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.matching.repository;
 
 import dormitoryfamily.doomz.domain.matching.entity.MatchingRequest;
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

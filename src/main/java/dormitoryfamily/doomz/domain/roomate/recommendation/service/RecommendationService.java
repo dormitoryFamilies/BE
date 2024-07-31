@@ -1,8 +1,8 @@
 package dormitoryfamily.doomz.domain.roomate.recommendation.service;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.repository.LifestyleRepository;

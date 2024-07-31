@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.jwt;
 
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.security.exception.AccessTokenNotExistsException;
 import dormitoryfamily.doomz.global.security.exception.MemberDataNotExistsException;

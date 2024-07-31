@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.lifestyle.entity;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.dto.request.UpdateMyLifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.*;
 import jakarta.annotation.Nullable;

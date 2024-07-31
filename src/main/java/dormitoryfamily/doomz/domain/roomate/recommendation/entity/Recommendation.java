@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.recommendation.entity;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

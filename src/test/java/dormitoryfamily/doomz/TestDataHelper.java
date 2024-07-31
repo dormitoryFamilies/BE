@@ -1,15 +1,15 @@
 package dormitoryfamily.doomz;
 
-import dormitoryfamily.doomz.domain.article.entity.Article;
-import dormitoryfamily.doomz.domain.article.entity.ArticleImage;
-import dormitoryfamily.doomz.domain.article.entity.type.ArticleDormitoryType;
-import dormitoryfamily.doomz.domain.article.entity.type.BoardType;
-import dormitoryfamily.doomz.domain.article.entity.type.StatusType;
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.entity.type.CollegeType;
-import dormitoryfamily.doomz.domain.member.entity.type.DepartmentType;
-import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
-import dormitoryfamily.doomz.domain.member.entity.type.MemberDormitoryType;
+import dormitoryfamily.doomz.domain.board.article.entity.Article;
+import dormitoryfamily.doomz.domain.board.article.entity.ArticleImage;
+import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType;
+import dormitoryfamily.doomz.domain.board.article.entity.type.BoardType;
+import dormitoryfamily.doomz.domain.board.article.entity.type.StatusType;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.type.CollegeType;
+import dormitoryfamily.doomz.domain.member.member.entity.type.DepartmentType;
+import dormitoryfamily.doomz.domain.member.member.entity.type.GenderType;
+import dormitoryfamily.doomz.domain.member.member.entity.type.MemberDormitoryType;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.*;
 import dormitoryfamily.doomz.domain.roomate.preference.entity.PreferenceOrder;

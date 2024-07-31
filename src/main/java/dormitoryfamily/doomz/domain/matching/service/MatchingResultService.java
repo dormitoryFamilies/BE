@@ -5,9 +5,9 @@ import dormitoryfamily.doomz.domain.matching.exception.AlreadyMatchedMemberExcep
 import dormitoryfamily.doomz.domain.matching.exception.MemberDormitoryMismatchException;
 import dormitoryfamily.doomz.domain.matching.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.domain.matching.repository.MatchingResultRepository;
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.exception.MemberNotExistsException;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roomate.preference.entity;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.global.converter.EnumConverter;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
