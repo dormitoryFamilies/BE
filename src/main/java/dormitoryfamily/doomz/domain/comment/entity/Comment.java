@@ -2,7 +2,7 @@ package dormitoryfamily.doomz.domain.comment.entity;
 
 import dormitoryfamily.doomz.domain.article.entity.Article;
 import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.replyComment.entity.ReplyComment;
+import dormitoryfamily.doomz.domain.replycomment.entity.ReplyComment;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
