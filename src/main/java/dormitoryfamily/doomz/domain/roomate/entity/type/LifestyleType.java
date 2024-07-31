@@ -37,13 +37,13 @@ public enum LifestyleType {
         this.enumClass = enumClass;
     }
 
-    public static LifestyleType fromType(String type) {
+    public static LifestyleType fromType(String typeStr) {
         for (LifestyleType lifestyleType : LifestyleType.values()) {
-            if (lifestyleType.toString().equalsIgnoreCase(type)) {
+            if (lifestyleType.toString().equalsIgnoreCase(typeStr)) {
                 return lifestyleType;
             }
         }
-        throw new InvalidLifestyleTypeException(type);
+        throw new InvalidLifestyleTypeException(typeStr);
     }
 
     public Enum<?> getLifestyleValueFrom(String value) {
@@ -73,7 +73,24 @@ public enum LifestyleType {
         };
     }
 
-    public static Enum<?> getComparedLifestyleAttribute(LifestyleType preferredType, Lifestyle lifestyle) {
+    public static String getRequiredEnumType(String lifestyleType) {
+        return switch (lifestyleType) {
+            case "SleepTimeType" -> "SLEEP_TIME";
+            case "WakeUpTimeType" -> "WAKE_UP_TIME";
+            case "SleepingHabitType" -> "SLEEPING_HABIT";
+            case "SleepingSensitivityType" -> "SLEEPING_SENSITIVITY";
+            case "SmokingType" -> "SMOKING";
+            case "DrinkingFrequencyType" -> "DRINKING_FREQUENCY";
+            case "CleaningFrequencyType" -> "CLEANING_FREQUENCY";
+            case "HeatToleranceType" -> "HEAT_TOLERANCE";
+            case "ColdToleranceType" -> "COLD_TOLERANCE";
+            case "PerfumeUsageType" -> "PERFUME_USAGE";
+            case "ExamPreparationType" -> "EXAM_PREPARATION";
+            default -> null;
+        };
+    }
+
+    public static LifestyleAttribute getTargetLifestyleAttribute(LifestyleType preferredType, Lifestyle lifestyle) {
         return switch (preferredType) {
             case SLEEP_TIME -> lifestyle.getSleepTimeType();
             case WAKE_UP_TIME -> lifestyle.getWakeUpTimeType();

@@ -3,11 +3,8 @@ package dormitoryfamily.doomz.domain.roomate.util;
 import dormitoryfamily.doomz.domain.roomate.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleAttribute;
-import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType;
 
-import java.util.List;
-
-import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.getComparedLifestyleAttribute;
+import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.*;
 import static dormitoryfamily.doomz.domain.roomate.util.RoommateProperties.*;
 
 public class ScoreCalculator {
@@ -15,31 +12,36 @@ public class ScoreCalculator {
     /**
      * 사용자 한 명에 대한 점수 계산
      *
-     * @param preferenceOrders 4개의 우선순위(1~4순위)
-     * @param lifestyle        비교할 사용자의 라이프 스타일
+     * @param preferenceOrder 우선순위(1~4순위)
+     * @param lifestyle       비교할 라이프 스타일
      */
-    public static double calculateScoreForUser(List<PreferenceOrder> preferenceOrders, Lifestyle lifestyle) {
+    public static double calculateScoreForUser(PreferenceOrder preferenceOrder, Lifestyle lifestyle) {
         double userScore = 0;
-        for (PreferenceOrder preferenceOder : preferenceOrders) {
-            userScore += calculateScoreForOrder(preferenceOder, lifestyle);
-        }
+
+        userScore += calculateScoreForOrder(preferenceOrder.getFirstPreferenceOrder(), lifestyle, FIRST_PRIORITY);
+        userScore += calculateScoreForOrder(preferenceOrder.getSecondPreferenceOrder(), lifestyle, SECOND_PRIORITY);
+        userScore += calculateScoreForOrder(preferenceOrder.getThirdPreferenceOrder(), lifestyle, THIRD_PRIORITY);
+        userScore += calculateScoreForOrder(preferenceOrder.getFourthPreferenceOrder(), lifestyle, FOURTH_PRIORITY);
+
         return userScore;
     }
 
     /**
      * 순위별 해당 항목에 대한 점수 계산
      *
-     * @param preferenceOrder 연산 대상의 우선순위 1개
-     * @param lifestyle       비교할 사용자의 라이프 스타일
+     * @param preferredLifestyle 연산 대상의 우선순위
+     * @param lifestyle          비교할 라이프 스타일
      */
-    private static double calculateScoreForOrder(PreferenceOrder preferenceOrder, Lifestyle lifestyle) {
-        LifestyleType preferredLifestyle = preferenceOrder.getLifestyleType();
-        Integer order = preferenceOrder.getPreferenceOrder();
+    private static double calculateScoreForOrder(Enum<?> preferredLifestyle, Lifestyle lifestyle, int order) {
+        LifestyleAttribute baseLifestyle = (LifestyleAttribute) preferredLifestyle;
+        LifestyleAttribute targetLifestyle = getTargetLifestyle(baseLifestyle, lifestyle);
 
-        LifestyleAttribute baseLifestyle = (LifestyleAttribute) preferenceOrder.getLifestyleDetail();
-        LifestyleAttribute otherLifestyle = (LifestyleAttribute) getComparedLifestyleAttribute(preferredLifestyle, lifestyle);
+        return applyWeightedScore(order, getScore(baseLifestyle, targetLifestyle));
+    }
 
-        return applyWeightedScore(order, getScore(baseLifestyle, otherLifestyle));
+    private static LifestyleAttribute getTargetLifestyle(LifestyleAttribute baseLifestyle, Lifestyle lifestyle) {
+        String lifestyleEnumType = getRequiredEnumType(baseLifestyle.getClass().getSimpleName()); //enum 타입명을 토대로 enum 상수명을 조회
+        return getTargetLifestyleAttribute(fromType(lifestyleEnumType), lifestyle);       //라이프 스타일에서 조회하고자 하는 lifestyle enum 조회
     }
 
     private static int getScore(LifestyleAttribute myStyle, LifestyleAttribute anotherStyle) {

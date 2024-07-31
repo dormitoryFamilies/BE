@@ -1,17 +1,19 @@
 package dormitoryfamily.doomz.domain.roomate.dto.preferenceorder.response;
 
 import dormitoryfamily.doomz.domain.roomate.entity.PreferenceOrder;
-import dormitoryfamily.doomz.domain.roomate.entity.type.Describable;
+import dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleAttribute;
+
+import static dormitoryfamily.doomz.domain.roomate.entity.type.LifestyleType.getRequiredEnumType;
 
 public record PreferenceOrderResponseDto(
 
-        String firstPreferenceOrder,
+        String firstPreference,
 
-        String secondPreferenceOrder,
+        String secondPreference,
 
-        String thirdPreferenceOrder,
+        String thirdPreference,
 
-        String fourthPreferenceOrder
+        String fourthPreference
 
 ) {
     public static PreferenceOrderResponseDto fromEntity(PreferenceOrder preference) {
@@ -24,9 +26,6 @@ public record PreferenceOrderResponseDto(
     }
 
     private static String formatPreference(Enum<?> preference) {
-        if (preference instanceof Describable describable) {
-            return preference.getClass().getSimpleName() + ":" + describable.getDescription();
-        }
-        return preference.name();
+        return getRequiredEnumType(preference.getClass().getSimpleName()) + ":" + ((LifestyleAttribute) preference).getDescription();
     }
 }
