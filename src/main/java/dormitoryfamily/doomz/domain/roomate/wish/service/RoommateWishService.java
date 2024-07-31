@@ -88,4 +88,12 @@ public class RoommateWishService {
                 .map(wish -> MemberInfoResponseDto.fromEntity(wish.getWished()))
                 .collect(Collectors.toList());
     }
+
+    public RoommateWishStatusResponseDto getRoommateWishStatus(PrincipalDetails principalDetails, Long memberId) {
+        Member loginMember = principalDetails.getMember();
+        Member targetMember = getMemberById(memberId);
+
+        boolean isRoommateWished = roommateWishRepository.findByWisherAndWished(loginMember, targetMember).isPresent();
+        return RoommateWishStatusResponseDto.from(isRoommateWished);
+    }
 }

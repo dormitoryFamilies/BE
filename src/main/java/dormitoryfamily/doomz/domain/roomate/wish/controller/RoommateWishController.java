@@ -1,7 +1,7 @@
-package dormitoryfamily.doomz.domain.roomate.wish.controller;
+package dormitoryfamily.doomz.domain.roomateWish.controller;
 
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
-import dormitoryfamily.doomz.domain.roomate.wish.service.RoommateWishService;
+import dormitoryfamily.doomz.domain.member.dto.response.MemberProfilePagingListResponseDto;
+import dormitoryfamily.doomz.domain.roomateWish.service.RoommateWishService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class RoommateWishController {
 
     private final RoommateWishService roommateWishService;
 
-    @PostMapping("/members/{memberId}/matching-wishes")
+    @PostMapping("/members/{memberId}/roommate-wishes")
     public ResponseEntity<ResponseDto<Void>> saveArticleWish(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -26,7 +26,7 @@ public class RoommateWishController {
         return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @DeleteMapping("/members/{memberId}/matching-wishes")
+    @DeleteMapping("/members/{memberId}/roommate-wishes")
     public ResponseEntity<ResponseDto<Void>> cancelArticleWish(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
@@ -43,5 +43,15 @@ public class RoommateWishController {
         MemberProfilePagingListResponseDto memberProfilePagingListResponseDto
                 = roommateWishService.findMyRoommateWishes(principalDetails, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(memberProfilePagingListResponseDto));
+    }
+
+    @GetMapping("/members/{memberId}/roommate-wishes")
+    public ResponseEntity<ResponseDto<RoommateWishStatusResponseDto>> getRoommateWishStatus(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @PathVariable Long memberId
+    ){
+        RoommateWishStatusResponseDto responseDto = roommateWishService.getRoommateWishStatus(principalDetails, memberId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+
     }
 }
