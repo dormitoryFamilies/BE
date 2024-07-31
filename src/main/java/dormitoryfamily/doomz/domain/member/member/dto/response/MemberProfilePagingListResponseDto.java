@@ -1,7 +1,5 @@
 package dormitoryfamily.doomz.domain.member.member.dto.response;
 
-import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
-import dormitoryfamily.doomz.domain.roomate.wish.entity.RoommateWish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 

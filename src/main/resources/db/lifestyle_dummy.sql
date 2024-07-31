@@ -1,4 +1,4 @@
-USE dormitoryfamily;
+USE dormitory_family;
 
 ALTER TABLE lifestyle MODIFY COLUMN sleep_time_type VARCHAR(50);
 ALTER TABLE lifestyle MODIFY COLUMN wake_up_time_type VARCHAR(50);

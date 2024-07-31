@@ -6,7 +6,7 @@ import jakarta.persistence.Converter;
 @Converter
 public class EnumConverter implements AttributeConverter<Enum<?>, String> {
 
-    private static final String PACKAGE_NAME = "dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.";
+    private static final String PACKAGE_NAME = "dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.";
 
     //Enum을 문자열로 변환하여 데이터베이스에 저장
     @Override

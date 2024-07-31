@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +33,6 @@ public class MemberController {
         MemberIdResponseDto responseDto = memberService.findMyMemberId(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
-
 
     @GetMapping("/members/{memberId}/profiles")
     public ResponseEntity<ResponseDto<MemberDetailsResponseDto>> findMemberProfile(

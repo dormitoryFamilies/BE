@@ -1,6 +1,6 @@
-package dormitoryfamily.doomz.domain.member.dto.response;
+package dormitoryfamily.doomz.domain.member.member.dto.response;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 
 public record AllMembersResponseDto (
         Long memberId,
