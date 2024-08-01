@@ -1,11 +1,15 @@
 package dormitoryfamily.doomz.domain.roommate.matching.service;
 
+import dormitoryfamily.doomz.domain.member.member.dto.response.MatchingRequestMemberResponseDto;
+import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
+import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
