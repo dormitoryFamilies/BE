@@ -7,6 +7,8 @@ import dormitoryfamily.doomz.global.security.exception.NotInitializedProfileExce
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.security.SignatureException;
 
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ExceptionResponseHandler {
 
     @ExceptionHandler(ExpiredJwtException.class)
