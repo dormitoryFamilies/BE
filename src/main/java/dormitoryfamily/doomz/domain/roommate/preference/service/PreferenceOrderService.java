@@ -28,7 +28,6 @@ public class PreferenceOrderService {
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final MemberRepository memberRepository;
 
-    //todo. 애노테이션으로 필수값인지 확인하는 유효성 검사 추가하기
     public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySavedPreferenceOrder(loginMember);

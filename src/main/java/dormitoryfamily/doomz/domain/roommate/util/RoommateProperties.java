@@ -12,17 +12,18 @@ public class RoommateProperties {
     /**
      * 추천 가능 시간 간격
      */
-    public static final int RECOMMENDATION_INTERVAL_HOURS = 24;
+    public static final int RECOMMENDATION_INTERVAL_HOURS = 1;
 
     /**
      * 룸메 추천
      */
-    public static final int RECOMMENDATIONS_MAX_COUNT = 50;
+    public static final int RECOMMENDATIONS_MAX_COUNT = 5;
 
     /**
      * 총점 계산 기준
      */
     public static final Integer MAX_SCORE_DIFFERENCE = 9;
+    public static final double ZERO = 0.0;
 
     /**
      * 가중치 값

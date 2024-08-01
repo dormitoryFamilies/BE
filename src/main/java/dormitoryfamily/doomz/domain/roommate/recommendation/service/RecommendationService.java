@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.domain.roommate.recommendation.service;
 
+import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
@@ -28,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
+import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.ZERO;
 import static dormitoryfamily.doomz.domain.roommate.util.ScoreCalculator.calculateScoreForUser;
 
 @Service
@@ -40,10 +43,11 @@ public class RecommendationService {
     private final MemberRepository memberRepository;
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
+    private final MatchingRequestService matchingRequestService;
 
-    //todo. 매칭이 가능한 사람인지 확인하기
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
+        checkAlreadyMatched(loginMember);
 
         //기존 매칭 추천을 조회하거나, 새로운 매칭 추천 생성
         Recommendation recommendation = getOrCreateRecommendation(loginMember);
@@ -64,6 +68,12 @@ public class RecommendationService {
         candidateRepository.saveAll(candidates);
 
         return RecommendationResponseDto.fromEntity(recommendation, candidates);
+    }
+
+    private void checkAlreadyMatched(Member loginMember) {
+        if (loginMember.isRoommateMatched()) {
+            throw new AlreadyMatchedMemberException();
+        }
     }
 
     private Recommendation getOrCreateRecommendation(Member loginMember) {
@@ -101,11 +111,13 @@ public class RecommendationService {
             PreferenceOrder myPreference, Lifestyle myLifestyle, List<Lifestyle> allUsersLifestyles
     ) {
         return allUsersLifestyles.stream()
+                .filter(userLifestyle -> !matchingRequestService.isMatchingRequestAlreadyExits(myPreference.getMember(), userLifestyle.getMember()))
                 .map(userLifestyle -> {
+
                     double scoreFromMyView = calculateScoreForUser(myPreference, userLifestyle);
                     double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
                             .map(userPreference -> calculateScoreForUser(userPreference, myLifestyle))
-                            .orElse(0.0);
+                            .orElse(ZERO);
 
                     double totalScore = scoreFromMyView + scoreFromTheirView;
 

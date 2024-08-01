@@ -1,12 +1,8 @@
 package dormitoryfamily.doomz.domain.roommate.matching.service;
 
-import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
-import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
-import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
-import dormitoryfamily.doomz.domain.member.member.dto.response.MatchingRequestMemberResponseDto;
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
@@ -48,7 +44,9 @@ public class MatchingRequestService {
         checkIfAlreadyMatchedMember(loginMember, targetMember);
         checkDistinctMembers(loginMember, targetMember);
         checkDormitoryMatch(loginMember, targetMember);
-        checkMatchingRequestAlreadyExits(loginMember, targetMember);
+        if(isMatchingRequestAlreadyExits(loginMember, targetMember)) {
+            throw new MatchingRequestAlreadyExitsException();
+        }
     }
 
     private void checkIfAlreadyMatchedMember(Member loginMember, Member targetMember) {
@@ -69,10 +67,9 @@ public class MatchingRequestService {
         }
     }
 
-    private void checkMatchingRequestAlreadyExits(Member loginMember, Member targetMember) {
-        if (matchingRequestRepository.findByMembers(loginMember, targetMember).isPresent()) {
-            throw new MatchingRequestAlreadyExitsException();
-        }
+    public boolean isMatchingRequestAlreadyExits(Member loginMember, Member targetMember) {
+        return matchingRequestRepository.findByMembers(loginMember, targetMember).isPresent();
+
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {

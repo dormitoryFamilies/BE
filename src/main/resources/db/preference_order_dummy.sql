@@ -1,4 +1,4 @@
-USE dormitory_family;
+USE dormitoryfamily;
 
 -- 홍길동
 INSERT INTO preference_order (member_id, first_preference_order, second_preference_order, third_preference_order, fourth_preference_order)

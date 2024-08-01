@@ -2,7 +2,6 @@ package dormitoryfamily.doomz.domain.roommate.matching.controller;
 
 import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
 import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import lombok.RequiredArgsConstructor;

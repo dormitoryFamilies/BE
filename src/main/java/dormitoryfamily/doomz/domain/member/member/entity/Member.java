@@ -131,4 +131,12 @@ public class Member extends BaseTimeEntity {
     public void markAsUnmatched(){
         isRoommateMatched = false;
     }
+
+    @PrePersist
+    private void init() {
+        followingCount = 0;
+        followerCount = 0;
+        isRoommateMatched = false;
+        authority = RoleType.ROLE_MEMBER;
+    }
 }

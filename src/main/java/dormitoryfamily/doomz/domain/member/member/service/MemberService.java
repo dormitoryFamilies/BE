@@ -11,7 +11,6 @@ import dormitoryfamily.doomz.domain.member.member.exception.NicknameDuplicatedEx
 import dormitoryfamily.doomz.domain.member.member.exception.NotRoleMemberException;
 import dormitoryfamily.doomz.domain.member.member.exception.NotVisitorOrRejectedMemberRoleException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
-import dormitoryfamily.doomz.domain.roommate.wish.repository.RoommateWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-    private final RoommateWishRepository roommateWishRepository;
 
     public NicknameCheckResponseDto checkNickname(String nickname) {
         boolean isDuplicated = memberRepository.existsByNickname(nickname);
@@ -122,6 +119,7 @@ public class MemberService {
         validateIsRoleMember(member);
         member.authenticateStudentCard();
     }
+
 
     public void rejectStudentCard(Long memberId) {
         Member member = getMemberById(memberId);
