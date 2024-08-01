@@ -3,7 +3,7 @@ package dormitoryfamily.doomz.domain.member.member.entity;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.member.entity.type.*;
-import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -65,6 +65,10 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
+                  int followingCount,
+                  int followerCount,
+                  RoleType authority,
+                  boolean isRoommateMatched,
                   String studentCardImageUrl
     ) {
         this.name = name;
@@ -78,10 +82,10 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
-        this.followingCount = 0;
-        this.followerCount = 0;
-        this.isRoommateMatched = false;
-        this.authority = RoleType.ROLE_VISITOR;
+        this.followingCount = followingCount;
+        this.followerCount = followerCount;
+        this.isRoommateMatched = isRoommateMatched;
+        this.authority = authority;
     }
 
     public void increaseFollowingCount(){
@@ -130,5 +134,13 @@ public class Member extends BaseTimeEntity {
 
     public void markAsUnmatched(){
         isRoommateMatched = false;
+    }
+
+    @PrePersist
+    private void init() {
+        followingCount = 0;
+        followerCount = 0;
+        isRoommateMatched = false;
+        authority = RoleType.ROLE_MEMBER;
     }
 }
