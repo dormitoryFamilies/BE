@@ -106,4 +106,12 @@ public enum LifestyleType {
             default -> null;
         };
     }
+
+    public boolean isEssential() {
+        return switch (this) {
+            case SLEEP_TIME, WAKE_UP_TIME, SMOKING, SLEEPING_HABIT, SLEEPING_SENSITIVITY, DRINKING_FREQUENCY,
+                    CLEANING_FREQUENCY, HEAT_TOLERANCE, COLD_TOLERANCE, PERFUME_USAGE, EXAM_PREPARATION -> true;
+            default -> false;
+        };
+    }
 }

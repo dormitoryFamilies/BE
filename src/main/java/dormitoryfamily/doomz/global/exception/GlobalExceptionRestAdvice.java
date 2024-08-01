@@ -38,7 +38,6 @@ public class GlobalExceptionRestAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleDbException(DataAccessException e) {
-        System.out.println("e.getMessage() = " + e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ResponseDto.errorWithMessage(HttpStatus.INTERNAL_SERVER_ERROR, "DB 에러!"));
