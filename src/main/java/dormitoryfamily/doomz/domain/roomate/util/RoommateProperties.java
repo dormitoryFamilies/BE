@@ -12,7 +12,7 @@ public class RoommateProperties {
     /**
      * 추천 가능 시간 간격
      */
-    public static final int RECOMMENDATION_INTERVAL_HOURS = 24;
+    public static final int RECOMMENDATION_INTERVAL_HOURS = 1;
 
     /**
      * 룸메 추천
