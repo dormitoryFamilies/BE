@@ -10,9 +10,9 @@ import dormitoryfamily.doomz.domain.member.member.entity.type.CollegeType;
 import dormitoryfamily.doomz.domain.member.member.entity.type.DepartmentType;
 import dormitoryfamily.doomz.domain.member.member.entity.type.GenderType;
 import dormitoryfamily.doomz.domain.member.member.entity.type.MemberDormitoryType;
-import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.Lifestyle;
-import dormitoryfamily.doomz.domain.roomate.lifestyle.entity.type.*;
-import dormitoryfamily.doomz.domain.roomate.preference.entity.PreferenceOrder;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.*;
+import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
