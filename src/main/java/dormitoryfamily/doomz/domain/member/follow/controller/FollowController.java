@@ -30,12 +30,21 @@ public class FollowController {
        return ResponseEntity.ok(ResponseDto.created());
     }
 
-    @DeleteMapping("/{memberId}/follows")
+    @DeleteMapping("/{memberId}/followings")
     public ResponseEntity<ResponseDto<Void>> cancelFollow(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ){
-        followService.removeFollow(principalDetails, memberId);
+        followService.removeFollowing(principalDetails, memberId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @DeleteMapping("/{memberId}/followers")
+    public ResponseEntity<ResponseDto<Void>> deleteFollower(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ){
+        followService.removeFollower(principalDetails, memberId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -76,4 +85,5 @@ public class FollowController {
         MemberProfilePagingListResponseDto responseDto = followService.searchFollowers(principalDetails, requestDto, pageable);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
+
 }

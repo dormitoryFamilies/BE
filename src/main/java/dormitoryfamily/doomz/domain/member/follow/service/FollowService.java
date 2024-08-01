@@ -64,12 +64,12 @@ public class FollowService {
         followingMember.increaseFollowerCount();
     }
 
-    public void removeFollow(PrincipalDetails principalDetails, Long followingMemberId) {
+    public void removeFollowing(PrincipalDetails principalDetails, Long followingMemberId) {
         Member loginMember = getMemberById(principalDetails.getMember().getId());
         Member followingMember = getMemberById(followingMemberId);
         Follow follow = getFollowByFollowerAndFollowing(loginMember, followingMember);
 
-        deleteFollowAndDecreaseCounts(loginMember, followingMember, follow);
+        deleteFollowingAndDecreaseCounts(loginMember, followingMember, follow);
     }
 
     private Follow getFollowByFollowerAndFollowing(Member follower, Member following) {
@@ -77,10 +77,24 @@ public class FollowService {
                 .orElseThrow(NotFollowingMemberException::new);
     }
 
-    private void deleteFollowAndDecreaseCounts(Member loginMember, Member followingMember, Follow follow) {
+    private void deleteFollowingAndDecreaseCounts(Member loginMember, Member followingMember, Follow follow) {
         followRepository.delete(follow);
         loginMember.decreaseFollowingCount();
         followingMember.decreaseFollowerCount();
+    }
+
+    public void removeFollower(PrincipalDetails principalDetails, Long memberId) {
+        Member loginMember = getMemberById(principalDetails.getMember().getId());
+        Member followerMember = getMemberById(memberId);
+        Follow follow = getFollowByFollowerAndFollowing(followerMember, loginMember);
+
+        deleteFollowerAndDecreaseCounts(loginMember, followerMember, follow);
+    }
+
+    private void deleteFollowerAndDecreaseCounts(Member loginMember, Member followingMember, Follow follow) {
+        followRepository.delete(follow);
+        loginMember.decreaseFollowerCount();
+        followingMember.decreaseFollowingCount();
     }
 
     public MemberProfilePagingListResponseDto findFollowings(PrincipalDetails principalDetails, Pageable pageable) {
@@ -135,4 +149,5 @@ public class FollowService {
 
         return MemberProfilePagingListResponseDto.from(follows, memberProfiles);
     }
+
 }
