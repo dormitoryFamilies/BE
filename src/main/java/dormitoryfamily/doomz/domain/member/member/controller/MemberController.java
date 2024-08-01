@@ -26,7 +26,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/my/id")
+    @GetMapping("/members/me")
     public ResponseEntity<ResponseDto<MemberIdResponseDto>> findMyMemberId(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
