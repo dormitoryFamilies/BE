@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.global.oauth2;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.global.security.dto.KakaoMemberResponse;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;

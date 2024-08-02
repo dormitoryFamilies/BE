@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.global.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.global.jwt.JWTUtil;
 import dormitoryfamily.doomz.global.jwt.refresh.entity.RefreshTokenEntity;
 import dormitoryfamily.doomz.global.jwt.refresh.repository.RefreshTokenRepository;

@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.security.dto;
 
-import dormitoryfamily.doomz.domain.member.entity.type.GenderType;
+import dormitoryfamily.doomz.domain.member.member.entity.type.GenderType;
 
 import java.time.LocalDate;
 import java.util.Map;

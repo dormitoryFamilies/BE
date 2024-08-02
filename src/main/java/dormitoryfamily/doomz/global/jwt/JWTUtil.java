@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.jwt;
 
-import dormitoryfamily.doomz.domain.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.data.util.Pair;
