@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.roommate.service;
+package dormitoryfamily.doomz.domain.roommate.recommendation.service;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;

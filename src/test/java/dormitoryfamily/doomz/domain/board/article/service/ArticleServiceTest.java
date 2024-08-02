@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.article.service;
+package dormitoryfamily.doomz.domain.board.article.service;
 
 import dormitoryfamily.doomz.domain.board.article.dto.request.ArticleRequest;
 import dormitoryfamily.doomz.domain.board.article.dto.request.ArticleRequestDto;
