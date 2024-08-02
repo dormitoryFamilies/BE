@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.roommate.recommendation.entity;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,12 +33,18 @@ public class Recommendation {
 
     private LocalDateTime recommendedAt;
 
-    public Recommendation(Member member) {
+    @Builder
+    public Recommendation(Member member, LocalDateTime recommendedAt) {
         this.member = member;
-        recommendedAt = LocalDateTime.now();
+        this.recommendedAt = recommendedAt;
     }
 
     public void updateRecommendedAt() {
+        recommendedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void init() {
         recommendedAt = LocalDateTime.now();
     }
 }
