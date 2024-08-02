@@ -65,11 +65,14 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
-                  String studentCardImageUrl
-    ) {
+                  String studentCardImageUrl,
+                  int followingCount,
+                  int followerCount,
+                  boolean isRoommateMatched,
+                  RoleType authority) {
         this.name = name;
-        this.email = email;
         this.nickname = nickname;
+        this.email = email;
         this.studentNumber = studentNumber;
         this.collegeType = collegeType;
         this.departmentType = departmentType;
@@ -78,10 +81,10 @@ public class Member extends BaseTimeEntity {
         this.genderType = genderType;
         this.profileUrl = profileUrl;
         this.studentCardImageUrl = studentCardImageUrl;
-        this.followingCount = 0;
-        this.followerCount = 0;
-        this.isRoommateMatched = false;
-        this.authority = RoleType.ROLE_VISITOR;
+        this.followingCount = followingCount;
+        this.followerCount = followerCount;
+        this.isRoommateMatched = isRoommateMatched;
+        this.authority = authority;
     }
 
     public void increaseFollowingCount(){
