@@ -64,15 +64,15 @@ public class TestDataHelper {
         return Arrays.asList(
                 // 본관
                 createArticle(1L, members.get("홍길동"), "겨울바다 보고 싶다.", "내용무", "S3/images/abc", StatusType.PROGRESS, ArticleDormitoryType.MAIN_BUILDING, BoardType.HELP, "#방학", 0, 0, 0),
-                createArticle(2L, members.get("이순신"), "군대가기 싫다ㅠㅠㅠ", "군대는 왜 가야 하나요?", null, StatusType.DONE, ArticleDormitoryType.MALE_DORMITORY, BoardType.CURIOUS, null, 0, 0, 0),
-                createArticle(3L, members.get("임꺽정"), "야~~~호", "메~~~~~~~~~롱", null, StatusType.DONE, ArticleDormitoryType.MALE_DORMITORY, BoardType.CURIOUS, "#장난치기", 0, 0, 0),
+                createArticle(2L, members.get("김영희"), "군대가기 싫다ㅠㅠㅠ", "군대는 왜 가야 하나요?", null, StatusType.DONE, ArticleDormitoryType.MALE_DORMITORY, BoardType.CURIOUS, null, 0, 0, 0),
+                createArticle(3L, members.get("이철수"), "야~~~호", "메~~~~~~~~~롱", null, StatusType.DONE, ArticleDormitoryType.MALE_DORMITORY, BoardType.CURIOUS, "#장난치기", 0, 0, 0),
 
                 // 양진재
-                createArticle(4L, members.get("홍길동"), "기숙사 식구들 화이팅!", "생각보다 오래 걸리는 프로젝트네요! 그래도 화이팅!!", "S3/images/abc", StatusType.PROGRESS, ArticleDormitoryType.FEMALE_DORMITORY, BoardType.HELP, "#바퀴벌래#무서워", 0, 0, 0),
-                createArticle(5L, members.get("임꺽정"), "학식 같이 먹을 사람 구해요!", "혼자 먹으니깐 너무 심심해요 ㅠㅠ", "S3/imagesdef", StatusType.DONE, ArticleDormitoryType.FEMALE_DORMITORY, BoardType.CURIOUS, "#학식#저녁#친구", 0, 0, 0),
+                createArticle(4L, members.get("박민수"), "기숙사 식구들 화이팅!", "생각보다 오래 걸리는 프로젝트네요! 그래도 화이팅!!", "S3/images/abc", StatusType.PROGRESS, ArticleDormitoryType.FEMALE_DORMITORY, BoardType.HELP, "#바퀴벌래#무서워", 0, 0, 0),
+                createArticle(5L, members.get("정수진"), "학식 같이 먹을 사람 구해요!", "혼자 먹으니깐 너무 심심해요 ㅠㅠ", "S3/imagesdef", StatusType.DONE, ArticleDormitoryType.FEMALE_DORMITORY, BoardType.CURIOUS, "#학식#저녁#친구", 0, 0, 0),
 
                 // 양성재
-                createArticle(6L, members.get("이순신"), "바다 오염이 심각하네요..", "우리 주말에 쓰레기 주우러 갑시다!", null, StatusType.PROGRESS, ArticleDormitoryType.MALE_DORMITORY, BoardType.HELP, "#바다#봉사#주말", 0, 0, 0)
+                createArticle(6L, members.get("홍길동"), "바다 오염이 심각하네요..", "우리 주말에 쓰레기 주우러 갑시다!", null, StatusType.PROGRESS, ArticleDormitoryType.MALE_DORMITORY, BoardType.HELP, "#바다#봉사#주말", 0, 0, 0)
         );
     }
 
