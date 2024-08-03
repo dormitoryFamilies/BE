@@ -73,7 +73,6 @@ public class MatchingRequestService {
 
     public boolean isMatchingRequestAlreadyExits(Member loginMember, Member targetMember) {
         return matchingRequestRepository.findByMembers(loginMember, targetMember).isPresent();
-
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {

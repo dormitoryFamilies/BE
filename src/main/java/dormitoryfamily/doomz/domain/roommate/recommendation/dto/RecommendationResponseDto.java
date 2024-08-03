@@ -17,12 +17,12 @@ public record RecommendationResponseDto(
 
 ) {
     public static RecommendationResponseDto fromEntity(Recommendation recommendation, List<Candidate> candidates) {
-            return new RecommendationResponseDto(
-                    recommendation.getId(),
-                    recommendation.getRecommendedAt(),
-                    candidates.stream()
-                            .map(candidate -> candidate.getCandidateMember().getId())
-                            .collect(Collectors.toList())
-            );
+        return new RecommendationResponseDto(
+                recommendation.getId(),
+                recommendation.getRecommendedAt(),
+                candidates.stream()
+                        .map(candidate -> candidate.getCandidateMember().getId())
+                        .collect(Collectors.toList())
+        );
     }
 }
