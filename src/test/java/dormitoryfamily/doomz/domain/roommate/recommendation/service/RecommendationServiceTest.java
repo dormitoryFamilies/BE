@@ -17,7 +17,6 @@ import dormitoryfamily.doomz.domain.roommate.recommendation.exception.Recommenda
 import dormitoryfamily.doomz.domain.roommate.recommendation.exception.TooManyRequestException;
 import dormitoryfamily.doomz.domain.roommate.recommendation.repository.CandidateRepository;
 import dormitoryfamily.doomz.domain.roommate.recommendation.repository.RecommendationRepository;
-import dormitoryfamily.doomz.domain.roommate.recommendation.service.RecommendationService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,7 @@ class RecommendationServiceTest {
     private List<Candidate> candidates;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         //Mockito 어노테이션 초기화
         MockitoAnnotations.openMocks(this);
 
