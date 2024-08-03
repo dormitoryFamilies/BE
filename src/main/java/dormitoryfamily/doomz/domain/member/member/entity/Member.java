@@ -65,15 +65,14 @@ public class Member extends BaseTimeEntity {
                   LocalDate birthDate,
                   GenderType genderType,
                   String profileUrl,
+                  String studentCardImageUrl,
                   int followingCount,
                   int followerCount,
                   boolean isRoommateMatched,
-                  RoleType authority,
-                  String studentCardImageUrl
-    ) {
+                  RoleType authority) {
         this.name = name;
-        this.email = email;
         this.nickname = nickname;
+        this.email = email;
         this.studentNumber = studentNumber;
         this.collegeType = collegeType;
         this.departmentType = departmentType;
