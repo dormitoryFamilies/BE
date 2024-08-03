@@ -1,13 +1,13 @@
 package dormitoryfamily.doomz.domain.roommate.recommendation.service;
 
-import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
-import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.repository.LifestyleRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.preference.repository.PreferenceOrderRepository;
@@ -84,7 +84,7 @@ public class RecommendationService {
                     existingRecommendation.updateRecommendedAt();
                     return existingRecommendation;
                 }).orElseGet(() -> {
-                    Recommendation newRecommendation = new Recommendation(loginMember);
+                    Recommendation newRecommendation = Recommendation.builder().member(loginMember).build();
                     return recommendationRepository.save(newRecommendation);
                 });
     }
