@@ -65,7 +65,7 @@ public class ChatService {
     }
 
     public void deleteInvisibleChat(LocalDateTime enteredAt, String roomUUID) {
-        chatRepository.deleteByCreatedAtBefore(enteredAt);
+        chatRepository.deleteByCreatedAtBefore(roomUUID, enteredAt);
         redisTemplateMessage.delete(roomUUID);
     }
 
