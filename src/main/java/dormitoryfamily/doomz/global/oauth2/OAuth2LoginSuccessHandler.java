@@ -30,7 +30,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JWTUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final ObjectMapper objectMapper;
+
+    private static final String REDIRECT_URL = "http://localhost:3000/onboarding";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -47,25 +48,22 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         System.out.println("accessToken = " + accessToken);
         System.out.println("refreshToken = " + refreshToken);
 
-        // 응답 설정
+        // 응답 헤더 설정
         response.addHeader(HEADER_STRING_ACCESS, TOKEN_PREFIX + accessToken);
         response.addHeader(HEADER_STRING_REFRESH, TOKEN_PREFIX + refreshToken);
         response.setStatus(HttpStatus.OK.value());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("code", 200);
-        responseData.put("message", "로그인에 성공했습니다.");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
-        String responseBody = objectMapper.writeValueAsString(responseData);
-        response.getWriter().write(responseBody);
+        // 리다이렉트 URL 설정
+        getRedirectStrategy().sendRedirect(request, response, REDIRECT_URL);
     }
 
     private void saveNewRefreshToken(String email, String refresh) {
-
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(email, refresh);
         refreshTokenRepository.save(refreshToken);
     }
