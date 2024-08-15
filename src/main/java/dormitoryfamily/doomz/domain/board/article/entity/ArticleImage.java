@@ -22,6 +22,7 @@ public class ArticleImage {
     @JoinColumn(name = "article_id")
     private Article article;
 
+    @Column(length = 1000)
     private String imageUrl;
 
     @Builder
