@@ -32,7 +32,7 @@ public class Notification extends BaseTimeEntity {
     private Member sender;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 200)
     private NotificationType notificationType;
 
     @Column(nullable = false)

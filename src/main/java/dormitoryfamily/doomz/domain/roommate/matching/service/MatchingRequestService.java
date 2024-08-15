@@ -2,17 +2,20 @@ package dormitoryfamily.doomz.domain.roommate.matching.service;
 
 import dormitoryfamily.doomz.domain.member.member.dto.response.MatchingRequestMemberResponseDto;
 import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
-import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
-import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
-import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
-import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.notification.entity.type.NotificationType;
+import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
+import dormitoryfamily.doomz.domain.roommate.matching.event.request.MatchingRequestEvent;
+import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
+import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MATCHING_REJECT;
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MATCHING_REQUEST;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class MatchingRequestService {
 
     private final MatchingRequestRepository matchingRequestRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
         Member loginMember = principalDetails.getMember();
@@ -37,6 +44,12 @@ public class MatchingRequestService {
 
         MatchingRequest matchingRequest = MatchingRequest.createMatchingRequest(loginMember, targetMember);
         matchingRequestRepository.save(matchingRequest);
+        //알림 전송
+        notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
+    }
+
+    private void notifyMatchingRequestInfo(MatchingRequest matchingRequest, NotificationType notificationType) {
+        eventPublisher.publishEvent(new MatchingRequestEvent(matchingRequest, notificationType));
     }
 
     private Member getMemberById(Long memberId) {
@@ -81,6 +94,8 @@ public class MatchingRequestService {
 
         MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
         matchingRequestRepository.delete(matchingRequest);
+        //알림 전송
+        notifyMatchingRequestInfo(matchingRequest, MATCHING_REJECT);
     }
 
     public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember) {

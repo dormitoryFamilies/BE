@@ -9,5 +9,5 @@ public enum NotificationType {
     MATCHING_WISH, //매칭 찜
     MATCHING_REQUEST, //매칭 신청
     MATCHING_REJECT,  //매칭 거절
-    MATCHING_DONE; //매칭 수락
+    MATCHING_ACCEPT //매칭 수락
 }
