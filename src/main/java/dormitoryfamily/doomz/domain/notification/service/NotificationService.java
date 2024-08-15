@@ -16,11 +16,14 @@ import java.util.Map;
 
 import static dormitoryfamily.doomz.domain.notification.util.NotificationProperties.*;
 
-//todo. 2개월 이상 된 알림 삭제하기
-//todo. 전체 알림 조회
-//todo. 알림 특정 알림 읽음 표시
+//todo. 1개월 이상 된 알림 삭제하기
+//todo. 전체 알림 조회(안 읽은 거는 그대로 프론트에 반환)
+//todo. GET 요청 시 전체 읽음 처리하기
+//todo. SSE 실시간 응답은 그냥 간단한 언급만(내용 말고)
+//todo. 채팅은 여러 기능들 확인해서 구현하기
 //todo. 전체 읽음 처리
-//todo. 확인 사항 4. SSE 저장, 이벤트 저장을 전체 조회하는 기능이 진짜 필요한지 판단하기
+//todo. SSE 저장, 이벤트 저장을 전체 조회하는 기능이 진짜 필요한지 판단하기
+//todo. 현재 이벤트 발행, 리스닝을 하나로 통일할 수 있는지 확인하기
 
 //todo. 확인 사항 1. 다른 사람이 행동한 것도 잘 동작하는지
 //todo. 확인 사항 2. 내 스스로 댓글, 대댓글, 찜하기 한 건 알림 안가기
