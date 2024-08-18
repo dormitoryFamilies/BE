@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.domain.notification.dto;
+package dormitoryfamily.doomz.domain.notification.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dormitoryfamily.doomz.domain.notification.entity.Notification;

@@ -76,40 +76,40 @@ public enum ErrorCode {
     CHAT_NOT_EXISTS(BAD_REQUEST, "채팅 기록이 존재하지 않는 채팅방입니다."),
 
     //recommendation
-    RECOMMENDATION_NOT_EXISTS(HttpStatus.NOT_FOUND, "룸메이트 매칭 추천을 요청한 적이 없습니다."),
-    TOO_MANY_REQUEST(HttpStatus.BAD_REQUEST, "매칭 추천 가능은 " + RECOMMENDATION_INTERVAL_HOURS + "시간 내 한 번만 가능합니다."),
+    RECOMMENDATION_NOT_EXISTS(NOT_FOUND, "룸메이트 매칭 추천을 요청한 적이 없습니다."),
+    TOO_MANY_REQUEST(BAD_REQUEST, "매칭 추천 가능은 " + RECOMMENDATION_INTERVAL_HOURS + "시간 내 한 번만 가능합니다."),
 
     //lifestyle
-    ALREADY_REGISTER_MY_LIFESTYLE(HttpStatus.CONFLICT, "나의 라이프 스타일을 이미 설정했습니다."),
-    LIFESTYLE_TYPE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 생활 타입은 존재하지 않습니다."),
-    SLEEPING_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
-    WAKE_UP_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
-    SLEEPING_HABIT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 잠버릇은 존재하지 않습니다."),
-    SLEEPING_SENSITIVITY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 잠귀 타입은 존재하지 않습니다."),
-    SMOKING_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 흡연 타입은 존재하지 않습니다."),
-    DRINKING_FREQUENCY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 음주 빈도는 존재하지 않습니다."),
-    SHOWER_TIME_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 샤워 시간대는 존재하지 않습니다."),
-    SHOWER_DURATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 샤워 시간은 존재하지 않습니다."),
-    CLEANING_HABIT_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 청소 타입은 존재하지 않습니다."),
-    HEAT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 더위 타입은 존재하지 않습니다."),
-    COLD_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 추위 타입은 존재하지 않습니다."),
-    MBTI_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 MBTI 타입은 존재하지 않습니다."),
-    VISIT_HOME_FREQUENCY_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 본가 가는 빈도는 존재하지 않습니다."),
-    LATE_NIGHT_SNACK_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 야식 타입은 존재하지 않습니다."),
-    SNACK_IN_ROOM_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 방안에서 타입은 존재하지 않습니다."),
-    PHONE_SOUND_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 휴대폰 소리 타입은 존재하지 않습니다."),
-    PERFUME_USAGE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 향수 타입은 존재하지 않습니다."),
-    STUDY_LOCATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 공부 장소는 존재하지 않습니다."),
-    EXAM_PREPARATION_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 시험 타입은 존재하지 않습니다."),
-    EXERCISE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 운동 타입은 존재하지 않습니다."),
-    INSECT_TOLERANCE_NOT_EXISTS(HttpStatus.BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
-    LIFESTYLE_NOT_EXISTS(HttpStatus.NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
+    ALREADY_REGISTER_MY_LIFESTYLE(CONFLICT, "나의 라이프 스타일을 이미 설정했습니다."),
+    LIFESTYLE_TYPE_NOT_EXISTS(BAD_REQUEST, "해당 생활 타입은 존재하지 않습니다."),
+    SLEEPING_TIME_NOT_EXISTS(BAD_REQUEST, "해당 취침 시간은 존재하지 않습니다."),
+    WAKE_UP_TIME_NOT_EXISTS(BAD_REQUEST, "해당 기상 시간은 존재하지 않습니다."),
+    SLEEPING_HABIT_NOT_EXISTS(BAD_REQUEST, "해당 잠버릇은 존재하지 않습니다."),
+    SLEEPING_SENSITIVITY_NOT_EXISTS(BAD_REQUEST, "해당 잠귀 타입은 존재하지 않습니다."),
+    SMOKING_NOT_EXISTS(BAD_REQUEST, "해당 흡연 타입은 존재하지 않습니다."),
+    DRINKING_FREQUENCY_NOT_EXISTS(BAD_REQUEST, "해당 음주 빈도는 존재하지 않습니다."),
+    SHOWER_TIME_NOT_EXISTS(BAD_REQUEST, "해당 샤워 시간대는 존재하지 않습니다."),
+    SHOWER_DURATION_NOT_EXISTS(BAD_REQUEST, "해당 샤워 시간은 존재하지 않습니다."),
+    CLEANING_HABIT_NOT_EXISTS(BAD_REQUEST, "해당 청소 타입은 존재하지 않습니다."),
+    HEAT_TOLERANCE_NOT_EXISTS(BAD_REQUEST, "해당 더위 타입은 존재하지 않습니다."),
+    COLD_TOLERANCE_NOT_EXISTS(BAD_REQUEST, "해당 추위 타입은 존재하지 않습니다."),
+    MBTI_NOT_EXISTS(BAD_REQUEST, "해당 MBTI 타입은 존재하지 않습니다."),
+    VISIT_HOME_FREQUENCY_NOT_EXISTS(BAD_REQUEST, "해당 본가 가는 빈도는 존재하지 않습니다."),
+    LATE_NIGHT_SNACK_NOT_EXISTS(BAD_REQUEST, "해당 야식 타입은 존재하지 않습니다."),
+    SNACK_IN_ROOM_NOT_EXISTS(BAD_REQUEST, "해당 방안에서 타입은 존재하지 않습니다."),
+    PHONE_SOUND_NOT_EXISTS(BAD_REQUEST, "해당 휴대폰 소리 타입은 존재하지 않습니다."),
+    PERFUME_USAGE_NOT_EXISTS(BAD_REQUEST, "해당 향수 타입은 존재하지 않습니다."),
+    STUDY_LOCATION_NOT_EXISTS(BAD_REQUEST, "해당 공부 장소는 존재하지 않습니다."),
+    EXAM_PREPARATION_NOT_EXISTS(BAD_REQUEST, "해당 시험 타입은 존재하지 않습니다."),
+    EXERCISE_NOT_EXISTS(BAD_REQUEST, "해당 운동 타입은 존재하지 않습니다."),
+    INSECT_TOLERANCE_NOT_EXISTS(BAD_REQUEST, "해당 벌레 타입은 존재하지 않습니다."),
+    LIFESTYLE_NOT_EXISTS(NOT_FOUND, "생활 타입을 아직 설정하지 않았습니다."),
 
     //preference
-    ALREADY_REGISTER_PREFERENCE_ORDER(HttpStatus.CONFLICT, "선호 우선순위를 이미 설정했습니다."),
-    PREFERENCE_ORDER_NOT_EXISTS(HttpStatus.NOT_FOUND, "선호 우선순위가 설정되어 있지 않습니다."),
-    WRONG_PROPERTY(HttpStatus.BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
-    DUPLICATE_PREFERENCE_ORDER_PARAMETER(HttpStatus.BAD_REQUEST, "타입이 중복됩니다."),
+    ALREADY_REGISTER_PREFERENCE_ORDER(CONFLICT, "선호 우선순위를 이미 설정했습니다."),
+    PREFERENCE_ORDER_NOT_EXISTS(NOT_FOUND, "선호 우선순위가 설정되어 있지 않습니다."),
+    WRONG_PROPERTY(BAD_REQUEST, "해당 프로퍼티는 유효하지 않습니다."),
+    DUPLICATE_PREFERENCE_ORDER_PARAMETER(BAD_REQUEST, "타입이 중복됩니다."),
 
     //matching request
     CANNOT_MATCHING_YOURSELF(CONFLICT, "자기 자신에게 매칭 신청을 할 수 없습니다."),
@@ -118,6 +118,7 @@ public enum ErrorCode {
     ALREADY_MATCHED_MEMBER(CONFLICT, "이미 룸메이트 매칭이 완료된 사용자입니다."),
     MEMBER_DORMITORY_MISMATCH(CONFLICT, "기숙사가 달라 매칭이 불가능한 사용자입니다."),
     MATCHING_REQUEST_STATUS_NOT_EXISTS(NOT_FOUND, "해당 매칭 신청 타입은 존재하지 않습니다."),
+
     //matching result
     MATCHING_RESULT_NOT_EXISTS(CONFLICT,"해당 사용자와 룸메이트 매칭이 이루어지지 않은 상태입니다." ),
 
@@ -125,6 +126,11 @@ public enum ErrorCode {
     ROOMMATE_WISH_NOT_EXIT(NOT_FOUND, "룸메이트 찜하지 않은 사용자입니다."),
     CANNOT_WISH_YOURSELF(CONFLICT, "자기 자신을 룸메이트 찜할 수 없습니다."),
     ALREADY_WISHED_ROOMMATE(CONFLICT, "이미 찜한 룸메이트 입니다."),
+
+    //notification
+    NOTIFICATION_NOT_EXISTS(NOT_FOUND, "해당 알림은 존재하지 않습니다."),
+    ALREADY_READ_NOTIFICATION(CONFLICT, "해당 알림은 이미 읽음 처리가 되어 있습니다."),
+    NOT_MY_NOTIFICATION(BAD_REQUEST, "본인 알림이 아닙니다."),
 
     // 5xx
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 에러");

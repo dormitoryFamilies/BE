@@ -57,4 +57,8 @@ public class Notification extends BaseTimeEntity {
         this.articleTitle = articleTitle;
         this.targetId = targetId;
     }
+
+    public void setReadStatusToTrue() {
+        isRead = true;
+    }
 }
