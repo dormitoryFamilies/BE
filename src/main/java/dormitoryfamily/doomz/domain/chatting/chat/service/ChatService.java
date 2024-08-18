@@ -5,8 +5,9 @@ import dormitoryfamily.doomz.domain.chatting.chat.dto.response.ChatListResponseD
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.ChatResponseDto;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.SearchChatListResponseDto;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.SearchChatResponseDto;
-import dormitoryfamily.doomz.domain.chatting.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chatting.chat.entity.Chat;
+import dormitoryfamily.doomz.domain.chatting.chat.event.ChatCreatedEvent;
+import dormitoryfamily.doomz.domain.chatting.chat.repository.ChatRepository;
 import dormitoryfamily.doomz.domain.chatting.chatroom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.chatting.chatroom.exception.AlreadyChatRoomLeftException;
 import dormitoryfamily.doomz.domain.chatting.chatroom.exception.ChatRoomNotExistsException;
@@ -19,6 +20,7 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,6 +34,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.CHAT;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -40,6 +44,7 @@ public class ChatService {
     private final RedisTemplate<String, ChatDto> redisTemplateMessage;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveChat(ChatMessage chatMessage) {
         ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
@@ -48,6 +53,12 @@ public class ChatService {
 
         chatRepository.save(chat);
         saveChatInRedis(chatMessage.getRoomUUID(), chat);
+        //알림 전송
+        notifySavingChatInfo(chat);
+    }
+
+    private void notifySavingChatInfo(Chat chat) {
+        eventPublisher.publishEvent(new ChatCreatedEvent(chat, CHAT));
     }
 
     private ChatRoom getChatRoomByRoomUUID(String roomUUID) {
