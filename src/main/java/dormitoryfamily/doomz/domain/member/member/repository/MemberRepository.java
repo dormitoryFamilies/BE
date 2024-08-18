@@ -1,10 +1,13 @@
 package dormitoryfamily.doomz.domain.member.member.repository;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.type.RoleType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +33,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "WHERE m.authority = 'ROLE_MEMBER' " +
             "ORDER BY m.createdAt ASC")
     Page<Member> findNonVerifiedMember(Pageable pageable);
+
+    /**
+     * 개발용 임시. 삭제 예정
+     */
+    @Query("UPDATE Member m SET m.authority = :authority WHERE m.id = :memberId")
+    @Modifying
+    void changeMyAuthority(@Param("authority") RoleType authority, @Param("memberId") Long memberId);
 }
