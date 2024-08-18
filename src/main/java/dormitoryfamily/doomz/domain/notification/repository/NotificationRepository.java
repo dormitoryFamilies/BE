@@ -14,4 +14,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "WHERE n.receiver = :receiver " +
             "ORDER BY n.isRead ASC, n.createdAt DESC")
     Page<Notification> findAllByReceiver(@Param("receiver") Member receiver, Pageable pageable);
+
+    @Query("SELECT COUNT(n) > 0 FROM Notification n WHERE n.receiver.id = :receiverId AND n.notificationType = 'CHAT' AND n.isRead = false")
+    boolean existsUnreadChatNotification(@Param("receiverId") Long receiverId);
 }

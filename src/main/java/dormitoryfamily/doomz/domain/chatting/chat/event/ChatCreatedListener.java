@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.chatting.chat.event;
 import dormitoryfamily.doomz.domain.chatting.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.chatting.chatroom.entity.ChatRoom;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.notification.entity.type.NotificationType;
 import dormitoryfamily.doomz.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -25,8 +26,8 @@ public class ChatCreatedListener {
         Member receiver = getReceiver(chatRoom, senderId);
         Member sender = getSender(chatRoom, senderId);
 
-        if(chatRoom.isMemberOutOfChatRoom(receiver.getId())) {
-            notificationService.send(receiver, sender, event.notificationType(), null, chatRoom.getId());
+        if (shouldSendNotification(chatRoom, receiver)) {
+            sendChatNotification(receiver, sender, event.notificationType(), chatRoom.getId());
         }
     }
 
@@ -44,5 +45,17 @@ public class ChatCreatedListener {
         } else {
             return chatRoom.getParticipant();
         }
+    }
+
+    /**
+     * 수신자가 현재 채팅방에 없고, 이미 만들어진 알림이 없음을 검증
+     */
+    private boolean shouldSendNotification(ChatRoom chatRoom, Member receiver) {
+        return chatRoom.isMemberOutOfChatRoom(receiver.getId()) &&
+                !notificationService.existsUnreadChatNotificationByReceiver(receiver);
+    }
+
+    private void sendChatNotification(Member receiver, Member sender, NotificationType notificationType, Long chatRoomId) {
+        notificationService.send(receiver, sender, notificationType, null, chatRoomId);
     }
 }
