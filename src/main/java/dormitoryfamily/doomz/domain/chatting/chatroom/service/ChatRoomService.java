@@ -27,6 +27,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +47,7 @@ public class ChatRoomService {
 
     @PostConstruct
     private void init() {
-        topics = new HashMap<>();
+        topics = new ConcurrentHashMap<>();
     }
 
     public ChatRoomEntryResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
