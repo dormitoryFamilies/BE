@@ -144,8 +144,9 @@ public class ChatRoomService {
 
     public void updateUnreadCount(ChatMessage chatMessage) {
         ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
+        boolean isInitiator = Objects.equals(chatMessage.getSenderId(), chatRoom.getInitiator().getId());
 
-        if (chatMessage.getSenderId().equals(chatRoom.getInitiator().getId())) {
+        if (isInitiator) {
             updateParticipantUnreadCount(chatRoom);
         } else {
             updateInitiatorUnreadCount(chatRoom);
@@ -153,12 +154,22 @@ public class ChatRoomService {
     }
 
     private void updateParticipantUnreadCount(ChatRoom chatRoom) {
+
+        if (chatRoom.getParticipantEnteredAt() == null) {
+            chatRoom.reEnterParticipant();
+        }
+
         if (chatRoom.getParticipantStatus() == ChatMemberStatus.OUT) {
             chatRoom.increaseParticipantUnreadCount();
         }
     }
 
     private void updateInitiatorUnreadCount(ChatRoom chatRoom) {
+
+        if (chatRoom.getInitiatorEnteredAt() == null) {
+            chatRoom.reEnterInitiator();
+        }
+
         if (chatRoom.getInitiatorStatus() == ChatMemberStatus.OUT) {
             chatRoom.increaseInitiatorUnreadCount();
         }
