@@ -71,6 +71,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/reissue", "/api/logout").permitAll()
                 .requestMatchers("/", "/stomp/**").permitAll()
+                .requestMatchers("/api/images").hasAnyRole("VISITOR", "REJECTED_MEMBER")
                 .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasAnyRole("VISITOR", "REJECTED_MEMBER")
                 .requestMatchers("/api/verify/**").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
