@@ -145,4 +145,23 @@ public class MemberService {
         Member loginMember = principalDetails.getMember();
         return MemberIdResponseDto.from(loginMember);
     }
+
+    /**
+     * 개발용 임시 메소드
+     * 삭제 예정
+     */
+    public void changeMyAuthority(PrincipalDetails principalDetails, String newAuthority) {
+        Member loginMember = principalDetails.getMember();
+
+        RoleType roleType = switch (newAuthority) {
+            case "ROLE_VISITOR" -> RoleType.ROLE_VISITOR;
+            case "ROLE_MEMBER" -> RoleType.ROLE_MEMBER;
+            case "ROLE_REJECTED_MEMBER" -> RoleType.ROLE_REJECTED_MEMBER;
+            case "ROLE_VERIFIED_STUDENT" -> RoleType.ROLE_VERIFIED_STUDENT;
+            case "ROLE_ADMIN" -> RoleType.ROLE_ADMIN;
+            default -> throw new IllegalArgumentException("잘못된 권한 값입니다: " + newAuthority);
+        };
+
+        memberRepository.changeMyAuthority(roleType, loginMember.getId());
+    }
 }

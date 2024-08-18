@@ -156,4 +156,17 @@ public class MemberController {
         memberService.rejectStudentCard(memberId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
+
+    /**
+     * 개발용 임시 컨트롤러
+     * 삭제 예정
+     */
+    @PutMapping("/my/authorities")
+    public ResponseEntity<ResponseDto<Void>> changeMyAuthority(
+            @AuthenticationPrincipal PrincipalDetails principalDetails,
+            @RequestParam String newAuthority
+    ) {
+        memberService.changeMyAuthority(principalDetails, newAuthority);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
 }
