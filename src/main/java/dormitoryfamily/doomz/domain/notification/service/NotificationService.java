@@ -157,4 +157,9 @@ public class NotificationService {
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusDays(DELETE_AFTER_DAYS);
         notificationRepository.deleteByCreatedAtBefore(oneMonthAgo);
     }
+
+    @Transactional
+    public void deleteNotificationByTypeAndTargetIdAndReceiverId(NotificationType notificationType, Long targetId, Long receiverId) {
+        notificationRepository.deleteByNotificationTypeChatAndTargetIdAndReceiverId(notificationType, targetId, receiverId);
+    }
 }
