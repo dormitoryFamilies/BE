@@ -128,6 +128,14 @@ public class ChatRoom extends BaseTimeEntity {
         this.participantStatus = ChatMemberStatus.OUT;
     }
 
+    public boolean isMemberOutOfChatRoom(Long receiverId) {
+        if (initiator.getId().equals(receiverId)) {
+            return initiatorStatus == ChatMemberStatus.OUT;
+        } else {
+            return participantStatus == ChatMemberStatus.OUT;
+        }
+    }
+
     @PrePersist
     private void init() {
         this.initiatorUnreadCount = 0;

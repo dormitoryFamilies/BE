@@ -8,23 +8,25 @@ import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryTy
 import dormitoryfamily.doomz.domain.board.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.board.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.board.article.repository.ArticleRepository;
-import dormitoryfamily.doomz.domain.board.wish.entity.ArticleWish;
 import dormitoryfamily.doomz.domain.board.comment.dto.request.CreateCommentRequestDto;
 import dormitoryfamily.doomz.domain.board.comment.dto.response.CommentListResponseDto;
 import dormitoryfamily.doomz.domain.board.comment.dto.response.CommentResponseDto;
 import dormitoryfamily.doomz.domain.board.comment.dto.response.CreateCommentResponseDto;
-import dormitoryfamily.doomz.domain.board.comment.exception.CommentIsDeletedException;
-import dormitoryfamily.doomz.domain.board.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.board.comment.entity.Comment;
+import dormitoryfamily.doomz.domain.board.comment.event.CommentCreatedEvent;
+import dormitoryfamily.doomz.domain.board.comment.exception.CommentIsDeletedException;
 import dormitoryfamily.doomz.domain.board.comment.exception.CommentNotExistsException;
-import dormitoryfamily.doomz.domain.member.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
+import dormitoryfamily.doomz.domain.board.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.board.replycomment.entity.ReplyComment;
 import dormitoryfamily.doomz.domain.board.replycomment.repository.ReplyCommentRepository;
+import dormitoryfamily.doomz.domain.board.wish.entity.ArticleWish;
 import dormitoryfamily.doomz.domain.board.wish.repository.ArticleWishRepository;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import java.util.stream.Stream;
 
 import static dormitoryfamily.doomz.domain.board.article.entity.type.BoardType.ALL;
 import static dormitoryfamily.doomz.domain.board.article.entity.type.BoardType.fromDescription;
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.ARTICLE_COMMENT;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -46,6 +49,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ReplyCommentRepository replyCommentRepository;
     private final ArticleWishRepository articleWishRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public CreateCommentResponseDto saveComment(Long articleId, PrincipalDetails principalDetails, CreateCommentRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
@@ -54,8 +58,16 @@ public class CommentService {
         Comment comment = CreateCommentRequestDto.toEntity(loginMember, article, requestDto);
         commentRepository.save(comment);
         article.increaseCommentCount();
+        //알림 전송
+        notifySavingCommentInfo(comment, article, loginMember);
 
         return CreateCommentResponseDto.fromEntity(comment);
+    }
+
+    private void notifySavingCommentInfo(Comment comment, Article article, Member loginMember) {
+        if (!Objects.equals(loginMember.getId(), article.getMember().getId())) {
+            eventPublisher.publishEvent(new CommentCreatedEvent(comment, article, ARTICLE_COMMENT));
+        }
     }
 
     private Article getArticleById(Long articleId) {

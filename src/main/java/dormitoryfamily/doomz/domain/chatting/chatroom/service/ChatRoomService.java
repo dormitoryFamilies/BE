@@ -13,6 +13,7 @@ import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.notification.service.NotificationService;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.RedisSubscriber;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -27,7 +28,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.CHAT;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +42,7 @@ public class ChatRoomService {
     private final ChatRepository chatRepository;
     private final MemberRepository memberRepository;
     private final ChatService chatService;
+    private final NotificationService notificationService;
 
     private final RedisMessageListenerContainer redisMessageListener;
     private final RedisSubscriber redisSubscriber;
@@ -46,7 +51,7 @@ public class ChatRoomService {
 
     @PostConstruct
     private void init() {
-        topics = new HashMap<>();
+        topics = new ConcurrentHashMap<>();
     }
 
     public ChatRoomEntryResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
@@ -186,6 +191,9 @@ public class ChatRoomService {
 
         checkIfRoomAlreadyLeft(isInitiator, isInitiatorDeleted, isParticipantDeleted);
         deleteOrChangeChatRoomStatus(chatRoom, isInitiator, isInitiatorDeleted, isParticipantDeleted);
+
+        //채팅방에 나갔으니 이미 만들어진 알림 삭제
+        notificationService.deleteNotificationByTypeAndTargetIdAndReceiverId(CHAT, chatRoom.getId(), loginMember.getId());
     }
 
     private ChatRoom getChatRoomById(Long chatRoomId) {

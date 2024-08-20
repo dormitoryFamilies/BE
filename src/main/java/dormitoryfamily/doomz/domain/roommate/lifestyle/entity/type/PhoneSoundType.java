@@ -17,7 +17,7 @@ public enum PhoneSoundType {
     }
 
     public static PhoneSoundType fromDescription(String description) {
-        if(description == null) {
+        if(description == null || description.isEmpty()) {
             return null;
         }
 

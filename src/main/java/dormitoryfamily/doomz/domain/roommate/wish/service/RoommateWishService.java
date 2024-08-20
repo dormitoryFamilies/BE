@@ -5,14 +5,16 @@ import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagi
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.roommate.wish.dto.response.RoommateWishStatusResponseDto;
+import dormitoryfamily.doomz.domain.roommate.wish.entity.RoommateWish;
+import dormitoryfamily.doomz.domain.roommate.wish.event.RoommateWishCreatedEvent;
 import dormitoryfamily.doomz.domain.roommate.wish.exception.AlreadyWishedRoommateException;
 import dormitoryfamily.doomz.domain.roommate.wish.exception.CannotWishYourselfException;
 import dormitoryfamily.doomz.domain.roommate.wish.exception.RoommateWishNotExitException;
-import dormitoryfamily.doomz.domain.roommate.wish.entity.RoommateWish;
 import dormitoryfamily.doomz.domain.roommate.wish.repository.RoommateWishRepository;
-import dormitoryfamily.doomz.domain.roommate.wish.dto.response.RoommateWishStatusResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MATCHING_WISH;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -29,6 +33,7 @@ public class RoommateWishService {
 
     private final RoommateWishRepository roommateWishRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveRoommateWish(PrincipalDetails principalDetails, Long memberId) {
         Member loginMember = principalDetails.getMember();
@@ -38,6 +43,12 @@ public class RoommateWishService {
 
         RoommateWish roommateWish = RoommateWish.createRoommateWish(loginMember, wishedMember);
         roommateWishRepository.save(roommateWish);
+        //알림 전송
+        notifyRoommateWishInfo(roommateWish);
+    }
+
+    private void notifyRoommateWishInfo(RoommateWish roommateWish) {
+        eventPublisher.publishEvent(new RoommateWishCreatedEvent(roommateWish, MATCHING_WISH));
     }
 
     private Member getMemberById(Long memberId) {
