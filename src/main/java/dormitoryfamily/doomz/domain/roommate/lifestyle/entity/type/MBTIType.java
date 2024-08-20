@@ -12,7 +12,7 @@ public enum MBTIType {
     ESTJ, ESFJ, ENFJ, ENTJ;
 
     public static MBTIType fromDescription(String description) {
-        if(description == null) {
+        if(description == null || description.isEmpty()) {
             return null;
         }
 

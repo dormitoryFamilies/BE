@@ -17,7 +17,7 @@ public enum LateNightSnackType {
     }
 
     public static LateNightSnackType fromDescription(String description) {
-        if(description == null) {
+        if(description == null || description.isEmpty()) {
             return null;
         }
 
