@@ -7,17 +7,21 @@ import dormitoryfamily.doomz.domain.board.comment.repository.CommentRepository;
 import dormitoryfamily.doomz.domain.board.comment.service.CommentService;
 import dormitoryfamily.doomz.domain.board.replycomment.dto.request.CreateReplyCommentRequestDto;
 import dormitoryfamily.doomz.domain.board.replycomment.dto.response.CreateReplyCommentResponseDto;
+import dormitoryfamily.doomz.domain.board.replycomment.entity.ReplyComment;
+import dormitoryfamily.doomz.domain.board.replycomment.event.ReplyCommentCreatedEvent;
 import dormitoryfamily.doomz.domain.board.replycomment.exception.ReplyCommentNotExistsException;
 import dormitoryfamily.doomz.domain.board.replycomment.repository.ReplyCommentRepository;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
-import dormitoryfamily.doomz.domain.board.replycomment.entity.ReplyComment;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.ARTICLE_REPLY_COMMENT;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class ReplyCommentService {
     private final CommentRepository commentRepository;
     private final ReplyCommentRepository replyCommentRepository;
     private final CommentService commentService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public CreateReplyCommentResponseDto saveReplyComment(PrincipalDetails principalDetails,
                                                           Long commentId,
@@ -39,8 +44,16 @@ public class ReplyCommentService {
         replyCommentRepository.save(replyComment);
 
         comment.getArticle().increaseCommentCount();
+        //알림 전송
+        notifySavingReplyCommentInfo(replyComment, comment, loginMember);
 
         return CreateReplyCommentResponseDto.fromEntity(replyComment);
+    }
+
+    private void notifySavingReplyCommentInfo(ReplyComment replyComment, Comment comment, Member loginMember) {
+        if (!Objects.equals(loginMember.getId(), comment.getMember().getId())) {
+            eventPublisher.publishEvent(new ReplyCommentCreatedEvent(replyComment, comment.getArticle(), ARTICLE_REPLY_COMMENT));
+        }
     }
 
     private Comment getCommentById(Long commentId) {

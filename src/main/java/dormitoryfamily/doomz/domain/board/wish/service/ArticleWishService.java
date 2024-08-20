@@ -7,19 +7,21 @@ import dormitoryfamily.doomz.domain.board.article.entity.Article;
 import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.board.article.exception.ArticleNotExistsException;
 import dormitoryfamily.doomz.domain.board.article.repository.ArticleRepository;
-import dormitoryfamily.doomz.domain.board.wish.exception.CannotWishYourArticleException;
-import dormitoryfamily.doomz.domain.board.wish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.domain.board.wish.entity.ArticleWish;
+import dormitoryfamily.doomz.domain.board.wish.event.ArticleWishCreatedEvent;
+import dormitoryfamily.doomz.domain.board.wish.exception.AlreadyWishedArticleException;
+import dormitoryfamily.doomz.domain.board.wish.exception.CannotWishYourArticleException;
+import dormitoryfamily.doomz.domain.board.wish.exception.NotWishedArticleException;
+import dormitoryfamily.doomz.domain.board.wish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.domain.member.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.member.dto.response.MemberDetailsResponseDto;
 import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
-import dormitoryfamily.doomz.domain.board.wish.exception.AlreadyWishedArticleException;
-import dormitoryfamily.doomz.domain.board.wish.exception.NotWishedArticleException;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.ARTICLE_WISH;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,7 @@ public class ArticleWishService {
     private final ArticleRepository articleRepository;
     private final ArticleWishRepository articleWishRepository;
     private final FollowRepository followRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveArticleWish(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
@@ -47,6 +52,14 @@ public class ArticleWishService {
         articleWishRepository.save(articleWish);
 
         article.increaseWishCount();
+        //알림 전송
+        notifySavingArticleWishInfo(articleWish, article, loginMember);
+    }
+
+    private void notifySavingArticleWishInfo(ArticleWish articleWish, Article article, Member loginMember) {
+        if (!Objects.equals(loginMember.getId(), article.getMember().getId())) {
+            eventPublisher.publishEvent(new ArticleWishCreatedEvent(articleWish, article, ARTICLE_WISH));
+        }
     }
 
     private void validateArticleWishRequest(Member loginMember, Article article){

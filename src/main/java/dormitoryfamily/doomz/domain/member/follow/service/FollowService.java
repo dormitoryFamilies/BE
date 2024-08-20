@@ -1,22 +1,22 @@
 package dormitoryfamily.doomz.domain.member.follow.service;
 
+import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
+import dormitoryfamily.doomz.domain.member.follow.event.FollowCreatedEvent;
 import dormitoryfamily.doomz.domain.member.follow.exception.AlreadyFollowingException;
 import dormitoryfamily.doomz.domain.member.follow.exception.CannotFollowYourselfException;
 import dormitoryfamily.doomz.domain.member.follow.exception.NotFollowingMemberException;
 import dormitoryfamily.doomz.domain.member.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.member.dto.response.FollowerMemberResponseDto;
 import dormitoryfamily.doomz.domain.member.member.dto.response.MemberInfoResponseDto;
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfileListResponseDto;
 import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
-import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MEMBER_FOLLOW;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -32,6 +34,7 @@ public class FollowService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveFollow(PrincipalDetails principalDetails, Long followingMemberId) {
         Member loginMember = getMemberById(principalDetails.getMember().getId());
@@ -41,6 +44,12 @@ public class FollowService {
 
         Follow follow = Follow.createFollow(loginMember, followingMember);
         saveFollowAndIncreaseCounts(loginMember, followingMember, follow);
+        //알림 전송
+        notifySavingFollowInfo(follow);
+    }
+
+    private void notifySavingFollowInfo(Follow follow) {
+        eventPublisher.publishEvent(new FollowCreatedEvent(follow, MEMBER_FOLLOW));
     }
 
     private Member getMemberById(Long memberId) {
@@ -106,7 +115,7 @@ public class FollowService {
         return MemberProfilePagingListResponseDto.from(follows, memberInfoDtos);
     }
 
-    private List<MemberInfoResponseDto> convertToMemberInfoResponseDtoList(List<Follow> follows){
+    private List<MemberInfoResponseDto> convertToMemberInfoResponseDtoList(List<Follow> follows) {
         return follows.stream()
                 .map(follow -> MemberInfoResponseDto.fromEntity(follow.getFollowing()))
                 .collect(Collectors.toList());
