@@ -27,14 +27,6 @@ import java.util.Objects;
 
 import static dormitoryfamily.doomz.domain.notification.util.NotificationProperties.*;
 
-//todo. SSE 실시간 응답은 그냥 간단한 언급만(내용 말고)  <4>
-//todo. SSE 저장, 이벤트 저장을 전체 조회하는 기능이 진짜 필요한지 판단하기  <5>
-//todo. 현재 이벤트 발행, 리스닝을 하나로 통일할 수 있는지 확인하기  <7>
-
-//todo. 확인 사항 1. 다른 사람이 행동한 것도 잘 동작하는지
-//todo. 확인 사항 2. 내 스스로 댓글, 대댓글, 찜하기 한 건 알림 안가기
-//todo. 확인 사항 3. 전체 알림 조회 잘 되는지
-//todo. 확인 사항 4. 채팅 알림 조건 확인하기 - 내가 채팅방에 없을 때 & 이미 채팅 알림이 없을 때
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
