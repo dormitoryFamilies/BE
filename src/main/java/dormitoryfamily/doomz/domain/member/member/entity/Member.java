@@ -140,6 +140,6 @@ public class Member extends BaseTimeEntity {
         followingCount = 0;
         followerCount = 0;
         isRoommateMatched = false;
-        authority = RoleType.ROLE_MEMBER;
+        authority = RoleType.ROLE_VISITOR;
     }
 }
