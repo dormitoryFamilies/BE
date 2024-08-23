@@ -1,12 +1,12 @@
 <p align="middle" >
   <img width="110px;" src="https://github.com/user-attachments/assets/3e4d62d6-052a-490d-a160-ef32d9c22388"/>
 </p>
-<h1 align="middle">기숙사 식구들
+<h1 align="middle">✨ 기숙사 식구들 ✨
 <h3 align="middle">"나와 맞는 룸메이트, 행복한 기숙사 생활 - Dormitory Family"</h3>
 
 <br>
 
-## 프로젝트 소개
+## 🏠 프로젝트 소개
 
 ![Screen Shot 2024-08-24 at 1 09 06 AM](https://github.com/user-attachments/assets/50e351e3-410d-4555-92ab-dd35ac7eae65) 
 
@@ -19,7 +19,7 @@
 
 <br>
 
-## 대표 기능 & 서비스 흐름
+## 🏠 대표 기능 & 서비스 흐름
 
 ![Screen Shot 2024-08-24 at 1 11 02 AM](https://github.com/user-attachments/assets/a3b82b2a-067a-44d3-ac8d-ff4b1983cf55)
 
@@ -30,37 +30,36 @@
 
 <br>
 
-## 서비스 흐름
+## 🏠 서비스 흐름
 ![Screen Shot 2024-08-24 at 1 11 11 AM](https://github.com/user-attachments/assets/36c86393-4668-489c-8f85-5be7c0ad18d9)
 
 <br>
 
-## 팀원 구성
-### Developer ⌨️
+## 👥 팀원 구성
 | **Back-End** | **Back-End** || **Front-End** || **iOS** | **iOS** |
 | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
 | <a href="https://github.com/meena2003"><img src="https://github.com/user-attachments/assets/c52cf4aa-5ace-496d-9a36-236fe60c657d" height=150 width=150></a> <br/> 김동민 | <a href="https://github.com/somln"><img src="https://github.com/user-attachments/assets/82464d9b-37ea-458c-888e-e1255a62b9e0" height=150 width=150></a> <br/> 충북대여신 |  | <a href="https://github.com/unnimm"><img src="https://github.com/user-attachments/assets/635565ce-ef64-4002-9dd2-2f78aa92adb4" height=150 width=150></a> <br/> 황유림 |  | <a href="https://github.com/nss321"><img src="https://github.com/user-attachments/assets/b7147b02-298e-4d58-8af2-6a92f9060a97" height=150 width=150></a> <br/> 배정훈 | <a href="https://github.com/boriiiborii"><img src="https://github.com/user-attachments/assets/fa025881-59f8-4c44-b781-ef5e8212e2d2" height=150 width=150></a> <br/> 이화진 |
 
 <br>
 
-## 기술 스택
+## 🛠️ 기술 스택
 
-### 공통
+### ✨ 공통
 
 ![Git](https://img.shields.io/badge/-Git-F05032?style=flat&logo=Git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=GitHub&logoColor=white)
 <img src="https://img.shields.io/badge/Notion-231F20?style=flat&logo=notion&logoColor=white">
 <img src="https://img.shields.io/badge/Slack-4A154B?style=flat&logo=slack&logoColor=white">
 
-### Back-End
+### ✨ Back-End
 
 <img src="https://img.shields.io/badge/java-3B66BC?style=flat&logo=openjdk&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=springboot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=springsecurity&logoColor=white"/> <img src="https://img.shields.io/badge/Hibernate-59666C?style=flat&logo=Hibernate&logoColor=white"> <img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=amazons3&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat&logo=amazonec2&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=amazonrds&logoColor=white"/> <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat&logo=postman&logoColor=white"/> <img src="https://img.shields.io/badge/JUnit5-25A162?style=flat&logo=JUnit5&logoColor=white"> <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
 
-### Front-End
+### ✨ Front-End
 
 <img src="https://img.shields.io/badge/Typescript-3178C6?style=flat&logo=TypeScript&logoColor=white"/> <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=React&logoColor=white"/> <img src="https://img.shields.io/badge/-Tailwind-38B2AC?style=flat&logo=Tailwind%20CSS&logoColor=white"/> <img src="https://img.shields.io/badge/-Storybook-FF4785?style=flat&logo=Storybook&logoColor=white"/> ![VSC](https://img.shields.io/badge/-Visual%20Studio%20Code-007ACC?style=flat&logo=Visual%20Studio%20Code&logoColor=white) ![WebStorm](https://img.shields.io/badge/-WebStorm-00A3E0?style=flat&logo=WebStorm&logoColor=white)
 
-### iOS
+### ✨ iOS
 
 ![Xcode](https://img.shields.io/badge/-Xcode-1575F9?style=flat&logo=Xcode&logoColor=white)
 ![Swift](https://img.shields.io/badge/-Swift-FA7343?style=flat&logo=Swift&logoColor=white)
@@ -69,77 +68,76 @@
 
 <br>
 
-## 기능별 시연
-### [ 로그인 ]
-#### > 카카오 OAuth2 로그인
+## 💡 기능별 시연
+### 🚀 로그인
+#### #️⃣ 카카오 OAuth2 로그인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
-#### > 초기 회원 프로필 설정 & 학생증 인증
+#### #️⃣ 초기 회원 프로필 설정 & 학생증 인증
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
 <br>
 <br>
 
 ### [ 홈화면 ]
-#### > 기숙사별 오늘의 메뉴 확인
+#### #️⃣ 기숙사별 오늘의 메뉴 확인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
-#### > 요열별 메뉴 확인
+#### #️⃣ 요열별 메뉴 확인
 
 <br>
 
-### [ 게시글 ]
-#### > [최신순, 인기순] 정렬 조회
+### 🚀 게시글
+#### #️⃣ [최신순, 인기순] 정렬 조회
 
-#### > [전체, 모집중, 모집 완료] 필터 조회
+#### #️⃣ [전체, 모집중, 모집 완료] 필터 조회
 
-#### > [도와주세요, 함께해요, 나눔해요, 궁금해요] 게시판별 조회
+#### #️⃣ [도와주세요, 함께해요, 나눔해요, 궁금해요] 게시판별 조회
 
-#### > 게시글 검색 기능
+#### #️⃣ 게시글 검색 기능
 
-#### > 게시글 작성
+#### #️⃣ 게시글 작성
 
-#### > 게시글 단 건 조회
-
-<br>
-
-### [ 댓글 ]
-#### > 댓글 & 대댓글 작성
+#### #️⃣ 게시글 단 건 조회
 
 <br>
 
-### [ 채팅 ]
-#### > 채팅방 목록 조회
-
-#### > 채팅 기능
+### 🚀 댓글
+#### #️⃣ 댓글 & 대댓글 작성
 
 <br>
 
-### [ 룸메이트 매칭 ]
-#### > 나의 라이프스타일 설정
+### 🚀 채팅
+#### #️⃣ 채팅방 목록 조회
 
-#### > 나의 선호 우선순위 설정
-
-#### > 룸메이트 추천 알고리즘 요청
-
-#### > 추천된 사용자 프로필 조회
-
-#### > 룸메이트 신청
-
-#### > 룸메이트 신청 목록 조회
-
-#### > 룸메이트 신청 수락 & 거절
-
-### [ 알림 ]
-#### > 실시간 알림 기능
+#### #️⃣ 채팅 기능
 
 <br>
 
-## 프로젝트 느낌점
-- 동민(BE) : 
+### 🚀 룸메이트 매칭
+#### #️⃣ 나의 라이프스타일 설정
+
+#### #️⃣ 나의 선호 우선순위 설정
+
+#### #️⃣ 룸메이트 추천 알고리즘 요청
+
+#### #️⃣ 추천된 사용자 프로필 조회
+
+#### #️⃣ 룸메이트 신청
+
+#### #️⃣ 룸메이트 신청 목록 조회
+
+#### #️⃣ 룸메이트 신청 수락 & 거절
+
+### 🚀 알림
+#### #️⃣ 실시간 알림 기능
+
+<br>
+
+## 💡 프로젝트 회고
+- 동민(BE) : 실제 재학생들이 사용한다는 마음을 담아서 열심히 개발했습니다. 좋은 동료들과 함께 성장할 수 있어서 좋았습니다.
 - 소민(BE) : 
 - 유림(FE) : 
 - 정훈(iOS) : 
 - 화진(iOS) : 
-
 
