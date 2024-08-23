@@ -77,9 +77,8 @@
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
 <br>
-<br>
 
-### [ 홈화면 ]
+### 🚀 홈화면
 #### #️⃣ 기숙사별 오늘의 메뉴 확인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
@@ -128,6 +127,8 @@
 #### #️⃣ 룸메이트 신청 목록 조회
 
 #### #️⃣ 룸메이트 신청 수락 & 거절
+
+<br>
 
 ### 🚀 알림
 #### #️⃣ 실시간 알림 기능
