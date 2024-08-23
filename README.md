@@ -32,11 +32,6 @@
 | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
 | <a href="https://github.com/meena2003"><img src="https://github.com/user-attachments/assets/c52cf4aa-5ace-496d-9a36-236fe60c657d" height=150 width=150></a> <br/> 김동민 | <a href="https://github.com/somln"><img src="https://github.com/user-attachments/assets/82464d9b-37ea-458c-888e-e1255a62b9e0" height=150 width=150></a> <br/> 충북대여신 |  | <a href="https://github.com/unnimm"><img src="https://github.com/user-attachments/assets/635565ce-ef64-4002-9dd2-2f78aa92adb4" height=150 width=150></a> <br/> 황유림 |  | <a href="https://github.com/nss321"><img src="https://github.com/user-attachments/assets/b7147b02-298e-4d58-8af2-6a92f9060a97" height=150 width=150></a> <br/> 배정훈 | <a href="https://github.com/boriiiborii"><img src="https://github.com/user-attachments/assets/fa025881-59f8-4c44-b781-ef5e8212e2d2" height=150 width=150></a> <br/> 이화진 |
 
-### Designer 🎨 
-| **Design** | **Design** |
-| :------: | :------: |
-| [<a href="https://github.com/username6"><img src="이미지_URL_6" height=150 width=150></a> <br/> @username6](https://github.com/username6) | [<a href="https://github.com/username7"><img src="이미지_URL_7" height=150 width=150></a> <br/> @username7](https://github.com/username7) |
-
 <br>
 
 ## 기술 스택
@@ -62,9 +57,6 @@
 ![Swift](https://img.shields.io/badge/-Swift-FA7343?style=flat&logo=Swift&logoColor=white)
 ![UIKit](https://img.shields.io/badge/-UIKit-00599C?style=flat&logo=UIKit&logoColor=white)
 ![Combine](https://img.shields.io/badge/-Combine-FF7B17?style=flat&logo=Swift&logoColor=white)
-
-### Design
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white">
 
 <br>
 
