@@ -73,8 +73,12 @@
 #### #️⃣ 카카오 OAuth2 로그인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
+<img src="https://github.com/user-attachments/assets/7edd7297-50e7-41d4-a6d4-34b3f263b986" width = 300/>
+<br>
+
 #### #️⃣ 초기 회원 프로필 설정 & 학생증 인증
-<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
+<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:200px;"/>
+
 
 <br>
 
@@ -82,8 +86,14 @@
 #### #️⃣ 기숙사별 오늘의 메뉴 확인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
+<img src="https://github.com/user-attachments/assets/092c4f7f-a15a-4731-81c4-363d37908b66
+" width = 300/>
+<br>
+
 #### #️⃣ 요열별 메뉴 확인
 
+<img src="https://github.com/dormitoryFamilies/iOS/assets/97685264/531b77fc-e2df-4e00-9b99-283eaf868e52" width = 300/>
+(비어있는곳은 기숙사 식단 홈페이지 데이터 자체가 비어있는 상황)
 <br>
 
 ### 🚀 게시글
@@ -91,26 +101,88 @@
 
 #### #️⃣ [전체, 모집중, 모집 완료] 필터 조회
 
+#### #️⃣ [본관, 양진재, 양성재] 기숙사 별 게시판 조회
+<img src="https://github.com/user-attachments/assets/e8db6a18-74ff-46ec-914d-5d77e4aa55b8" width = 300/>
+<br>
+
 #### #️⃣ [도와주세요, 함께해요, 나눔해요, 궁금해요] 게시판별 조회
+<img src="https://github.com/user-attachments/assets/5b7ee030-d437-4e4c-b4b2-040a7b655996" width = 300/>
+<br>
+
 
 #### #️⃣ 게시글 검색 기능
+<img src="https://github.com/user-attachments/assets/ede2291f-23e7-4cf5-ac9f-e667f14cd1a9" width = 300/>
+<br>
+
 
 #### #️⃣ 게시글 작성
+<img src="https://github.com/user-attachments/assets/3c0db545-81c9-421b-9bb6-642286f9d3fe" width = 300/>
+<br>
 
-#### #️⃣ 게시글 단 건 조회
+#### #️⃣ 게시글 상세내역 조회
+<img src="https://github.com/user-attachments/assets/3c0db545-81c9-421b-9bb6-642286f9d3fe" width = 300/>
+<br>
+
+
+#### #️⃣ 게시글 모집중/모집완료 변경
+<img src="https://github.com/user-attachments/assets/e2131ecd-31ad-4e51-9b1c-5ca3be338f53" width = 300/>
+<br>
+
+#### #️⃣ 게시글 삭제
+<img src="https://github.com/user-attachments/assets/856b64c0-8090-4cf3-9202-bc33964dcc4b" width = 300/>
+<br>
+
+
+#### #️⃣ 게시글 찜/찜취소
+<img src="https://github.com/user-attachments/assets/65d47865-5951-4a82-825e-5330602fb7e6" width = 300/>
+<br>
+
 
 <br>
 
 ### 🚀 댓글
 #### #️⃣ 댓글 & 대댓글 작성
+<img src="https://github.com/user-attachments/assets/b51640ab-8382-4b1e-a65f-ceca2c35d810" width = 300/>
+<br>
+
+#### #️⃣ 댓글 & 대댓글 삭제
+<img src="https://github.com/user-attachments/assets/dadef26d-4f61-4adc-9ff4-9468e556c119" width = 300/>
+<br>
 
 <br>
 
 ### 🚀 채팅
-#### #️⃣ 채팅방 목록 조회
+#### #️⃣ 해당 사용자의 채팅방 전체 조회
+<img src="https://github.com/user-attachments/assets/15a131e7-39e9-4027-b645-9ec7d3760c18" width = 300/>
+<br>
 
-#### #️⃣ 채팅 기능
+#### #️⃣ 프로필을 통한 채팅방 입장
+<img src="https://github.com/user-attachments/assets/d85761cc-7bdb-4507-be99-65aceef0dc49" width = 300/>
+<br>
 
+#### #️⃣ 채팅방을 통한 채팅방 입장
+<img src="https://github.com/user-attachments/assets/6659c86f-4e42-4f75-be00-abceb6c521d5" width = 300/>
+<br>
+
+
+#### #️⃣ 채팅 보내기
+<img src="https://github.com/user-attachments/assets/455863d1-d43e-40ad-94f5-a8b4cd8a49a3" width = 300/>
+<br>
+
+#### #️⃣ 채팅방 나가기
+<img src="https://github.com/user-attachments/assets/c93cfdd1-0a99-42c2-a69d-7bdb068414b0" width = 300/>
+<br>
+
+<img src="https://github.com/user-attachments/assets/d814173e-b260-4ef8-897f-5333839a09ec" width = 300/>
+<br>
+
+#### #️⃣ 채팅 기록 검색
+<img src="https://github.com/user-attachments/assets/e6364000-c540-4fdf-bfc1-3430369643d8" width = 300/>
+<br>
+
+#### #️⃣ 채팅탭 팔로우 취소
+<img src="https://github.com/user-attachments/assets/a97c8cd2-fcb8-4871-8613-8caca7e79ec9" width = 300/>
+<br>
 <br>
 
 ### 🚀 룸메이트 매칭
@@ -150,7 +222,6 @@
 ## 💡 프로젝트 회고
 - 동민(BE) : 실제 재학생들이 사용한다는 마음을 담아서 열심히 개발했습니다. 좋은 동료들과 함께 성장할 수 있어서 좋았습니다.
 - 소민(BE) : 
-- 유림(FE) : 
+- 유림(FE) : 같이 개발하시는 개발자분들, 디자이너분들 모두 열심히 하는 프로젝트는 처음이었습니다. 함께하여 너무 감사하고 재미있게 개발하였습니다. 실제 재학생 기숙사 학생들이 유용하게 사용하였으면 좋겠습니다🙏
 - 정훈(iOS) : 
-- 화진(iOS) : 
-
+- 화진(iOS) : 모든 팀원 분들이 각자의 파트에서 최선을 다한 프로젝트라고 생각합니다. 프로젝트를 함께 하면서 팀워크가 무엇인지 깨달았습니다. 팀원분들에게 무한한 감사를 ^ -^. 이후, 프로젝트 배포 후 저희 후배들이 즐거운 기숙사 생활을 하길 바라요.
