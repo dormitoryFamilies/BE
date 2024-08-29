@@ -4,10 +4,13 @@ import dormitoryfamily.doomz.global.oauth2.dto.AccessTokenRequestDto;
 import dormitoryfamily.doomz.global.oauth2.dto.JwtResponseDto;
 import dormitoryfamily.doomz.global.oauth2.service.UserKakaoService;
 import dormitoryfamily.doomz.global.util.ResponseDto;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,13 +21,12 @@ public class UserKakaoController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<Void>> login(
-            @RequestBody AccessTokenRequestDto request,
-            HttpServletResponse httpServletResponse
+            @RequestBody AccessTokenRequestDto request
     ) {
         JwtResponseDto responseDto = UserKakaoService.getJWTAccessToken(request.accessToken());
-        httpServletResponse.setHeader("accessToken", responseDto.accessToken());
-        httpServletResponse.setHeader("refreshToken", responseDto.refreshToken());
-
-        return ResponseEntity.ok(ResponseDto.ok());
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("accessToken", responseDto.accessToken())
+                .header("refreshToken", responseDto.refreshToken())
+                .body(ResponseDto.ok());
     }
 }

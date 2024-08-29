@@ -42,7 +42,7 @@ public class KakaoMemberResponse {
             } else if ("female".equals(genderString)) {
                 this.gender = GenderType.FEMALE;
             } else {
-                this.gender = null; // Unknown or not provided
+                this.gender = null;
             }
         } else {
             this.gender = null;
