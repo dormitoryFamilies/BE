@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.member.follow.service;
 
+import dormitoryfamily.doomz.domain.member.follow.dto.FollowStatusResponseDto;
 import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
 import dormitoryfamily.doomz.domain.member.follow.event.FollowCreatedEvent;
 import dormitoryfamily.doomz.domain.member.follow.exception.AlreadyFollowingException;
@@ -159,4 +160,14 @@ public class FollowService {
         return MemberProfilePagingListResponseDto.from(follows, memberProfiles);
     }
 
+    public FollowStatusResponseDto checkFollowing(PrincipalDetails principalDetails, Long followingId) {
+        Member loginMember = principalDetails.getMember();
+        Member following = getMemberById(followingId);
+
+        if (loginMember.getId().equals(followingId)) {
+            throw new CannotFollowYourselfException();
+        }
+
+        return FollowStatusResponseDto.from(followRepository.existsByFollowerAndFollowing(loginMember, following));
+    }
 }

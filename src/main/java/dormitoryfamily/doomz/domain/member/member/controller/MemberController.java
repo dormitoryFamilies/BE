@@ -80,11 +80,11 @@ public class MemberController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/my/matching-statuses")
+    @GetMapping("/my/matching-status")
     public ResponseEntity<ResponseDto<MatchingStatusResponseDto>> getMyRoommateMatchingStatus(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        MatchingStatusResponseDto responseDto = memberService.getMyMatchingStatus(principalDetails);
+        MatchingStatusResponseDto responseDto = memberService.getMyMatchedId(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
