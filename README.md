@@ -115,8 +115,20 @@
 
 ### 🚀 룸메이트 매칭
 #### #️⃣ 나의 라이프스타일 설정
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 08 35](https://github.com/user-attachments/assets/14c2f232-ea20-4cc2-b903-50ae0fbc2417)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 10 00](https://github.com/user-attachments/assets/1ee9fbb6-ca96-4848-9992-94f1bc68f353)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 11 17](https://github.com/user-attachments/assets/a5ae2f41-7639-47fa-b96b-e3b5c884f30d)
+
+- 룸메이트 매칭 전 본인의 생활 습관과, 선호하는 룸메이트의 성향을 설정해야 매칭 가능.
+- 생활 습관은 공동 생활에 중요한 영향을 미치는 필수 옵션과, 그렇지 않은 선택 옵션으로 구성 됨. 필수 옵션의 경우 표시되어 있으며, 미선택시 다음 화면으로 넘어갈 수 없음.
+- MBTI 설정의 경우 4개의 옵션(에너지의 방향, 인식 기능, 판단 기능, 생활 양식) 모두 선택하거나, 모두 선택하지 않아야 다음 화면으로 넘어갈 수 있도록 함.
 
 #### #️⃣ 나의 선호 우선순위 설정
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 25 54](https://github.com/user-attachments/assets/4b42da14-4b82-4050-8642-2d2caa59eca7)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 26 09](https://github.com/user-attachments/assets/60c6f9bd-901b-42e1-b135-2bcd5cbb93bf)
+
+- 선호하는 룸메이트의 성향을 선택.
+- 각 성향에는 우선순위를 둘 수 있음.
 
 #### #️⃣ 룸메이트 추천 알고리즘 요청
 
