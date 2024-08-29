@@ -1,8 +1,8 @@
 package dormitoryfamily.doomz.domain.member.follow.controller;
 
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfileListResponseDto;
-import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
+import dormitoryfamily.doomz.domain.member.follow.dto.FollowStatusResponseDto;
 import dormitoryfamily.doomz.domain.member.follow.service.FollowService;
+import dormitoryfamily.doomz.domain.member.member.dto.response.MemberProfilePagingListResponseDto;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
@@ -86,4 +86,12 @@ public class FollowController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
+    @GetMapping("/{memberId}/follow-status")
+    public ResponseEntity<ResponseDto<FollowStatusResponseDto>> checkFollowing(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        FollowStatusResponseDto responseDto = followService.checkFollowing(principalDetails, memberId);
+        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
+    }
 }

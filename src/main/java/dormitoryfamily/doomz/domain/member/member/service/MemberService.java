@@ -11,6 +11,8 @@ import dormitoryfamily.doomz.domain.member.member.exception.NicknameDuplicatedEx
 import dormitoryfamily.doomz.domain.member.member.exception.NotRoleMemberException;
 import dormitoryfamily.doomz.domain.member.member.exception.NotVisitorOrRejectedMemberRoleException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
+import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
 import dormitoryfamily.doomz.domain.roommate.wish.repository.RoommateWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +34,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final RoommateWishRepository roommateWishRepository;
+    private final MatchingResultRepository matchingResultRepository;
 
     public NicknameCheckResponseDto checkNickname(String nickname) {
         boolean isDuplicated = memberRepository.existsByNickname(nickname);
@@ -136,9 +140,19 @@ public class MemberService {
         }
     }
 
-    public MatchingStatusResponseDto getMyMatchingStatus(PrincipalDetails principalDetails) {
+    public MatchingStatusResponseDto getMyMatchedId(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        return MatchingStatusResponseDto.from(loginMember);
+        Optional<MatchingResult> matchingResult = matchingResultRepository.findBySenderOrReceiver(loginMember);
+
+        Long matchedId = matchingResult.map(result -> {
+            if (result.getSender().getId().equals(loginMember.getId())) {
+                return result.getReceiver().getId();
+            } else {
+                return result.getSender().getId();
+            }
+        }).orElse(0L);
+
+        return MatchingStatusResponseDto.from(matchedId);
     }
 
     public MemberIdResponseDto findMyMemberId(PrincipalDetails principalDetails) {

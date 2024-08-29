@@ -13,4 +13,7 @@ public interface MatchingResultRepository extends JpaRepository<MatchingResult, 
             "WHERE (m.sender = :loginMember AND m.receiver = :targetMember) " +
             "OR (m.sender = :targetMember AND m.receiver = :loginMember)")
     Optional<MatchingResult> findByMembers(Member loginMember, Member targetMember);
+
+    @Query("SELECT m FROM MatchingResult m WHERE m.sender = :member OR m.receiver = :member")
+    Optional<MatchingResult> findBySenderOrReceiver(Member member);
 }
