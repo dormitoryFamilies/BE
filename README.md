@@ -119,17 +119,16 @@
 #### #️⃣ 나의 선호 우선순위 설정
 
 #### #️⃣ 룸메이트 추천 알고리즘 요청
+![2024-08-303 58 53-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f95481d-cf1f-4a41-b509-8ff274d8c863)
 
 #### #️⃣ 추천된 사용자 프로필 조회
 ![2024-08-303 21 08-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/688182f4-bcd1-4419-81f2-49e52c9d07c5)
 
-#### #️⃣ 룸메이트 신청
+#### #️⃣ 룸메이트 신청 수락 & 거절
 
 
 #### #️⃣ 룸메이트 신청 목록 조회
 ![룸메 매칭 전체 목록](https://github.com/user-attachments/assets/cb920544-06f3-40c3-a8f3-4cb2763f1aa9)
-
-#### #️⃣ 룸메이트 신청 수락 & 거절
 
 <br>
 
