@@ -1,49 +1,51 @@
 package dormitoryfamily.doomz.global.security.dto;
 
 import dormitoryfamily.doomz.domain.member.member.entity.type.GenderType;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.Map;
 
+@Getter
 public class KakaoMemberResponse {
 
-    private final Map<String, Object> attributes;
+    private final String name;
+    private final String email;
+    private final String profileImage;
+    private final LocalDate birthDate;
+    private final GenderType gender;
 
-    public KakaoMemberResponse(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
+    public KakaoMemberResponse(JsonNode jsonNode) {
+        JsonNode kakaoAccount = jsonNode.get("kakao_account");
+        JsonNode properties = jsonNode.get("properties");
 
-    public String getName() {
-        Map<String, Object> properties = (Map<String, Object>) attributes.get("kakao_account");
-        return properties.get("name").toString();
-    }
+        this.name = kakaoAccount.has("name") ? kakaoAccount.get("name").asText() : null;
+        this.email = kakaoAccount.has("email") ? kakaoAccount.get("email").asText() : null;
+        this.profileImage = properties.has("profile_image") ? properties.get("profile_image").asText() : null;
 
-    public String getEmail() {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        return kakaoAccount.get("email").toString();
-    }
-
-    public String getProfileImage() {
-        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-        return properties.get("profile_image").toString();
-    }
-
-    public LocalDate getBirthDate() {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        int birthYear = Integer.parseInt(kakaoAccount.get("birthyear").toString());
-        String birthDate = kakaoAccount.get("birthday").toString();
-        int birthMonth = Integer.parseInt(birthDate.substring(0, 2));
-        int birthDay = Integer.parseInt(birthDate.substring(2));
-
-        return LocalDate.of(birthYear, birthMonth, birthDay);
-    }
-
-    public GenderType getGender() {
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        String gender = kakaoAccount.get("gender").toString();
-        if (gender.equals("male")) {
-            return GenderType.MALE;
+        // Birthdate parsing
+        if (kakaoAccount.has("birthyear") && kakaoAccount.has("birthday")) {
+            int birthYear = Integer.parseInt(kakaoAccount.get("birthyear").asText());
+            String birthDateString = kakaoAccount.get("birthday").asText();
+            int birthMonth = Integer.parseInt(birthDateString.substring(0, 2));
+            int birthDay = Integer.parseInt(birthDateString.substring(2));
+            this.birthDate = LocalDate.of(birthYear, birthMonth, birthDay);
+        } else {
+            this.birthDate = null;
         }
-        return GenderType.FEMALE;
+
+        // Gender parsing
+        if (kakaoAccount.has("gender")) {
+            String genderString = kakaoAccount.get("gender").asText();
+            if ("male".equals(genderString)) {
+                this.gender = GenderType.MALE;
+            } else if ("female".equals(genderString)) {
+                this.gender = GenderType.FEMALE;
+            } else {
+                this.gender = null;
+            }
+        } else {
+            this.gender = null;
+        }
     }
 }

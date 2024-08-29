@@ -1,8 +1,6 @@
 package dormitoryfamily.doomz.global.security.config;
 
 import dormitoryfamily.doomz.global.jwt.JWTAuthenticationFilter;
-import dormitoryfamily.doomz.global.oauth2.OAuth2LoginSuccessHandler;
-import dormitoryfamily.doomz.global.oauth2.OAuth2UserService;
 import dormitoryfamily.doomz.global.security.exception.handler.JWTAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +24,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuth2UserService oAuth2UserService;
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final AuthenticationEntryPoint entryPoint;
     private final JWTAccessDeniedHandler deniedHandler;
 
@@ -69,7 +65,7 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/reissue", "/api/logout").permitAll()
+                .requestMatchers("/api/reissue", "/api/logout", "/api/login").permitAll()
                 .requestMatchers("/", "/stomp/**").permitAll()
                 .requestMatchers("/api/my/authorities").permitAll() //개발용으로 설정함. 삭제 예정
                 .requestMatchers("/api/images").hasAnyRole("VISITOR", "REJECTED_MEMBER")
@@ -77,11 +73,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/verify/**").hasRole("ADMIN")
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .anyRequest().hasRole("VERIFIED_STUDENT"));
-
-        //oauth2 로그인
-        http.oauth2Login((oauth2) -> oauth2
-                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
-                .successHandler(oAuth2LoginSuccessHandler));
 
         // 세션 stateless 설정
         http.sessionManagement((session) -> session

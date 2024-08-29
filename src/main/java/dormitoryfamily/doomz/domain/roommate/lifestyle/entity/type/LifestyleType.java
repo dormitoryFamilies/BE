@@ -39,7 +39,7 @@ public enum LifestyleType {
 
     public static LifestyleType fromType(String typeStr) {
         for (LifestyleType lifestyleType : LifestyleType.values()) {
-            if (lifestyleType.toString().equalsIgnoreCase(typeStr)) {
+            if (lifestyleType.name().equalsIgnoreCase(typeStr)) {
                 return lifestyleType;
             }
         }
