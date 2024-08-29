@@ -125,7 +125,7 @@
 ![2024-08-303 21 08-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/688182f4-bcd1-4419-81f2-49e52c9d07c5)
 
 #### #️⃣ 룸메이트 신청 수락 & 거절
-
+![2024-08-304 01 06-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9d6b28bc-f96b-460e-939a-b5e73294cc19)
 
 #### #️⃣ 룸메이트 신청 목록 조회
 ![룸메 매칭 전체 목록](https://github.com/user-attachments/assets/cb920544-06f3-40c3-a8f3-4cb2763f1aa9)
