@@ -71,14 +71,12 @@
 ## 💡 기능별 시연
 ### 🚀 로그인
 #### #️⃣ 카카오 OAuth2 로그인
-<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
 <img src="https://github.com/user-attachments/assets/7edd7297-50e7-41d4-a6d4-34b3f263b986" width = 300/>
 <br>
 
 #### #️⃣ 초기 회원 프로필 설정 & 학생증 인증
-<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:200px;"/>
-
+<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>  
 
 <br>
 
@@ -93,7 +91,9 @@
 #### #️⃣ 요열별 메뉴 확인
 
 <img src="https://github.com/dormitoryFamilies/iOS/assets/97685264/531b77fc-e2df-4e00-9b99-283eaf868e52" width = 300/>
-(비어있는곳은 기숙사 식단 홈페이지 데이터 자체가 비어있는 상황)
+
+- 비어있는곳은 기숙사 식단 홈페이지 데이터 자체가 비어있기 때문입니다.
+
 <br>
 
 ### 🚀 게시글
