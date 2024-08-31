@@ -97,10 +97,6 @@
 <br>
 
 ### 🚀 게시글
-#### #️⃣ [최신순, 인기순] 정렬 조회
-
-#### #️⃣ [전체, 모집중, 모집 완료] 필터 조회
-
 #### #️⃣ [본관, 양진재, 양성재] 기숙사 별 게시판 조회
 <img src="https://github.com/user-attachments/assets/e8db6a18-74ff-46ec-914d-5d77e4aa55b8" width = 300/>
 <br>
