@@ -38,7 +38,7 @@
 ## 👥 팀원 구성
 | **Back-End** | **Back-End** || **Front-End** || **iOS** | **iOS** |
 | :------: | :------: | :------: | :------: | :------: | :------: | :------: |
-| <a href="https://github.com/meena2003"><img src="https://github.com/user-attachments/assets/c52cf4aa-5ace-496d-9a36-236fe60c657d" height=150 width=150></a> <br/> 김동민 | <a href="https://github.com/somln"><img src="https://github.com/user-attachments/assets/82464d9b-37ea-458c-888e-e1255a62b9e0" height=150 width=150></a> <br/> 충북대여신 |  | <a href="https://github.com/unnimm"><img src="https://github.com/user-attachments/assets/635565ce-ef64-4002-9dd2-2f78aa92adb4" height=150 width=150></a> <br/> 황유림 |  | <a href="https://github.com/nss321"><img src="https://github.com/user-attachments/assets/b7147b02-298e-4d58-8af2-6a92f9060a97" height=150 width=150></a> <br/> 배정훈 | <a href="https://github.com/boriiiborii"><img src="https://github.com/user-attachments/assets/fa025881-59f8-4c44-b781-ef5e8212e2d2" height=150 width=150></a> <br/> 이화진 |
+| <a href="https://github.com/meena2003"><img src="https://github.com/user-attachments/assets/1ec24fb1-e2a6-4384-9c96-364456d3a435" height=150 width=150></a> <br/> 김동민 | <a href="https://github.com/somln"><img src="https://github.com/user-attachments/assets/eba91b7f-c1d7-4771-b40a-e0c376616987" height=150 width=150></a> <br/> 박소민 |  | <a href="https://github.com/unnimm"><img src="https://github.com/user-attachments/assets/635565ce-ef64-4002-9dd2-2f78aa92adb4" height=150 width=150></a> <br/> 황유림 |  | <a href="https://github.com/nss321"><img src="https://github.com/user-attachments/assets/b7147b02-298e-4d58-8af2-6a92f9060a97" height=150 width=150></a> <br/> 배정훈 | <a href="https://github.com/boriiiborii"><img src="https://github.com/user-attachments/assets/fa025881-59f8-4c44-b781-ef5e8212e2d2" height=150 width=150></a> <br/> 이화진 |
 
 <br>
 
@@ -71,10 +71,12 @@
 ## 💡 기능별 시연
 ### 🚀 로그인
 #### #️⃣ 카카오 OAuth2 로그인
-<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
+
+<img src="https://github.com/user-attachments/assets/7edd7297-50e7-41d4-a6d4-34b3f263b986" width = 300/>
+<br>
 
 #### #️⃣ 초기 회원 프로필 설정 & 학생증 인증
-<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
+<img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>  
 
 <br>
 
@@ -82,75 +84,140 @@
 #### #️⃣ 기숙사별 오늘의 메뉴 확인
 <img src="https://github.com/user-attachments/assets/06b65d2d-2f39-46a1-99fe-6f63bd828570" style="width:600px;"/>
 
+<img src="https://github.com/user-attachments/assets/092c4f7f-a15a-4731-81c4-363d37908b66
+" width = 300/>
+<br>
+
 #### #️⃣ 요열별 메뉴 확인
+
+<img src="https://github.com/dormitoryFamilies/iOS/assets/97685264/531b77fc-e2df-4e00-9b99-283eaf868e52" width = 300/>
+
+- 비어있는곳은 기숙사 식단 홈페이지 데이터 자체가 비어있기 때문입니다.
 
 <br>
 
 ### 🚀 게시글
-#### #️⃣ [최신순, 인기순] 정렬 조회
-
-#### #️⃣ [전체, 모집중, 모집 완료] 필터 조회
+#### #️⃣ [본관, 양진재, 양성재] 기숙사 별 게시판 조회
+<img src="https://github.com/user-attachments/assets/e8db6a18-74ff-46ec-914d-5d77e4aa55b8" width = 300/>
+<br>
 
 #### #️⃣ [도와주세요, 함께해요, 나눔해요, 궁금해요] 게시판별 조회
+<img src="https://github.com/user-attachments/assets/5b7ee030-d437-4e4c-b4b2-040a7b655996" width = 300/>
+<br>
+
 
 #### #️⃣ 게시글 검색 기능
+<img src="https://github.com/user-attachments/assets/ede2291f-23e7-4cf5-ac9f-e667f14cd1a9" width = 300/>
+<br>
+
 
 #### #️⃣ 게시글 작성
+<img src="https://github.com/user-attachments/assets/3c0db545-81c9-421b-9bb6-642286f9d3fe" width = 300/>
+<br>
 
-#### #️⃣ 게시글 단 건 조회
+#### #️⃣ 게시글 상세내역 조회
+<img src="https://github.com/user-attachments/assets/3c0db545-81c9-421b-9bb6-642286f9d3fe" width = 300/>
+<br>
+
+
+#### #️⃣ 게시글 모집중/모집완료 변경
+<img src="https://github.com/user-attachments/assets/e2131ecd-31ad-4e51-9b1c-5ca3be338f53" width = 300/>
+<br>
+
+#### #️⃣ 게시글 삭제
+<img src="https://github.com/user-attachments/assets/856b64c0-8090-4cf3-9202-bc33964dcc4b" width = 300/>
+<br>
+
+
+#### #️⃣ 게시글 찜/찜취소
+<img src="https://github.com/user-attachments/assets/65d47865-5951-4a82-825e-5330602fb7e6" width = 300/>
+<br>
+
 
 <br>
 
 ### 🚀 댓글
 #### #️⃣ 댓글 & 대댓글 작성
+<img src="https://github.com/user-attachments/assets/b51640ab-8382-4b1e-a65f-ceca2c35d810" width = 300/>
+<br>
+
+#### #️⃣ 댓글 & 대댓글 삭제
+<img src="https://github.com/user-attachments/assets/dadef26d-4f61-4adc-9ff4-9468e556c119" width = 300/>
+<br>
 
 <br>
 
 ### 🚀 채팅
-#### #️⃣ 채팅방 목록 조회
+#### #️⃣ 해당 사용자의 채팅방 전체 조회
+<img src="https://github.com/user-attachments/assets/15a131e7-39e9-4027-b645-9ec7d3760c18" width = 300/>
+<br>
 
-#### #️⃣ 채팅 기능
+#### #️⃣ 프로필을 통한 채팅방 입장
+<img src="https://github.com/user-attachments/assets/d85761cc-7bdb-4507-be99-65aceef0dc49" width = 300/>
+<br>
 
+#### #️⃣ 채팅방을 통한 채팅방 입장
+<img src="https://github.com/user-attachments/assets/6659c86f-4e42-4f75-be00-abceb6c521d5" width = 300/>
+<br>
+
+
+#### #️⃣ 채팅 보내기
+<img src="https://github.com/user-attachments/assets/455863d1-d43e-40ad-94f5-a8b4cd8a49a3" width = 300/>
+<br>
+
+#### #️⃣ 채팅방 나가기
+<img src="https://github.com/user-attachments/assets/c93cfdd1-0a99-42c2-a69d-7bdb068414b0" width = 300/>
+<br>
+
+<img src="https://github.com/user-attachments/assets/d814173e-b260-4ef8-897f-5333839a09ec" width = 300/>
+<br>
+
+#### #️⃣ 채팅 기록 검색
+<img src="https://github.com/user-attachments/assets/e6364000-c540-4fdf-bfc1-3430369643d8" width = 300/>
+<br>
+
+#### #️⃣ 채팅탭 팔로우 취소
+<img src="https://github.com/user-attachments/assets/a97c8cd2-fcb8-4871-8613-8caca7e79ec9" width = 300/>
+<br>
 <br>
 
 ### 🚀 룸메이트 매칭
 #### #️⃣ 나의 라이프스타일 설정
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 08 35](https://github.com/user-attachments/assets/14c2f232-ea20-4cc2-b903-50ae0fbc2417)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 10 00](https://github.com/user-attachments/assets/1ee9fbb6-ca96-4848-9992-94f1bc68f353)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 11 17](https://github.com/user-attachments/assets/a5ae2f41-7639-47fa-b96b-e3b5c884f30d)
+
+- 룸메이트 매칭 전 본인의 생활 습관과, 선호하는 룸메이트의 성향을 설정해야 매칭 가능.
+- 생활 습관은 공동 생활에 중요한 영향을 미치는 필수 옵션과, 그렇지 않은 선택 옵션으로 구성 됨. 필수 옵션의 경우 표시되어 있으며, 미선택시 다음 화면으로 넘어갈 수 없음.
+- MBTI 설정의 경우 4개의 옵션(에너지의 방향, 인식 기능, 판단 기능, 생활 양식) 모두 선택하거나, 모두 선택하지 않아야 다음 화면으로 넘어갈 수 있도록 함.
 
 #### #️⃣ 나의 선호 우선순위 설정
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 25 54](https://github.com/user-attachments/assets/4b42da14-4b82-4050-8642-2d2caa59eca7)
+![Simulator Screen Recording - iPhone 13 mini - 2024-08-29 at 19 26 09](https://github.com/user-attachments/assets/60c6f9bd-901b-42e1-b135-2bcd5cbb93bf)
+
+- 선호하는 룸메이트의 성향을 선택.
+- 각 성향에는 우선순위를 둘 수 있음.
 
 #### #️⃣ 룸메이트 추천 알고리즘 요청
-![2024-08-303 58 53-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f95481d-cf1f-4a41-b509-8ff274d8c863)
 
 #### #️⃣ 추천된 사용자 프로필 조회
-![2024-08-303 21 08-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/688182f4-bcd1-4419-81f2-49e52c9d07c5)
 
-#### #️⃣ 룸메이트 신청 수락 & 거절
-![2024-08-304 01 06-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9d6b28bc-f96b-460e-939a-b5e73294cc19)
+#### #️⃣ 룸메이트 신청
 
 #### #️⃣ 룸메이트 신청 목록 조회
-![룸메 매칭 전체 목록](https://github.com/user-attachments/assets/cb920544-06f3-40c3-a8f3-4cb2763f1aa9)
+
+#### #️⃣ 룸메이트 신청 수락 & 거절
 
 <br>
 
 ### 🚀 알림
 #### #️⃣ 실시간 알림 기능
 
-### 🚀 마이페이지
-#### #️⃣ 팔로우
-![마이페이지 홈](https://github.com/user-attachments/assets/9e70b084-ce1d-4d2f-85ce-cdbe3616de86)
-
-#### #️⃣ 내가 작성한 글/댓글
-![마이페이지 내가 작성한 댓글](https://github.com/user-attachments/assets/a6deb05d-8d2b-468c-ad8e-7aaab08d0715)
-
-#### #️⃣ 나의 관심목록
-![마이페이지 관심목록](https://github.com/user-attachments/assets/0f7d8b35-d277-46ab-99de-472acf4947f3)
-
 <br>
 
 ## 💡 프로젝트 회고
 - 동민(BE) : 실제 재학생들이 사용한다는 마음을 담아서 열심히 개발했습니다. 좋은 동료들과 함께 성장할 수 있어서 좋았습니다.
-- 소민(BE) : 
+- 소민(BE) : 개발뿐만 아니라 협업에 대해서도 배울 수 있었던 좋은 경험이었습니다. 첫 프로젝트인 만큼 애정이 많은 프로젝트인데, 팀원들의 노력이 기숙사 생활의 작은 변화를 만들어내길 기대합니다!
 - 유림(FE) : 같이 개발하시는 개발자분들, 디자이너분들 모두 열심히 하는 프로젝트는 처음이었습니다. 함께하여 너무 감사하고 재미있게 개발하였습니다. 실제 재학생 기숙사 학생들이 유용하게 사용하였으면 좋겠습니다🙏
 - 정훈(iOS) : 
-- 화진(iOS) : 
-
+- 화진(iOS) : 모든 팀원 분들이 각자의 파트에서 최선을 다한 프로젝트라고 생각합니다. 프로젝트를 함께 하면서 팀워크가 무엇인지 깨달았습니다. 팀원분들에게 무한한 감사를 ^ -^. 이후, 프로젝트 배포 후 저희 후배들이 즐거운 기숙사 생활을 하길 바라요.
