@@ -33,6 +33,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
         List<Article> content = queryFactory
                 .selectFrom(article)
+                .leftJoin(article.member).fetchJoin()
                 .where(
                         dormitoryTypeEq(dormitoryType),
                         articleStatus(request),
