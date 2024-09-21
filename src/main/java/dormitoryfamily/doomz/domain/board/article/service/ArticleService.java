@@ -61,7 +61,7 @@ public class ArticleService {
 
     public ArticleResponseDto findArticle(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
-        Article article = getArticleById(articleId);
+        Article article = getArticleById(articleId, true);
         boolean isWished = checkIfArticleIsWished(article, loginMember);
         boolean isWriter = isWriter(loginMember, article.getMember());
 
@@ -69,9 +69,14 @@ public class ArticleService {
         return ArticleResponseDto.fromEntity(loginMember, article, isWished, isWriter, article.getArticleImages());
     }
 
-    private Article getArticleById(Long articleId) {
-        return articleRepository.findById(articleId)
-                .orElseThrow(ArticleNotExistsException::new);
+    private Article getArticleById(Long articleId, boolean fetchJoinRequired) {
+        if (fetchJoinRequired) {
+            return articleRepository.findById(articleId)
+                    .orElseThrow(ArticleNotExistsException::new);
+        } else {
+            return articleRepository.findByIdWithoutFetch(articleId)
+                    .orElseThrow(ArticleNotExistsException::new);
+        }
     }
 
     private boolean checkIfArticleIsWished(Article article, Member loginMember) {
@@ -80,7 +85,7 @@ public class ArticleService {
 
     public void updateArticle(PrincipalDetails principalDetails, Long articleId, ArticleRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
-        Article article = getArticleById(articleId);
+        Article article = getArticleById(articleId, false);
         if (!isWriter(loginMember, article.getMember())) {
             throw new InvalidMemberAccessException();
         }
@@ -97,7 +102,7 @@ public class ArticleService {
 
     public void deleteArticle(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
-        Article article = getArticleById(articleId);
+        Article article = getArticleById(articleId, false);
         if (!isWriter(loginMember, article.getMember())) {
             throw new InvalidMemberAccessException();
         }
@@ -107,7 +112,7 @@ public class ArticleService {
 
     public void changeStatus(PrincipalDetails principalDetails, Long articleId, String status) {
         Member loginMember = principalDetails.getMember();
-        Article article = getArticleById(articleId);
+        Article article = getArticleById(articleId, false);
         if (!isWriter(loginMember, article.getMember())) {
             throw new InvalidMemberAccessException();
         }
