@@ -21,6 +21,7 @@ import dormitoryfamily.doomz.domain.board.wish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -60,12 +62,11 @@ public class ArticleService {
     public ArticleResponseDto findArticle(PrincipalDetails principalDetails, Long articleId) {
         Member loginMember = principalDetails.getMember();
         Article article = getArticleById(articleId);
-        List<ArticleImage> articleImages = articleImageRepository.findByArticleId(articleId);
         boolean isWished = checkIfArticleIsWished(article, loginMember);
         boolean isWriter = isWriter(loginMember, article.getMember());
 
         article.plusViewCount();
-        return ArticleResponseDto.fromEntity(loginMember, article, isWished, isWriter, articleImages);
+        return ArticleResponseDto.fromEntity(loginMember, article, isWished, isWriter, article.getArticleImages());
     }
 
     private Article getArticleById(Long articleId) {
@@ -133,13 +134,13 @@ public class ArticleService {
 
         return articles.stream()
                 .map(article -> {
-                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
+                    boolean isWished = checkIfArticleIsWishedByList(article, memberWishes);
                     return SimpleArticleResponseDto.fromEntity(article, isWished);
                 })
                 .toList();
     }
 
-    private boolean checkIfArticleIsWishedByList(Article article, Member loginMember, List<ArticleWish> memberWishes) {
+    private boolean checkIfArticleIsWishedByList(Article article, List<ArticleWish> memberWishes) {
         return memberWishes.stream()
                 .anyMatch(wish -> wish.getArticle().getId().equals(article.getId()));
     }
@@ -183,7 +184,7 @@ public class ArticleService {
 
         return articles.stream()
                 .map(article -> {
-                    boolean isWished = checkIfArticleIsWishedByList(article, loginMember, memberWishes);
+                    boolean isWished = checkIfArticleIsWishedByList(article, memberWishes);
                     return SimpleArticleResponseDto.fromEntityWithMember(article, loginMember, isWished);
                 })
                 .toList();
