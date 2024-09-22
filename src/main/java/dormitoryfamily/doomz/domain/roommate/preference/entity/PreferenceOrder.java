@@ -17,7 +17,7 @@ public class PreferenceOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "preference_lifestyle_id")
+    @Column(name = "preference_order_id")
     private Long id;
 
     @ManyToOne(fetch = LAZY)
