@@ -19,6 +19,9 @@ import org.springframework.web.cors.CorsUtils;
 
 import java.util.Arrays;
 
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.HEADER_STRING_ACCESS;
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.HEADER_STRING_REFRESH;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -45,6 +48,8 @@ public class SecurityConfig {
 
                     // 다른 도메인도 필요에 따라 추가
                     configuration.setAllowCredentials(true); // 쿠키를 포함한 크로스 도메인 요청을 허용
+                    configuration.addExposedHeader(HEADER_STRING_ACCESS);  // 프론트에서 헤더 볼 수 있도록 허용
+                    configuration.addExposedHeader(HEADER_STRING_REFRESH);  // 프론트에서 헤더 볼 수 있도록 허용
                     return configuration;
                 }));
 
