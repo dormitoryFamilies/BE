@@ -8,7 +8,6 @@ import dormitoryfamily.doomz.domain.notification.entity.Notification;
 import dormitoryfamily.doomz.domain.notification.entity.type.NotificationType;
 import dormitoryfamily.doomz.domain.notification.exception.NotMyNotificationException;
 import dormitoryfamily.doomz.domain.notification.exception.NotificationAlreadyReadException;
-import dormitoryfamily.doomz.domain.notification.exception.NotificationNotExistsException;
 import dormitoryfamily.doomz.domain.notification.repository.EmitterRepository;
 import dormitoryfamily.doomz.domain.notification.repository.NotificationRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -22,8 +21,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.notification.util.NotificationProperties.*;
 
@@ -122,29 +122,26 @@ public class NotificationService {
     @Transactional
     public void setNotificationAsRead(PrincipalDetails principalDetails, NotificationsSetReadRequestDto requestDto) {
         Member loginMember = principalDetails.getMember();
-        requestDto.notificationIds().forEach(id -> {
-            Notification notification = getNotificationById(id);
-            validateNotification(notification, loginMember);
-            markNotificationAsRead(notification);
-        });
+        List<Notification> userNotifications = notificationRepository.findByReceiver(loginMember);
+
+        Map<Long, Notification> notificationMap = userNotifications.stream()
+                .collect(Collectors.toMap(Notification::getId, notification -> notification));
+
+        requestDto.notificationIds().forEach(id ->
+                validateNotification(id, notificationMap)
+        );
+
+        notificationRepository.updateNotificationAsRead(requestDto.notificationIds());
     }
 
-    private Notification getNotificationById(Long id) {
-        return notificationRepository.findById(id)
-                .orElseThrow(() -> new NotificationNotExistsException(id));
-    }
-
-    private static void validateNotification(Notification notification, Member loginMember) {
+    private static void validateNotification(Long id, Map<Long, Notification> notificationMap) {
+        Notification notification = notificationMap.get(id);
+        if (notification == null) {
+            throw new NotMyNotificationException(id);
+        }
         if (notification.isRead()) {
-            throw new NotificationAlreadyReadException(notification.getId());
+            throw new NotificationAlreadyReadException(id);
         }
-        if (!Objects.equals(notification.getReceiver().getId(), loginMember.getId())) {
-            throw new NotMyNotificationException(notification.getId());
-        }
-    }
-
-    private void markNotificationAsRead(Notification notification) {
-        notification.setReadStatusToTrue();
     }
 
     public boolean existsUnreadChatNotificationByReceiver(Member receiver) {
