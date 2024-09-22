@@ -151,8 +151,10 @@ public class RecommendationService {
         Member loginMember = principalDetails.getMember();
         Recommendation recommendation = recommendationRepository.findByMemberId(loginMember.getId())
                 .orElseThrow(RecommendationNotExistsException::new);
-        List<Candidate> candidates = candidateRepository
-                .findAllByRecommendationIdOrderByCandidateScoreDesc(recommendation.getId());
+
+        List<Candidate> candidates = recommendation.getCandidates().stream()
+                .sorted(Comparator.comparing(Candidate::getCandidateScore).reversed())
+                .toList();
 
         return RecommendationResponseDto.fromEntity(recommendation, candidates);
     }
