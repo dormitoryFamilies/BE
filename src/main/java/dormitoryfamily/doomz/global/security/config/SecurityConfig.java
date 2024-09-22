@@ -48,8 +48,8 @@ public class SecurityConfig {
 
                     // 다른 도메인도 필요에 따라 추가
                     configuration.setAllowCredentials(true); // 쿠키를 포함한 크로스 도메인 요청을 허용
-                    configuration.addExposedHeader("AccessToken");  // 프론트에서 헤더 볼 수 있도록 허용
-                    configuration.addExposedHeader("RefreshToken");  // 프론트에서 헤더 볼 수 있도록 허용
+                    configuration.addExposedHeader("Accesstoken");  // 프론트에서 헤더 볼 수 있도록 허용
+                    configuration.addExposedHeader("Refreshtoken");  // 프론트에서 헤더 볼 수 있도록 허용
                     return configuration;
                 }));
 
