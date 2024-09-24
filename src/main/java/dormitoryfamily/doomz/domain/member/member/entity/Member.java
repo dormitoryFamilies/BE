@@ -22,9 +22,6 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
-    private Lifestyle lifeStyle;
-
     private String name;
     private String nickname;
     private String studentNumber;

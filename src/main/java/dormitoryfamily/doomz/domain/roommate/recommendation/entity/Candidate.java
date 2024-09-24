@@ -24,7 +24,7 @@ public class Candidate {
     @JoinColumn(name = "recommendation_id")
     private Recommendation recommendation;
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "candidate_member_id")
     private Member candidateMember;
 

@@ -12,12 +12,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query("SELECT n FROM Notification n " +
+    @Query(value = "SELECT n FROM Notification n " +
+            "JOIN FETCH n.sender " +
             "WHERE n.receiver = :receiver " +
-            "ORDER BY n.isRead ASC, n.createdAt DESC")
+            "ORDER BY n.isRead ASC, n.createdAt DESC",
+            countQuery = "SELECT COUNT(n) FROM Notification n WHERE n.receiver = :receiver")
     Page<Notification> findAllByReceiver(@Param("receiver") Member receiver, Pageable pageable);
 
     @Query("SELECT COUNT(n) > 0 FROM Notification n " +
@@ -38,4 +41,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             @Param("targetId") Long targetId,
             @Param("receiverId") Long receiverId
     );
+
+
+    List<Notification> findByReceiver(@Param("receiver") Member receiver);
+
+    @Modifying(flushAutomatically = true)
+    @Query("UPDATE Notification n SET n.isRead = true WHERE n.id IN :ids")
+    void updateNotificationAsRead(@Param("ids") List<Long> ids);
 }

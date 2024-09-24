@@ -12,7 +12,6 @@ import dormitoryfamily.doomz.domain.board.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.board.article.exception.*;
 import dormitoryfamily.doomz.domain.board.article.repository.ArticleImageRepository;
 import dormitoryfamily.doomz.domain.board.article.repository.ArticleRepository;
-import dormitoryfamily.doomz.domain.board.article.service.ArticleService;
 import dormitoryfamily.doomz.domain.board.wish.repository.ArticleWishRepository;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.InvalidMemberAccessException;
@@ -155,12 +154,7 @@ class ArticleServiceTest {
             Long articleId = 1L;
             Article article = articles.get(0);
 
-            List<String> articleImageUrls = articleImages.stream()
-                    .map(ArticleImage::getImageUrl)
-                    .toList();
-
             when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-            when(articleImageRepository.findByArticleId(articleId)).thenReturn(articleImages);
             when(wishRepository.existsByMemberIdAndArticleId(principalDetails.getMember().getId(), articleId)).thenReturn(false);
 
             //when
@@ -174,7 +168,6 @@ class ArticleServiceTest {
             assertThat(responseDto.title()).isEqualTo(article.getTitle());
             assertThat(responseDto.content()).isEqualTo(article.getContent());
             assertThat(responseDto.tags()).isEqualTo(article.getTags());
-            assertThat(responseDto.imagesUrls()).isEqualTo(articleImageUrls);
         }
 
         @Test
@@ -185,7 +178,6 @@ class ArticleServiceTest {
             Article article = articles.get(0);
 
             when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-            when(articleImageRepository.findByArticleId(articleId)).thenReturn(articleImages);
             when(wishRepository.existsByMemberIdAndArticleId(principalDetails.getMember().getId(), articleId)).thenReturn(false);
 
             //when
@@ -203,7 +195,6 @@ class ArticleServiceTest {
             Article article = articles.get(1);
 
             when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
-            when(articleImageRepository.findByArticleId(articleId)).thenReturn(articleImages);
             when(wishRepository.existsByMemberIdAndArticleId(principalDetails.getMember().getId(), articleId)).thenReturn(false);
 
             //when
@@ -346,7 +337,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -373,7 +364,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -400,7 +391,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -427,7 +418,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -454,7 +445,7 @@ class ArticleServiceTest {
                     newTags, // 태그 수정
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -485,7 +476,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     imagesUrls // 이미지 수정
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.updateArticle(principalDetails, articleId, requestDto);
@@ -510,7 +501,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
 
             //when
             //then
@@ -534,7 +525,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -559,7 +550,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -584,7 +575,7 @@ class ArticleServiceTest {
                     target.getTags(),
                     target.getArticleImages().stream().map(ArticleImage::getImageUrl).collect(Collectors.toList())
             );
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -607,7 +598,7 @@ class ArticleServiceTest {
             StatusType oldStatus = target.getStatus();
             String newStatus = "모집완료";
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.changeStatus(principalDetails, articleId, newStatus);
@@ -624,7 +615,7 @@ class ArticleServiceTest {
             Long articleId = 100L;
             String newStatus = "모집완료";
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
 
             //when
             //then
@@ -641,7 +632,7 @@ class ArticleServiceTest {
             Article target = articles.get(1);
             String newStatus = "모집완료";
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -658,7 +649,7 @@ class ArticleServiceTest {
             Article target = articles.get(0);
             String wrongStatus = "에러상태";
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -675,7 +666,7 @@ class ArticleServiceTest {
             Article target = articles.get(0);
             String newStatus = target.getStatus().getDescription();
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then
@@ -696,7 +687,7 @@ class ArticleServiceTest {
             Long articleId = 1L;
             Article target = articles.get(0);
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             articleService.deleteArticle(principalDetails, articleId);
@@ -711,7 +702,7 @@ class ArticleServiceTest {
             //given
             Long articleId = 100L;
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.empty()); // Optional.empty() 반환
 
             //when
             //then
@@ -727,7 +718,7 @@ class ArticleServiceTest {
             Long articleId = 2L;
             Article target = articles.get(1);
 
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(target));
+            when(articleRepository.findByIdWithoutFetch(articleId)).thenReturn(Optional.of(target));
 
             //when
             //then

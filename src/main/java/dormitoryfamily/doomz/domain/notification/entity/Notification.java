@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 
+import static jakarta.persistence.FetchType.*;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Getter
@@ -21,12 +22,12 @@ public class Notification extends BaseTimeEntity {
     @Column(name = "notification_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "receiver_id")
     @OnDelete(action = CASCADE)
     private Member receiver;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "sender_id")
     @OnDelete(action = CASCADE)
     private Member sender;
