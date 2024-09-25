@@ -1,10 +1,10 @@
 package dormitoryfamily.doomz.domain.board.article.entity;
 
+import dormitoryfamily.doomz.domain.board.article.dto.request.ArticleRequestDto;
+import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.board.article.entity.type.BoardType;
 import dormitoryfamily.doomz.domain.board.article.entity.type.StatusType;
 import dormitoryfamily.doomz.domain.board.article.exception.StatusAlreadySetException;
-import dormitoryfamily.doomz.domain.board.article.dto.request.ArticleRequestDto;
-import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.board.comment.entity.Comment;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
@@ -13,15 +13,18 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 public class Article extends BaseTimeEntity {
 
     @Id
@@ -33,10 +36,10 @@ public class Article extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = REMOVE)
     private List<ArticleImage> articleImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     @Column(nullable = false)

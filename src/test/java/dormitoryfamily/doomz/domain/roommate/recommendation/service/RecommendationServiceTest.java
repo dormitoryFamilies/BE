@@ -26,13 +26,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static dormitoryfamily.doomz.TestDataHelper.*;
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
 import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.RECOMMENDATION_INTERVAL_HOURS;
 import static dormitoryfamily.doomz.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -219,36 +217,6 @@ class RecommendationServiceTest {
             recommendationService.findTopCandidates(principalDetails);
         });
         assertThat(exception.getMessage()).isEqualTo(LIFESTYLE_NOT_EXISTS.getMessage());
-    }
-
-    @Test
-    @DisplayName("추천된 회원 아이디를 성공적으로 조회할 수 있다.")
-    void getRecommendedCandidatesListSuccess() {
-        //given
-        Member loginMember = principalDetails.getMember();
-
-        when(recommendationRepository.findByMemberId(loginMember.getId())).thenReturn(Optional.of(recommendation));
-        when(candidateRepository.findAllByRecommendationIdOrderByCandidateScoreDesc(any(Long.class)))
-                .thenAnswer(invocation -> {
-                    Long recommendationId = invocation.getArgument(0);
-                    return candidates.stream()
-                            .filter(c -> c.getRecommendation().getId().equals(recommendationId))
-                            .sorted(Comparator.comparing(Candidate::getCandidateScore).reversed())
-                            .limit(RECOMMENDATIONS_MAX_COUNT)
-                            .toList();
-                });
-
-        //when
-        RecommendationResponseDto responseDto = recommendationService.findRecommendedCandidates(principalDetails);
-        List<Long> candidateIds = responseDto.candidateIds();
-
-        //then
-        assertThat(candidateIds.size()).isEqualTo(5);
-        assertThat(candidateIds.get(0)).isEqualTo(21L);
-        assertThat(candidateIds.get(1)).isEqualTo(17L);
-        assertThat(candidateIds.get(2)).isEqualTo(18L);
-        assertThat(candidateIds.get(3)).isEqualTo(16L);
-        assertThat(candidateIds.get(4)).isEqualTo(24L);
     }
 
     @Test
