@@ -49,7 +49,7 @@ jobs:
           cp ./scripts/*.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           cp ./.env ./deploy/
-          zip -r -qq -j ./dormitory-family-build.zip ./deploy
+          zip -r -qq -j ./doomz-build.zip ./deploy
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -62,11 +62,11 @@ jobs:
         run: |
           aws s3 cp \
             --region ap-northeast-2 \
-            ./dormitory-family-build.zip s3://dormitory-family-deploy
+            ./doomz-build.zip s3://doomz-deploy
             
       - name: Code Deploy
         run: >
-         aws deploy create-deployment --application-name dormitory-family-codedeploy
+         aws deploy create-deployment --application-name doomz-codedploy-app
          --deployment-config-name CodeDeployDefault.AllAtOnce
-         --deployment-group-name dormitory-family-deploy-group
-         --s3-location bucket=dormitory-family-deploy,bundleType=zip,key=dormitory-family-build.zip
+         --deployment-group-name doomz-codedeploy-group
+         --s3-location bucket=doomz-deploy,bundleType=zip,key=doomz-build.zip
