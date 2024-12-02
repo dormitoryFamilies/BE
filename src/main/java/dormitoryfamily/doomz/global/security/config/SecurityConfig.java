@@ -41,7 +41,7 @@ public class SecurityConfig {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.applyPermitDefaultValues();
                     configuration.addAllowedOriginPattern("");
-                    configuration.addAllowedOriginPattern("http://localhost:3000");
+                    configuration.addAllowedOriginPattern("http://localhost:3001");
                     configuration.addAllowedOriginPattern("https://apic.app");  //채팅 테스트를 위해 허용
                     configuration.addAllowedOriginPattern("http://43.202.254.127:8080/");
                     configuration.setAllowedMethods(
