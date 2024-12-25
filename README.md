@@ -2,7 +2,7 @@
   <img width="110px;" src="https://github.com/user-attachments/assets/3e4d62d6-052a-490d-a160-ef32d9c22388"/>
 </p>
 <h1 align="middle">✨ Doomz ✨
-<h3 align="middle">"나와 맞는 룸메이트, 행복한 기숙사 생활 - Dormitory Family"</h3>
+<h3 align="middle">"나와 맞는 룸메이트, 행복한 기숙사 생활 - Doomz"</h3>
 
 <br>
 
@@ -12,7 +12,7 @@
 
 ![Screen Shot 2024-08-24 at 1 10 52 AM](https://github.com/user-attachments/assets/34af4ef0-b6f3-44e1-9cb1-509e52e87b4f)
 
-기숙사 식구들은 충북대학교 재학생을 위한 기숙사 룸메이트 매칭 추천 애플리케이션입니다. 
+Doomz는 충북대학교 재학생을 위한 기숙사 룸메이트 매칭 추천 애플리케이션입니다. 
 
 저희는 생활 패턴, 취향, 선호 우선순위를 종합적으로 고려해 가장 적합한 룸메이트 인원을 추천합니다.  
 이를 통해 충북대학교 재학생들이 편안하고 행복한 대학 생활을 할 수 있도록 돕고자 합니다.
