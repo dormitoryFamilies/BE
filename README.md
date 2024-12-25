@@ -1,7 +1,7 @@
 <p align="middle" >
   <img width="110px;" src="https://github.com/user-attachments/assets/3e4d62d6-052a-490d-a160-ef32d9c22388"/>
 </p>
-<h1 align="middle">✨ 기숙사 식구들 ✨
+<h1 align="middle">✨ Doomz ✨
 <h3 align="middle">"나와 맞는 룸메이트, 행복한 기숙사 생활 - Dormitory Family"</h3>
 
 <br>
