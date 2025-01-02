@@ -41,11 +41,11 @@ public class ChatRoomController {
     }
 
     @GetMapping("/members/{memberId}")
-    public ResponseEntity<ResponseDto<ChatRoomIdResponseDto>> findChatRoomByMember(
+    public ResponseEntity<ResponseDto<ChatRoomEntryResponseDto>> findChatRoomByMember(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        ChatRoomIdResponseDto responseDto = chatRoomService.findChatRoomByMember(memberId, principalDetails);
+        ChatRoomEntryResponseDto responseDto = chatRoomService.findChatRoomByMember(memberId, principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 

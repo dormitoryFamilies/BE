@@ -303,13 +303,13 @@ public class ChatRoomService {
         return ChatRoomListResponseDto.from(chatRooms, chatRoomDtos);
     }
 
-    public ChatRoomIdResponseDto findChatRoomByMember(Long memberId, PrincipalDetails principalDetails) {
+    public ChatRoomEntryResponseDto findChatRoomByMember(Long memberId, PrincipalDetails principalDetails) {
         Member logInMember = principalDetails.getMember();
         Member chatMember = getMemberById(memberId);
 
         ChatRoom chatRoom = chatRoomRepository.findByInitiatorAndParticipant(logInMember, chatMember)
                 .orElseThrow(MemberChatRoomNotExistsException::new);
 
-        return ChatRoomIdResponseDto.fromEntity(chatRoom);
+        return ChatRoomEntryResponseDto.fromEntity(chatRoom);
     }
 }
