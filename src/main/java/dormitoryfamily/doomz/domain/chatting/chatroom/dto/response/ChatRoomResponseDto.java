@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public record ChatRoomResponseDto (
 
         Long roomId,
+        String roomUUID,
         Long memberId,
         String memberNickname,
         String memberProfileUrl,
@@ -26,6 +27,7 @@ public record ChatRoomResponseDto (
 
                 return new ChatRoomResponseDto(
                         chatRoom.getId(),
+                        chatRoom.getRoomUUID(),
                         member.getId(),
                         member.getNickname(),
                         member.getProfileUrl(),
