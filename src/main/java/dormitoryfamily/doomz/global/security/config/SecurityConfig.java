@@ -42,7 +42,7 @@ public class SecurityConfig {
                     configuration.applyPermitDefaultValues();
                     configuration.addAllowedOriginPattern("");
                     configuration.addAllowedOriginPattern("http://localhost:3001");
-                    configuration.addAllowedOriginPattern("https://apic.app");  //채팅 테스트를 위해 허용
+                    configuration.addAllowedOriginPattern("http://34.64.76.111/");
                     configuration.addAllowedOriginPattern("http://43.202.254.127:8080/");
                     configuration.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"));
