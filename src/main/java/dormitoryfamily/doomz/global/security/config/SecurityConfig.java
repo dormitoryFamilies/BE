@@ -72,7 +72,7 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/reissue", "/api/logout", "/api/login").permitAll()
+                .requestMatchers("/api/reissue", "/api/logout", "/api/login", "api/members/me/authorities").permitAll()
                 .requestMatchers("/", "/stomp/**").permitAll()
                 .requestMatchers("/api/my/authorities").permitAll() //개발용으로 설정함. 삭제 예정
                 .requestMatchers("/api/images").hasAnyRole("VISITOR", "REJECTED_MEMBER")

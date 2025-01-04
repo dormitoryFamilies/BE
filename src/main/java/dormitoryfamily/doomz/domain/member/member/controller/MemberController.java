@@ -10,10 +10,12 @@ import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -155,6 +157,14 @@ public class MemberController {
     ) {
         memberService.rejectStudentCard(memberId);
         return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @GetMapping("/members/me/authorities")
+    public ResponseEntity<ResponseDto<Collection<? extends GrantedAuthority>>> getMyAuthority(
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        Collection<? extends GrantedAuthority> authorities = principalDetails.getAuthorities();
+        return ResponseEntity.ok(ResponseDto.okWithData(authorities));
     }
 
     /**
