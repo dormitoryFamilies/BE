@@ -11,6 +11,7 @@ import dormitoryfamily.doomz.global.util.ResponseDto;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/chats")
 public class ChatController {
@@ -32,8 +34,11 @@ public class ChatController {
         // 채팅 메시지 유효성 검사
         chatService.validateChat(chatMessage);
 
-        // 채팅방에 참여
-        chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
+        try{
+            chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
+        }catch (Exception e){
+            log.error("Error occurred while processing chat message: {}", chatMessage, e);
+        }
 
         // 채팅 메시지 발행
         redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);

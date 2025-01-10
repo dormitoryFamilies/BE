@@ -26,3 +26,14 @@ cloud:
       secretKey: ${AWS_S3_SECRET_KEY}
     region:
       static: ${AWS_S3_REGION}
+
+  messaging:
+    client:
+      inbound-executor:
+        core-pool-size: 10
+        max-pool-size: 100
+        queue-capacity: 500
+      outbound-executor:
+        core-pool-size: 10
+        max-pool-size: 100
+        queue-capacity: 500
