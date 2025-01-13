@@ -43,8 +43,9 @@ public class SecurityConfig {
                     configuration.addAllowedOriginPattern("");
                     configuration.addAllowedOriginPattern("http://localhost:3001");
                     configuration.addAllowedOriginPattern("http://localhost:3000");
+                    configuration.addAllowedOriginPattern("http://localhost:5500/");
                     configuration.addAllowedOriginPattern("http://34.64.76.111/");
-                    configuration.addAllowedOriginPattern("http://43.202.254.127:8080/");
+                    configuration.addAllowedOriginPattern("http://13.124.186.20:8080/");
                     configuration.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"));
 
