@@ -1,5 +1,8 @@
 package dormitoryfamily.doomz.global.oauth2.controller;
 
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.HEADER_STRING_ACCESS;
+import static dormitoryfamily.doomz.global.jwt.JWTProperties.HEADER_STRING_REFRESH;
+
 import dormitoryfamily.doomz.global.oauth2.dto.AccessTokenRequestDto;
 import dormitoryfamily.doomz.global.oauth2.dto.JwtResponseDto;
 import dormitoryfamily.doomz.global.oauth2.service.UserKakaoService;
@@ -25,8 +28,8 @@ public class UserKakaoController {
     ) {
         JwtResponseDto responseDto = UserKakaoService.getJWTAccessToken(request.accessToken());
         return ResponseEntity.status(HttpStatus.OK)
-                .header("accessToken", responseDto.accessToken())
-                .header("refreshToken", responseDto.refreshToken())
+                .header(HEADER_STRING_ACCESS, responseDto.accessToken())
+                .header(HEADER_STRING_REFRESH, responseDto.refreshToken())
                 .body(ResponseDto.ok());
     }
 }

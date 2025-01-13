@@ -43,7 +43,7 @@ public class SecurityConfig {
                     configuration.addAllowedOriginPattern("");
                     configuration.addAllowedOriginPattern("http://localhost:3001");
                     configuration.addAllowedOriginPattern("http://localhost:3000");
-                    configuration.addAllowedOriginPattern("http://localhost:5500/");
+                    configuration.addAllowedOriginPattern("http://127.0.0.1:5500/");
                     configuration.addAllowedOriginPattern("http://34.64.76.111/");
                     configuration.addAllowedOriginPattern("http://13.124.186.20:8080/");
                     configuration.setAllowedMethods(
@@ -51,8 +51,8 @@ public class SecurityConfig {
 
                     // 다른 도메인도 필요에 따라 추가
                     configuration.setAllowCredentials(true); // 쿠키를 포함한 크로스 도메인 요청을 허용
-                    configuration.addExposedHeader("Accesstoken");  // 프론트에서 헤더 볼 수 있도록 허용
-                    configuration.addExposedHeader("Refreshtoken");  // 프론트에서 헤더 볼 수 있도록 허용
+                    configuration.addExposedHeader(HEADER_STRING_ACCESS);  // 프론트에서 헤더 볼 수 있도록 허용
+                    configuration.addExposedHeader(HEADER_STRING_REFRESH);  // 프론트에서 헤더 볼 수 있도록 허용
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
                     return configuration;
                 }));
