@@ -131,7 +131,7 @@ public enum ErrorCode {
     NOTIFICATION_NOT_EXISTS(NOT_FOUND, "해당 알림은 존재하지 않습니다."),
     ALREADY_READ_NOTIFICATION(CONFLICT, "해당 알림은 이미 읽음 처리가 되어 있습니다."),
     NOT_MY_NOTIFICATION(BAD_REQUEST, "본인 알림이 아닙니다."),
-    MENU_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "식단 정보가 존재하지 않습니다."),
+    MENU_NOT_FOUND(NOT_FOUND, "식단 정보가 존재하지 않습니다."),
     JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱 에러가 발생했습니다."),
 
     // 5xx
