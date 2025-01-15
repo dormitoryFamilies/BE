@@ -8,27 +8,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dormitoryfamily.doomz.domain.menu.dto.MenuDto;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
-import dormitoryfamily.doomz.global.scheduler.MealScheduler;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MenuService {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
-    private static final Logger logger = LoggerFactory.getLogger(MealScheduler.class);
 
     public List<MenuDto> getMenuByDormType(String dormType) {
         String key = "menu:" + dormType;
@@ -45,28 +47,40 @@ public class MenuService {
         }
     }
 
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updateMenus() {
-
         try {
-            // 기존 기숙사 식단 데이터 삭제
-            deleteByPattern("menu:*");
+
+            Map<String, List<MenuDto>> newData = new HashMap<>();
 
             String[] urls = {
                     "https://dorm.chungbuk.ac.kr/home/sub.php?menukey=20041&type=1",
                     "https://dorm.chungbuk.ac.kr/home/sub.php?menukey=20041&type=2",
                     "https://dorm.chungbuk.ac.kr/home/sub.php?menukey=20041&type=3"
             };
-            String[] dormTypes = new String[]{
-                    MAIN_BUILDING.getName(), FEMALE_DORMITORY.getName(), MALE_DORMITORY.getName()};
 
+            String[] dormTypes = new String[]{
+                    MAIN_BUILDING.getName(), // 본관
+                    FEMALE_DORMITORY.getName(), //양성재
+                    MALE_DORMITORY.getName() // 양진재
+            };
+
+            // 모든 데이터를 크롤링하여 임시로 저장
             for (int i = 0; i < urls.length; i++) {
                 List<MenuDto> menuList = fetchMenu(urls[i]);
-                save("menu:" + dormTypes[i], menuList);
+                newData.put("menu:" + dormTypes[i], menuList);
             }
 
-            logger.info("Menu update job completed successfully!");
+            // 데이터 삭제 및 새로운 데이터 저장
+            deleteByPattern("menu:*");
+            for (Map.Entry<String, List<MenuDto>> entry : newData.entrySet()) {
+                save(entry.getKey(), entry.getValue());
+            }
+
+            log.info("Menu update job completed successfully!");
         } catch (Exception e) {
-            logger.error("Error occurred during menu update job", e);
+            // 실패 시 로그 출력 및 기존 데이터 유지
+            log.error("Error occurred during menu update job. Existing data remains intact.", e);
         }
     }
 
@@ -74,14 +88,20 @@ public class MenuService {
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys);
-            logger.info("Deleted keys: {}", keys);
+            log.info("Deleted keys: {}", keys);
         } else {
-            logger.info("No keys found for pattern: {}", pattern);
+            log.info("No keys found for pattern: {}", pattern);
         }
     }
 
-    private List<MenuDto> fetchMenu(String url) throws Exception {
-        Document doc = Jsoup.connect(url).get();
+    private List<MenuDto> fetchMenu(String url) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).get();
+        } catch (IOException e) {
+            throw new ApplicationException(ErrorCode.MENU_FETCH_ERROR);
+        }
+
         Elements rows = doc.select("table.contTable_c tbody tr");
 
         List<MenuDto> menuList = new ArrayList<>();
@@ -119,6 +139,6 @@ public class MenuService {
     private void save(String key, List<MenuDto> menuList) throws Exception {
         String jsonValue = objectMapper.writeValueAsString(menuList);
         redisTemplate.opsForValue().set(key, jsonValue);
-        logger.info("Saved menu to Redis with key: {}", key);
+        log.info("Saved menu to Redis with key: {}", key);
     }
 }

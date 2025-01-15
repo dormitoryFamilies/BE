@@ -133,6 +133,7 @@ public enum ErrorCode {
     NOT_MY_NOTIFICATION(BAD_REQUEST, "본인 알림이 아닙니다."),
     MENU_NOT_FOUND(NOT_FOUND, "식단 정보가 존재하지 않습니다."),
     JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "JSON 파싱 에러가 발생했습니다."),
+    MENU_FETCH_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"기숙사 식단 크롤링 url 연결에 실패했습니다." ),
 
     // 5xx
     INTERNAL_SERVER_ERROR(NOT_FOUND, "서버 내부 에러");
