@@ -5,6 +5,7 @@ import static dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDorm
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType;
 import dormitoryfamily.doomz.domain.menu.dto.MenuDto;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
@@ -33,11 +34,12 @@ public class MenuService {
     private final ObjectMapper objectMapper;
 
     public List<MenuDto> getMenuByDormType(String dormType) {
-        String key = "menu:" + dormType;
+        ArticleDormitoryType articleDormitoryType = fromName(dormType);
+        String key = "menu:" + articleDormitoryType.getName();
         String jsonValue = redisTemplate.opsForValue().get(key);
 
         if (jsonValue == null) {
-            throw new ApplicationException(ErrorCode.MENU_NOT_FOUND);
+            updateMenus();
         }
 
         try {
@@ -47,7 +49,7 @@ public class MenuService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void updateMenus() {
         try {
 
