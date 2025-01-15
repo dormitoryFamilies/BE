@@ -69,6 +69,10 @@ dependencies {
 
 	//jackson-datatype-jsr310
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+
+	// jsoup HTML parser library @ https://jsoup.org/
+	implementation 'org.jsoup:jsoup:1.18.3'
+
 }
 
 tasks.named('test') {
