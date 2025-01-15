@@ -1,9 +1,11 @@
-package dormitoryfamily.doomz.domain.meal.service;
+package dormitoryfamily.doomz.domain.menu.service;
+
+import static dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryType.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dormitoryfamily.doomz.domain.meal.dto.MenuDto;
+import dormitoryfamily.doomz.domain.menu.dto.MenuDto;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
 import dormitoryfamily.doomz.global.scheduler.MealScheduler;
@@ -28,7 +30,7 @@ public class MenuService {
     private final ObjectMapper objectMapper;
     private static final Logger logger = LoggerFactory.getLogger(MealScheduler.class);
 
-    public List<MenuDto> getMenuByDormType(String dormType)  {
+    public List<MenuDto> getMenuByDormType(String dormType) {
         String key = "menu:" + dormType;
         String jsonValue = redisTemplate.opsForValue().get(key);
 
@@ -36,7 +38,7 @@ public class MenuService {
             throw new ApplicationException(ErrorCode.MENU_NOT_FOUND);
         }
 
-        try{
+        try {
             return objectMapper.readValue(jsonValue, new TypeReference<List<MenuDto>>() {});
         } catch (JsonProcessingException e) {
             throw new ApplicationException(ErrorCode.JSON_PARSING_ERROR);
@@ -54,7 +56,8 @@ public class MenuService {
                     "https://dorm.chungbuk.ac.kr/home/sub.php?menukey=20041&type=2",
                     "https://dorm.chungbuk.ac.kr/home/sub.php?menukey=20041&type=3"
             };
-            String[] dormTypes = {"본관", "양성재", "양진재"};
+            String[] dormTypes = new String[]{
+                    MAIN_BUILDING.getName(), FEMALE_DORMITORY.getName(), MALE_DORMITORY.getName()};
 
             for (int i = 0; i < urls.length; i++) {
                 List<MenuDto> menuList = fetchMenu(urls[i]);
@@ -83,18 +86,34 @@ public class MenuService {
 
         List<MenuDto> menuList = new ArrayList<>();
         for (Element row : rows) {
-            String day = row.select("td.foodday").text();
-            String morning = row.select("td.morning").text();
-            String lunch = row.select("td.lunch").text();
-            String dinner = row.select("td.evening").text();
+            String dayWithWeekday = row.select("td.foodday").text(); // 예: 월요일 2025-01-13
+            String[] dayParts = dayWithWeekday.split(" ", 2);
+            String weekday = dayParts[0]; // 예: 월요일
+            String day = dayParts.length > 1 ? dayParts[1] : ""; // 예: 2025-01-13
+
+            // 각 식사 데이터
+            MenuDto.Meal morning = extractMeal(row.select("td.morning").text());
+            MenuDto.Meal lunch = extractMeal(row.select("td.lunch").text());
+            MenuDto.Meal dinner = extractMeal(row.select("td.evening").text());
 
             // 빈 값인 경우 추가하지 않음
-            if (!day.isBlank() || !morning.isBlank() || !lunch.isBlank() || !dinner.isBlank()) {
-                menuList.add(new MenuDto(day, morning, lunch, dinner));
+            if (!day.isBlank() || morning != null || lunch != null || dinner != null) {
+                menuList.add(new MenuDto(day, weekday, morning, lunch, dinner));
             }
         }
 
         return menuList;
+    }
+
+    private MenuDto.Meal extractMeal(String rawText) {
+        if (rawText.isBlank()) {
+            return null;
+        }
+        String[] parts = rawText.split(" 에너지:");
+        String menu = parts[0].trim(); // 메뉴
+        String energy = parts.length > 1 ? parts[1].split(" 단백질:")[0].trim() : ""; // 에너지
+        String protein = parts.length > 1 && parts[1].contains("단백질:") ? parts[1].split("단백질:")[1].trim() : ""; // 단백질
+        return new MenuDto.Meal(menu, energy, protein);
     }
 
     private void save(String key, List<MenuDto> menuList) throws Exception {

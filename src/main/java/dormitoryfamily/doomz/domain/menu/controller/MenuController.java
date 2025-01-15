@@ -1,7 +1,7 @@
-package dormitoryfamily.doomz.domain.meal.controller;
+package dormitoryfamily.doomz.domain.menu.controller;
 
-import dormitoryfamily.doomz.domain.meal.dto.MenuDto;
-import dormitoryfamily.doomz.domain.meal.service.MenuService;;
+import dormitoryfamily.doomz.domain.menu.dto.MenuDto;
+import dormitoryfamily.doomz.domain.menu.service.MenuService;;
 import dormitoryfamily.doomz.global.util.ResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

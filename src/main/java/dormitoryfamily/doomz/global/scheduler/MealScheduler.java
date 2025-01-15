@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.global.scheduler;
 
-import dormitoryfamily.doomz.domain.meal.service.MenuService;
+import dormitoryfamily.doomz.domain.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
