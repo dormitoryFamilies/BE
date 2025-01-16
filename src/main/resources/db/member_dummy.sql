@@ -1,4 +1,4 @@
-USE dormitoryfamily;
+USE doomz;
 ALTER TABLE member MODIFY dormitory_type VARCHAR(100);
 INSERT INTO member (name, nickname, profile_url, student_card_image_url, birth_date, follower_count, following_count,
                      created_at, student_number, college_type, department_type, dormitory_type, gender_type, authority,
