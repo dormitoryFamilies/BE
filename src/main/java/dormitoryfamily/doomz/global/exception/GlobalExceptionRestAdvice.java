@@ -40,14 +40,14 @@ public class GlobalExceptionRestAdvice {
     public ResponseEntity<ResponseDto<Void>> handleDbException(DataAccessException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResponseDto.errorWithMessage(HttpStatus.INTERNAL_SERVER_ERROR, "DB 에러!" + e.getMessage()));
+                .body(ResponseDto.errorWithMessage(HttpStatus.INTERNAL_SERVER_ERROR, "DB 에러 " + e.getMessage()));
     }
 
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> handleServerException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResponseDto.errorWithMessage(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러!" + e.getMessage()));
+                .body(ResponseDto.errorWithMessage(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러 " + e.getMessage()));
     }
 
     //@Validate 검증 예외 처리
