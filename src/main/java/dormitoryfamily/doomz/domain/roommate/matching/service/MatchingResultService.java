@@ -6,8 +6,6 @@ import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.roommate.matching.event.result.MatchingResultEvent;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
-import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingInterruptException;
-import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingLockException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MemberDormitoryMismatchException;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
@@ -15,10 +13,10 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -38,66 +36,41 @@ public class MatchingResultService {
 
     @Transactional
     public void saveMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = getMemberById(principalDetails.getMember().getId());
-        Member targetMember = getMemberById(memberId);
+        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+        Member loginMember = members.getFirst();
+        Member targetMember = members.getSecond();
 
-        // 두 회원에 대한 락 획득
-        ReentrantLock lock1 = getLockForMember(loginMember.getId());
-        ReentrantLock lock2 = getLockForMember(targetMember.getId());
-
-        // 데드락 방지를 위해 ID 순서대로 락 획득
-        ReentrantLock firstLock = loginMember.getId() < targetMember.getId() ? lock1 : lock2;
-        ReentrantLock secondLock = loginMember.getId() < targetMember.getId() ? lock2 : lock1;
-
-        boolean firstLockAcquired = false;
-        boolean secondLockAcquired = false;
-
-        try {
-            // 5초 타임아웃으로 첫 번째 락 획득 시도
-            firstLockAcquired = firstLock.tryLock(5, TimeUnit.SECONDS);
-            if (!firstLockAcquired) {
-                throw new MatchingLockException();
-            }
-
-            // 3초 타임아웃으로 두 번째 락 획득 시도
-            secondLockAcquired = secondLock.tryLock(3, TimeUnit.SECONDS);
-            if (!secondLockAcquired) {
-                throw new MatchingLockException();
-            }
-
-            // 락 획득 후 매칭 로직 실행
-            validateMatchingCapability(loginMember, targetMember);
-            MatchingResult matchingResult = MatchingResult.createMatchingResult(loginMember, targetMember);
-            matchingResultRepository.save(matchingResult);
-            updateMemberMatchingStatus(loginMember, targetMember);
-            matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
-            notifyMatchingResultInfo(matchingResult);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new MatchingInterruptException();
-        } finally {
-            // 락 해제 (획득한 순서 반대로)
-            if (secondLockAcquired) {
-                secondLock.unlock();
-            }
-            if (firstLockAcquired) {
-                firstLock.unlock();
-            }
-        }
+        validateMatchingCapability(loginMember, targetMember);
+        MatchingResult matchingResult = MatchingResult.createMatchingResult(loginMember, targetMember);
+        matchingResultRepository.save(matchingResult);
+        updateMemberMatchingStatus(loginMember, targetMember);
+        matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
+        notifyMatchingResultInfo(matchingResult);
     }
 
-    private ReentrantLock getLockForMember(Long memberId) {
-        return memberLocks.computeIfAbsent(memberId, k -> new ReentrantLock());
+    public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
+        Long loginMemberId = principalDetails.getMember().getId();
+
+        // ID 정렬 (데드락 방지)
+        Long firstId = Math.min(loginMemberId, memberId);
+        Long secondId = Math.max(loginMemberId, memberId);
+
+        // 비관적 락으로 조회
+        Member firstMember = memberRepository.findByIdWithPessimisticLock(firstId)
+                .orElseThrow(MemberNotExistsException::new);
+
+        Member secondMember = memberRepository.findByIdWithPessimisticLock(secondId)
+                .orElseThrow(MemberNotExistsException::new);
+
+        // 정확한 loginMember, targetMember 할당
+        Member loginMember = (firstMember.getId().equals(loginMemberId)) ? firstMember : secondMember;
+        Member targetMember = (firstMember.getId().equals(loginMemberId)) ? secondMember : firstMember;
+
+        return Pair.of(loginMember, targetMember);
     }
 
     private void notifyMatchingResultInfo(MatchingResult matchingResult) {
         eventPublisher.publishEvent(new MatchingResultEvent(matchingResult, MATCHING_ACCEPT));
-    }
-
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(MemberNotExistsException::new);
     }
 
     private void validateMatchingCapability(Member loginMember, Member targetMember){
@@ -123,8 +96,9 @@ public class MatchingResultService {
     }
 
     public void cancelMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = getMemberById(principalDetails.getMember().getId());
-        Member targetMember = getMemberById(memberId);
+        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+        Member loginMember = members.getFirst();
+        Member targetMember = members.getSecond();
 
         MatchingResult matchingResult = getMatchingResultByMembers(loginMember, targetMember);
         matchingResultRepository.delete(matchingResult);

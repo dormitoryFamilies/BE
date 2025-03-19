@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +38,9 @@ public class MatchingRequestService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void saveMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = principalDetails.getMember();
-        Member targetMember = getMemberById(memberId);
+        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+        Member loginMember = members.getFirst();
+        Member targetMember = members.getSecond();
 
         validateMatchingRequestCapability(loginMember, targetMember);
 
@@ -48,13 +50,29 @@ public class MatchingRequestService {
         notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
     }
 
-    private void notifyMatchingRequestInfo(MatchingRequest matchingRequest, NotificationType notificationType) {
-        eventPublisher.publishEvent(new MatchingRequestEvent(matchingRequest, notificationType));
+    public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
+        Long loginMemberId = principalDetails.getMember().getId();
+
+        // ID 정렬 (데드락 방지)
+        Long firstId = Math.min(loginMemberId, memberId);
+        Long secondId = Math.max(loginMemberId, memberId);
+
+        // 비관적 락으로 조회
+        Member firstMember = memberRepository.findByIdWithPessimisticLock(firstId)
+                .orElseThrow(MemberNotExistsException::new);
+
+        Member secondMember = memberRepository.findByIdWithPessimisticLock(secondId)
+                .orElseThrow(MemberNotExistsException::new);
+
+        // 정확한 loginMember, targetMember 할당
+        Member loginMember = (firstMember.getId().equals(loginMemberId)) ? firstMember : secondMember;
+        Member targetMember = (firstMember.getId().equals(loginMemberId)) ? secondMember : firstMember;
+
+        return Pair.of(loginMember, targetMember);
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(MemberNotExistsException::new);
+    private void notifyMatchingRequestInfo(MatchingRequest matchingRequest, NotificationType notificationType) {
+        eventPublisher.publishEvent(new MatchingRequestEvent(matchingRequest, notificationType));
     }
 
     private void validateMatchingRequestCapability(Member loginMember, Member targetMember) {
@@ -89,8 +107,9 @@ public class MatchingRequestService {
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        Member loginMember = principalDetails.getMember();
-        Member targetMember = getMemberById(memberId);
+        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+        Member loginMember = members.getFirst();
+        Member targetMember = members.getSecond();
 
         MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
         matchingRequestRepository.delete(matchingRequest);

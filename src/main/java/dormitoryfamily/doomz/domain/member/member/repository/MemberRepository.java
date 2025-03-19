@@ -2,9 +2,11 @@ package dormitoryfamily.doomz.domain.member.member.repository;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.entity.type.RoleType;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,4 +42,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.authority = :authority WHERE m.id = :memberId")
     @Modifying
     void changeMyAuthority(@Param("authority") RoleType authority, @Param("memberId") Long memberId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT m FROM Member m WHERE m.id = :id")
+    Optional<Member> findByIdWithPessimisticLock(@Param("id") Long id);
 }
