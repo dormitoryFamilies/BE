@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.domain.board.article.repository;
 import dormitoryfamily.doomz.domain.board.article.entity.Article;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
@@ -15,4 +16,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, Article
 
     @Query("SELECT a FROM Article a WHERE a.id = :id")
     Optional<Article> findByIdWithoutFetch(Long id);
+
+
+    @Modifying
+    @Query("UPDATE Article f SET f.viewCount = f.viewCount + 1 WHERE f.id = :articleId")
+    void updateViewCount(Long articleId);
 }

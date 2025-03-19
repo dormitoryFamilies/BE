@@ -88,10 +88,6 @@ public class Article extends BaseTimeEntity {
         this.commentCount -= 1;
     }
 
-    public void plusViewCount() {
-        viewCount += 1;
-    }
-
     public void increaseWishCount(){
         this.wishCount += 1;
     }

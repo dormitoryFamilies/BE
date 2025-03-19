@@ -65,7 +65,7 @@ public class ArticleService {
         boolean isWished = checkIfArticleIsWished(article, loginMember);
         boolean isWriter = isWriter(loginMember, article.getMember());
 
-        article.plusViewCount();
+        articleRepository.updateViewCount(articleId);
         return ArticleResponseDto.fromEntity(loginMember, article, isWished, isWriter, article.getArticleImages());
     }
 
