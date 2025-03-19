@@ -9,18 +9,12 @@ import dormitoryfamily.doomz.domain.board.article.entity.type.ArticleDormitoryTy
 import dormitoryfamily.doomz.domain.menu.dto.MenuDto;
 import dormitoryfamily.doomz.global.exception.ApplicationException;
 import dormitoryfamily.doomz.global.exception.ErrorCode;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +25,7 @@ public class MenuService {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
+    private final MenuCrawler menuCrawler;
 
     /**
      * 기숙사 타입에 따른 메뉴 정보를 반환
@@ -77,7 +72,7 @@ public class MenuService {
         // 비동기 크롤링 실행
         for (int i = 0; i < urls.length; i++) {
             String key = "menu:" + dormTypes[i];
-            futureList.add(fetchMenuAsync(urls[i]).thenApply(menuList -> new AbstractMap.SimpleEntry<>(key, menuList)));
+            futureList.add(menuCrawler.fetchMenuAsync(urls[i]).thenApply(menuList -> new AbstractMap.SimpleEntry<>(key, menuList)));
         }
 
         // 모든 크롤링 완료될 때까지 대기
@@ -91,37 +86,6 @@ public class MenuService {
                     log.error("메뉴 업데이트 중 오류 발생!", e);
                     return null;
                 });
-    }
-
-    /**
-     * 비동기 크롤링 메서드
-     */
-    @Async
-    public CompletableFuture<List<MenuDto>> fetchMenuAsync(String url) {
-        try {
-            Document doc = Jsoup.connect(url).get();
-            Elements rows = doc.select("table.contTable_c tbody tr");
-
-            List<MenuDto> menuList = new ArrayList<>();
-            for (Element row : rows) {
-                String dayWithWeekday = row.select("td.foodday").text();
-                String[] dayParts = dayWithWeekday.split(" ", 2);
-                String weekday = dayParts[0];
-                String day = dayParts.length > 1 ? dayParts[1] : "";
-
-                MenuDto.Meal morning = extractMeal(row.select("td.morning").text());
-                MenuDto.Meal lunch = extractMeal(row.select("td.lunch").text());
-                MenuDto.Meal dinner = extractMeal(row.select("td.evening").text());
-
-                if (!day.isBlank() || morning != null || lunch != null || dinner != null) {
-                    menuList.add(new MenuDto(day, weekday, morning, lunch, dinner));
-                }
-            }
-            return CompletableFuture.completedFuture(menuList);
-        } catch (IOException e) {
-            log.error("크롤링 실패: {}", url, e);
-            return CompletableFuture.completedFuture(Collections.emptyList()); // 실패 시 빈 리스트 반환
-        }
     }
 
     /**
@@ -160,14 +124,4 @@ public class MenuService {
         }
     }
 
-    private MenuDto.Meal extractMeal(String rawText) {
-        if (rawText.isBlank()) {
-            return null;
-        }
-        String[] parts = rawText.split(" 에너지:");
-        String menu = parts[0].trim();
-        String energy = parts.length > 1 ? parts[1].split(" 단백질:")[0].trim() : "";
-        String protein = parts.length > 1 && parts[1].contains("단백질:") ? parts[1].split("단백질:")[1].trim() : "";
-        return new MenuDto.Meal(menu, energy, protein);
-    }
 }
