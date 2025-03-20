@@ -1,17 +1,14 @@
 version: '3'
-
 services:
   redis:
     container_name: redis
     image: "redis:latest"
     ports:
       - "6379:6379"
-      # 추후 volume 연결
     environment:
       TZ: "Asia/Seoul"
 
-  doomz:
-    container_name: doomz
+  spring-blue:
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,4 +17,21 @@ services:
     depends_on:
       - redis
     environment:
-      TZ: "Asia/Seoul"               
+      TZ: "Asia/Seoul"
+      SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - .env
+
+  spring-green:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    environment:
+      TZ: "Asia/Seoul"
+      SPRING_PROFILES_ACTIVE: prod
+    env_file:
+      - .env
