@@ -26,3 +26,10 @@ cloud:
       secretKey: ${AWS_S3_SECRET_KEY}
     region:
       static: ${AWS_S3_REGION}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /api/actuator
