@@ -76,6 +76,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/reissue", "/api/logout", "/api/login", "api/members/me/authorities").permitAll()
                 .requestMatchers("/", "/stomp/**").permitAll()
+                .requestMatchers("/api/actuator/**").permitAll()
                 .requestMatchers("/api/my/authorities").permitAll() //개발용으로 설정함. 삭제 예정
                 .requestMatchers("/api/images").hasAnyRole("VISITOR", "REJECTED_MEMBER")
                 .requestMatchers("/api/members/initial-profiles", "/api/members/check").hasAnyRole("VISITOR", "REJECTED_MEMBER")
