@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public enum SmokingType implements LifestyleAttribute {
 
-    NON_SMOKER("비흡연", 0),
-    SMOKER("흡연", 8);
+    NON_SMOKER("비흡연", 1),
+    SMOKER("흡연", 9);
 
     private final String description;
     private final int index;

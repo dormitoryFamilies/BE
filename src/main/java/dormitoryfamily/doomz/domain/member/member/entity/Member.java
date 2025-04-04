@@ -3,7 +3,6 @@ package dormitoryfamily.doomz.domain.member.member.entity;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MyProfileModifyRequestDto;
 import dormitoryfamily.doomz.domain.member.member.entity.type.*;
-import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -137,6 +136,8 @@ public class Member extends BaseTimeEntity {
         followingCount = 0;
         followerCount = 0;
         isRoommateMatched = false;
-        authority = RoleType.ROLE_VISITOR;
+        if(authority == null) {
+            authority = RoleType.ROLE_VISITOR;
+        }
     }
 }

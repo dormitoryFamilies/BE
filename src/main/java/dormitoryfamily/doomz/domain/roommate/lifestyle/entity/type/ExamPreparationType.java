@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public enum ExamPreparationType implements LifestyleAttribute {
 
-    PREPARING("시험 준비", 0),
-    NONE("해당 없어요", 8);
+    PREPARING("시험 준비", 1),
+    NONE("해당 없어요", 9);
 
     private final String description;
     private final int index;

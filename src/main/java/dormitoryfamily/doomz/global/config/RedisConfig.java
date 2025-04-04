@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.global.config;
 
+import org.springframework.context.annotation.Primary;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.ChatDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ public class RedisConfig {
     }
 
     @Bean
+    @Primary
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);

@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public enum SleepingHabitType implements LifestyleAttribute {
 
-    TEETH_GRINDING("이갈이", 8),
-    SNORING("코골이", 8),
-    SLEEP_TALKING("잠꼬대", 8),
-    NONE("없음", 0);
+    TEETH_GRINDING("이갈이", 9),
+    SNORING("코골이", 9),
+    SLEEP_TALKING("잠꼬대", 9),
+    NONE("없음", 1);
 
     private final String description;
     private final int index;

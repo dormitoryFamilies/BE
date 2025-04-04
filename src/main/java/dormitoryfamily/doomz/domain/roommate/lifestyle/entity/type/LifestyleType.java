@@ -7,34 +7,37 @@ import lombok.Getter;
 @Getter
 public enum LifestyleType {
 
-    SLEEP_TIME("sleepTime", SleepTimeType.class), //수면시간
-    WAKE_UP_TIME("wakeUpTime", WakeUpTimeType.class), //기상시간
-    SLEEPING_HABIT("sleepingHabit", SleepingHabitType.class), //잠버릇
-    SLEEPING_SENSITIVITY("sleepingSensitivity", SleepingSensitivityType.class), //잠귀
-    SMOKING("smoking", SmokingType.class), //흡연 여부
-    DRINKING_FREQUENCY("drinkingFrequency", DrinkingFrequencyType.class), //음주 빈도
-    SHOWER_TIME("showerTime", ShowerTimeType.class), //샤워 시간대
-    SHOWER_DURATION("showerDuration", ShowerDurationType.class), //샤워시간
-    CLEANING_FREQUENCY("cleaningFrequency", CleaningFrequencyType.class), //청소
-    HEAT_TOLERANCE("heatTolerance", HeatToleranceType.class), //더위
-    COLD_TOLERANCE("coldTolerance", ColdToleranceType.class), //추위
-    MBTI("MBTI", MBTIType.class), //MBTI
-    VISIT_HOME_FREQUENCY("visitHomeFrequency", VisitHomeFrequencyType.class), //본가가는 빈도
-    LATE_NIGHT_SNACK("lateNightSnack", LateNightSnackType.class), //야식
-    SNACK_IN_ROOM("snackInRoom", SnackInRoomType.class), //야식 방안에서
-    PHONE_SOUND("phoneSound", PhoneSoundType.class), //휴대폰 소리
-    PERFUME_USAGE("perfumeUsage", PerfumeUsageType.class), //향수
-    STUDY_LOCATION("studyLocation", StudyLocationType.class), //공부 장소
-    EXAM_PREPARATION("examPreparation", ExamPreparationType.class), //시험
-    EXERCISE("exercise", ExerciseType.class), //운동
-    INSECT_TOLERANCE("insectTolerance", InsectToleranceType.class); //벌레
+    SLEEP_TIME("sleepTime", SleepTimeType.class, 0),
+    WAKE_UP_TIME("wakeUpTime", WakeUpTimeType.class, 1),
+    SLEEPING_HABIT("sleepingHabit", SleepingHabitType.class, 2),
+    SLEEPING_SENSITIVITY("sleepingSensitivity", SleepingSensitivityType.class, 3),
+    SMOKING("smoking", SmokingType.class, 4),
+    DRINKING_FREQUENCY("drinkingFrequency", DrinkingFrequencyType.class, 5),
+    CLEANING_FREQUENCY("cleaningFrequency", CleaningFrequencyType.class, 6),
+    HEAT_TOLERANCE("heatTolerance", HeatToleranceType.class, 7),
+    COLD_TOLERANCE("coldTolerance", ColdToleranceType.class, 8),
+    PERFUME_USAGE("perfumeUsage", PerfumeUsageType.class, 9),
+    EXAM_PREPARATION("examPreparation", ExamPreparationType.class, 10),
+    // 나머지는 벡터에 포함 안되니까 인덱스 -1
+    SHOWER_TIME("showerTime", ShowerTimeType.class, -1),
+    SHOWER_DURATION("showerDuration", ShowerDurationType.class, -1),
+    MBTI("MBTI", MBTIType.class, -1),
+    VISIT_HOME_FREQUENCY("visitHomeFrequency", VisitHomeFrequencyType.class, -1),
+    LATE_NIGHT_SNACK("lateNightSnack", LateNightSnackType.class, -1),
+    SNACK_IN_ROOM("snackInRoom", SnackInRoomType.class, -1),
+    PHONE_SOUND("phoneSound", PhoneSoundType.class, -1),
+    STUDY_LOCATION("studyLocation", StudyLocationType.class, -1),
+    EXERCISE("exercise", ExerciseType.class, -1),
+    INSECT_TOLERANCE("insectTolerance", InsectToleranceType.class, -1);
 
     private final String type;
     private final Class<? extends Enum<?>> enumClass;
+    private final int vectorIndex;
 
-    LifestyleType(String type, Class<? extends Enum<?>> enumClass) {
+    LifestyleType(String type, Class<? extends Enum<?>> enumClass, int vectorIndex) {
         this.type = type;
         this.enumClass = enumClass;
+        this.vectorIndex = vectorIndex;
     }
 
     public static LifestyleType fromType(String typeStr) {
@@ -44,6 +47,15 @@ public enum LifestyleType {
             }
         }
         throw new InvalidLifestyleTypeException(typeStr);
+    }
+
+    public static LifestyleType fromTypeName(String simpleName) {
+        for (LifestyleType lifestyleType : LifestyleType.values()) {
+            if (lifestyleType.enumClass.getSimpleName().equals(simpleName)) {
+                return lifestyleType;
+            }
+        }
+        throw new InvalidLifestyleTypeException(simpleName);
     }
 
     public Enum<?> getLifestyleValueFrom(String value) {

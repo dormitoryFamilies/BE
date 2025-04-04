@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public enum SleepingSensitivityType implements LifestyleAttribute {
 
-    DARK("어두움", 0),
-    LIGHT("밝음", 8);
+    DARK("어두움", 1),
+    LIGHT("밝음", 9);
 
     private final String description;
     private final int index;
