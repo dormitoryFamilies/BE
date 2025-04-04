@@ -16,11 +16,12 @@ public interface LifestyleRepository extends JpaRepository<Lifestyle, Long> {
 
     boolean existsByMemberId(Long memberId);
 
-    @Query("SELECT l FROM Lifestyle l JOIN l.member m " +
-            "WHERE l.member != :member " +
-            "AND m.genderType = :#{#member.genderType} " +
-            "AND m.dormitoryType = :#{#member.dormitoryType} " +
-            "AND m.isRoommateMatched = false")
+    @Query("""
+SELECT l FROM Lifestyle l JOIN l.member m
+WHERE m.id != :#{#member.id}
+AND m.dormitoryType = :#{#member.dormitoryType}
+AND m.isRoommateMatched = false
+""")
     List<Lifestyle> findAllExcludingMember(@Param("member") Member member);
 
     /**
