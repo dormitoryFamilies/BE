@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 public enum CleaningFrequencyType implements LifestyleAttribute {
 
-    IMMEDIATELY("바로바로", 0),
-    OCCASIONALLY("가끔", 4),
-    ALL_AT_ONCE("몰아서", 8);
+    IMMEDIATELY("바로바로", 1),
+    OCCASIONALLY("가끔", 5),
+    ALL_AT_ONCE("몰아서", 9);
 
     private final String description;
     private final int index;

@@ -2,8 +2,6 @@ package dormitoryfamily.doomz.global.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.RECOMMENDATION_INTERVAL_HOURS;
 import static org.springframework.http.HttpStatus.*;
 
 @Getter
@@ -77,7 +75,6 @@ public enum ErrorCode {
 
     //recommendation
     RECOMMENDATION_NOT_EXISTS(NOT_FOUND, "룸메이트 매칭 추천을 요청한 적이 없습니다."),
-    TOO_MANY_REQUEST(BAD_REQUEST, "매칭 추천 가능은 " + RECOMMENDATION_INTERVAL_HOURS + "시간 내 한 번만 가능합니다."),
 
     //lifestyle
     ALREADY_REGISTER_MY_LIFESTYLE(CONFLICT, "나의 라이프 스타일을 이미 설정했습니다."),

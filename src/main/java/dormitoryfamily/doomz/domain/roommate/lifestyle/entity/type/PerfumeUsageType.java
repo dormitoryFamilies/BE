@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 public enum PerfumeUsageType implements LifestyleAttribute {
 
-    NONE("미사용", 0),
-    SOMETIMES("가끔", 5),
-    OFTEN("자주", 8);
+    NONE("미사용", 1),
+    SOMETIMES("가끔", 6),
+    OFTEN("자주", 9);
 
     private final String description;
     private final int index;

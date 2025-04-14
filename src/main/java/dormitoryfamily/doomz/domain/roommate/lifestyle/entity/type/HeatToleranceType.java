@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 public enum HeatToleranceType implements LifestyleAttribute {
 
-    LOW("적게 탐", 0),
-    MEDIUM("조금 탐", 4),
-    HIGH("많이 탐", 8);
+    LOW("적게 탐", 1),
+    MEDIUM("조금 탐", 5),
+    HIGH("많이 탐", 9);
 
     private final String description;
     private final int index;

@@ -1,7 +1,6 @@
 package dormitoryfamily.doomz.domain.roommate.recommendation.service;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
-import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.LifestyleNotExistsException;
@@ -12,81 +11,205 @@ import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.preference.repository.PreferenceOrderRepository;
 import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationResponseDto;
-import dormitoryfamily.doomz.domain.roommate.recommendation.entity.Candidate;
-import dormitoryfamily.doomz.domain.roommate.recommendation.entity.Recommendation;
-import dormitoryfamily.doomz.domain.roommate.recommendation.exception.RecommendationNotExistsException;
-import dormitoryfamily.doomz.domain.roommate.recommendation.repository.CandidateRepository;
-import dormitoryfamily.doomz.domain.roommate.recommendation.repository.RecommendationRepository;
-import dormitoryfamily.doomz.domain.roommate.util.TimeIntervalCalculator;
+import dormitoryfamily.doomz.domain.roommate.util.ScoreCalculator;
+import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.RECOMMENDATIONS_MAX_COUNT;
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.ZERO;
-import static dormitoryfamily.doomz.domain.roommate.util.ScoreCalculator.calculateScoreForUser;
+import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class RecommendationService {
 
-    private final RecommendationRepository recommendationRepository;
-    private final CandidateRepository candidateRepository;
     private final MemberRepository memberRepository;
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
     private final MatchingRequestService matchingRequestService;
+    private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadyMatched(loginMember);
 
-        //기존 매칭 추천을 조회하거나, 새로운 매칭 추천 생성
-        Recommendation recommendation = getOrCreateRecommendation(loginMember);
+        Long memberId = loginMember.getId();
+        
+        // 엘라스틱서치 벡터 쿼리 기반으로 추천 점수 계산
+        List<Entry<Long, Double>> scores = findTopMatchingCandidatesWithVectorQuery(loginMember);
 
-        //나의 선호 우선순위와 라이프스타일 조회
+        // 결과가 없거나 오류가 발생한 경우 기존 방식으로 계산
+        if (scores.isEmpty()) {
+            log.warn("엘라스틱서치 벡터 쿼리 추천 결과가 없거나 처리 중 오류 발생, 데이터베이스 조회으로 전환합니다.");
+            scores = findTopMatchingCandidatesLegacy(loginMember);
+        }
+
+        // 매칭 요청 이력 필터링
+        scores = filterMatchingRequests(loginMember, scores);
+        
+        // 추천 정보를 Redis에 저장
+        String candidatesKey = REDIS_CANDIDATES_KEY_PREFIX + memberId;
+        
+        // 후보 ID 리스트를 생성
+        List<Long> candidateIds = scores.stream()
+                .map(Entry::getKey)
+                .collect(Collectors.toList());
+        
+        // Redis에 저장 - 후보 ID 리스트 저장
+        redisTemplate.opsForValue().set(candidatesKey, candidateIds);
+        
+        // 만료 시간 설정
+        redisTemplate.expire(candidatesKey, REDIS_CACHE_DURATION);
+
+        return new RecommendationResponseDto(
+                memberId,
+                candidateIds
+        );
+    }
+
+    /**
+     * 엘라스틱서치 벡터 쿼리를 이용한 추천 계산
+     *
+     * @param member 현재 로그인한 사용자
+     * @return 점수가 높은 순서대로 정렬된 회원 ID와 점수 쌍 목록
+     */
+    private List<Entry<Long, Double>> findTopMatchingCandidatesWithVectorQuery(Member member) {
+        Long memberId = member.getId();
+        try {
+            // 내 선호도 벡터 가져오기
+            Map<String, Object> myPreference = elasticScriptQueryExecutor.getVectorById(PREFERENCE_INDEX, memberId);
+            if (myPreference == null) {
+                log.warn("내 선호도 벡터를 찾을 수 없습니다: memberId={}", memberId);
+                return Collections.emptyList();
+            }
+
+            // 내 라이프스타일 벡터 가져오기
+            Map<String, Object> myLifestyle = elasticScriptQueryExecutor.getVectorById(LIFESTYLE_INDEX, memberId);
+            if (myLifestyle == null) {
+                log.warn("내 라이프스타일 벡터를 찾을 수 없습니다: memberId={}", memberId);
+                return Collections.emptyList();
+            }
+
+            // 내 선호도 벡터들 추출
+            float[] preferenceWeights = convertToArray(myPreference.get(FIELD_PREFERENCE_WEIGHT));
+            float[] preferredValues = convertToArray(myPreference.get(FIELD_PREFERRED_VALUES));
+
+            // 내 라이프스타일 벡터 추출
+            float[] lifestyleVector = convertToArray(myLifestyle.get(FIELD_LIFESTYLE_VECTOR));
+
+            // 1단계: 내 선호도를 기준으로 각 사용자의 라이프스타일과 매칭 점수 계산 (나 → 상대방)
+            List<Entry<Long, Double>> fromMyView = elasticScriptQueryExecutor.calculateScoresWithScript(
+                    preferenceWeights,
+                    preferredValues,
+                    memberId,
+                    member.getDormitoryType().name()
+            );
+
+            // 2단계: 다른 사용자의 선호도를 기준으로 내 라이프스타일과 매칭 점수 계산 (상대방 → 나)
+            List<Entry<Long, Double>> fromTheirView = elasticScriptQueryExecutor.calculateReversedScoresWithScript(
+                    lifestyleVector,
+                    memberId,
+                    member.getDormitoryType().name()
+            );
+
+            // 점수 합산
+            Map<Long, Double> combinedScores = new HashMap<>();
+
+            // 내 관점에서의 점수 합산
+            for (Entry<Long, Double> entry : fromMyView) {
+                combinedScores.put(entry.getKey(), entry.getValue());
+            }
+
+            // 상대방 관점에서의 점수 합산
+            for (Entry<Long, Double> entry : fromTheirView) {
+                combinedScores.merge(entry.getKey(), entry.getValue(), Double::sum);
+            }
+
+            // 점수 내림차순 정렬 후 상위 N개 반환
+            return combinedScores.entrySet().stream()
+                    .sorted(Entry.comparingByValue(Comparator.reverseOrder()))
+                    .limit(RECOMMENDATIONS_MAX_COUNT)
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+
+    /**
+     * 이미 매칭 요청한 사용자 필터링
+     */
+    private List<Entry<Long, Double>> filterMatchingRequests(Member loginMember, List<Entry<Long, Double>> scores) {
+        return scores.stream()
+                .filter(entry -> {
+                    Member candidateMember = memberRepository.findById(entry.getKey()).orElse(null);
+                    return candidateMember != null &&
+                            !matchingRequestService.isMatchingRequestAlreadyExits(loginMember, candidateMember);
+                })
+                .limit(RECOMMENDATIONS_MAX_COUNT)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Object를 float 배열로 변환
+     */
+    private float[] convertToArray(Object obj) {
+        if (obj instanceof List<?> list) {
+            float[] result = new float[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i) instanceof Number) {
+                    result[i] = ((Number) list.get(i)).floatValue();
+                }
+            }
+            return result;
+        }
+        return new float[0];
+    }
+
+
+    /**
+     * 기존 방식으로 매칭 후보 계산 (엘라스틱서치 실패 시 대체용)
+     */
+    private List<Entry<Long, Double>> findTopMatchingCandidatesLegacy(Member loginMember) {
+        // 나의 선호 우선순위와 라이프스타일 조회
         PreferenceOrder myPreference = getPreferenceOrder(loginMember);
         Lifestyle myLifestyle = getLifestyle(loginMember);
 
-        //나를 제외한 전체 사용자의 라이프 스타일 조회
+        // 나를 제외한 전체 사용자의 라이프 스타일 조회
         List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAllExcludingMember(loginMember);
 
-        //상위 점수대 회원 산출
-        List<Entry<Long, Double>> scores = findTopMatchingCandidates(myPreference, myLifestyle, allUsersLifestyles);
-        List<Candidate> candidates = createCandidates(scores, recommendation);
+        return allUsersLifestyles.stream()
+                .filter(userLifestyle -> !matchingRequestService.isMatchingRequestAlreadyExits(myPreference.getMember(), userLifestyle.getMember()))
+                .map(userLifestyle -> {
+                    double scoreFromMyView = ScoreCalculator.calculateScoreForUser(myPreference, userLifestyle);
+                    double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
+                            .map(userPreference -> ScoreCalculator.calculateScoreForUser(userPreference, myLifestyle))
+                            .orElse(ZERO);
 
-        //기존 후보 레코드 삭제 후 새롭게 저장
-        candidateRepository.deleteAllByRecommendation(recommendation);
-        candidateRepository.saveAll(candidates);
+                    double totalScore = scoreFromMyView + scoreFromTheirView;
 
-        return RecommendationResponseDto.fromEntity(recommendation, candidates);
+                    return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);
+                })
+                .sorted(Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(RECOMMENDATIONS_MAX_COUNT)
+                .collect(Collectors.toList());
     }
 
     private void checkAlreadyMatched(Member loginMember) {
         if (loginMember.isRoommateMatched()) {
             throw new AlreadyMatchedMemberException();
         }
-    }
-
-    private Recommendation getOrCreateRecommendation(Member loginMember) {
-        return recommendationRepository.findByMemberId(loginMember.getId())
-                .map(existingRecommendation -> {
-                    //매칭 가능 시간인지 체크
-                    TimeIntervalCalculator.validateRecommendationInterval(existingRecommendation);
-                    existingRecommendation.updateRecommendedAt();
-                    return existingRecommendation;
-                }).orElseGet(() -> {
-                    Recommendation newRecommendation = Recommendation.builder().member(loginMember).build();
-                    return recommendationRepository.save(newRecommendation);
-                });
     }
 
     private PreferenceOrder getPreferenceOrder(Member member) {
@@ -99,63 +222,27 @@ public class RecommendationService {
                 .orElseThrow(LifestyleNotExistsException::new);
     }
 
-    /**
-     * 선호 우선순위와 라이프 스타일을 비교하여 점수를 계산해 높은 점수 순으로 사용자 id 반환하는 메소드
-     *
-     * @param myPreference       나의 선호 우선순위(1 ~ 4순위)
-     * @param myLifestyle        나의 라이프 스타일
-     * @param allUsersLifestyles 전체 사용자의 라이프 스타일
-     * @return 높은 점수 순으로 정렬된 회원 아이디 리스트
-     */
-    private List<Entry<Long, Double>> findTopMatchingCandidates(
-            PreferenceOrder myPreference, Lifestyle myLifestyle, List<Lifestyle> allUsersLifestyles
-    ) {
-        return allUsersLifestyles.stream()
-                .filter(userLifestyle -> !matchingRequestService.isMatchingRequestAlreadyExits(myPreference.getMember(), userLifestyle.getMember()))
-                .map(userLifestyle -> {
-
-                    double scoreFromMyView = calculateScoreForUser(myPreference, userLifestyle);
-                    double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
-                            .map(userPreference -> calculateScoreForUser(userPreference, myLifestyle))
-                            .orElse(ZERO);
-
-                    double totalScore = scoreFromMyView + scoreFromTheirView;
-
-                    return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);
-                })
-                .sorted(Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(RECOMMENDATIONS_MAX_COUNT)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * @param scores         회원 아이디와 점수 리스트
-     * @param recommendation Recommendation 레코드
-     * @return 생성된 Candidate 레코드 리스트
-     */
-    private List<Candidate> createCandidates(List<Entry<Long, Double>> scores, Recommendation recommendation) {
-        return scores.stream()
-                .map(entry -> {
-                    Member candidate = memberRepository.findById(entry.getKey())
-                            .orElseThrow(MemberNotExistsException::new);
-                    return Candidate.builder()
-                            .recommendation(recommendation)
-                            .candidateMember(candidate)
-                            .candidateScore(entry.getValue())
-                            .build();
-                }).toList();
-    }
-
     @Transactional(readOnly = true)
     public RecommendationResponseDto findRecommendedCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        Recommendation recommendation = recommendationRepository.findByMemberId(loginMember.getId())
-                .orElseThrow(RecommendationNotExistsException::new);
-
-        List<Candidate> candidates = recommendation.getCandidates().stream()
-                .sorted(Comparator.comparing(Candidate::getCandidateScore).reversed())
-                .toList();
-
-        return RecommendationResponseDto.fromEntity(recommendation, candidates);
+        Long memberId = loginMember.getId();
+        
+        // Redis에서 추천 정보 조회
+        String candidatesKey = REDIS_CANDIDATES_KEY_PREFIX + memberId;
+        
+        // 후보 ID 리스트 조회
+        @SuppressWarnings("unchecked")
+        List<Long> candidateIds = (List<Long>) redisTemplate.opsForValue().get(candidatesKey);
+        
+        // 캐시에 없는 경우 빈 리스트 반환
+        if (candidateIds == null) {
+            return new RecommendationResponseDto(memberId, List.of());
+        }
+        
+        // RecommendationResponseDto 생성
+        return new RecommendationResponseDto(
+                memberId,
+                candidateIds
+        );
     }
 }

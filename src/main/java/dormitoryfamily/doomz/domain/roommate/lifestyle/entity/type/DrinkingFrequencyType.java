@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public enum DrinkingFrequencyType implements LifestyleAttribute {
 
-    NONE("없음", 0),
-    OCCASIONAL("가끔", 3),
-    FREQUENT("종종", 5),
-    REGULAR("자주", 8);
+    NONE("없음", 1),
+    OCCASIONAL("가끔", 4),
+    FREQUENT("종종", 6),
+    REGULAR("자주", 9);
 
     private final String description;
     private final int index;
