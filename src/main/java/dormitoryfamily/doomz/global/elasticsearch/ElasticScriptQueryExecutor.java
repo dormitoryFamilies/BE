@@ -1,11 +1,19 @@
 package dormitoryfamily.doomz.global.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.Result;
 import co.elastic.clients.elasticsearch._types.Script;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.json.JsonData;
+import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.LifestyleAttribute;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.LifestyleType;
+import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import java.lang.reflect.Type;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +33,95 @@ import java.util.Map;
 public class ElasticScriptQueryExecutor {
 
     private final ElasticsearchClient elasticsearchClient;
+
+    /**
+     * 엘라스틱서치에 라이프스타일 벡터 저장
+     */
+    public void indexLifestyleVector(Member member, Lifestyle lifestyle) {
+        try {
+            float[] vector = convertToVector(lifestyle);
+
+            Map<String, Object> document = new HashMap<>();
+            document.put("member_id", member.getId());
+            document.put(FIELD_LIFESTYLE_VECTOR, vector);
+            document.put("dormitory", member.getDormitoryType().name());
+
+            IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
+                    .index(LIFESTYLE_INDEX)
+                    .id(member.getId().toString())
+                    .document(document)
+            );
+
+            IndexResponse response = elasticsearchClient.index(request);
+
+            if (response.result() != Result.Created && response.result() != Result.Updated) {
+                System.err.println(" 저장은 됐지만 예외적인 상태: " + response.result());
+            }
+
+        } catch (IOException e) {
+            System.err.println(" Elasticsearch 저장 실패: " + e.getMessage());
+            throw new RuntimeException("엘라스틱서치 저장 중 오류 발생", e);
+        }
+    }
+
+    private float[] convertToVector(Lifestyle lifestyle) {
+        float[] vector = new float[11];
+        vector[0] = lifestyle.getSleepTimeType().getIndex();
+        vector[1] = lifestyle.getWakeUpTimeType().getIndex();
+        vector[2] = lifestyle.getSleepingHabitType().getIndex();
+        vector[3] = lifestyle.getSleepingSensitivityType().getIndex();
+        vector[4] = lifestyle.getSmokingType().getIndex();
+        vector[5] = lifestyle.getDrinkingFrequencyType().getIndex();
+        vector[6] = lifestyle.getCleaningFrequencyType().getIndex();
+        vector[7] = lifestyle.getHeatToleranceType().getIndex();
+        vector[8] = lifestyle.getColdToleranceType().getIndex();
+        vector[9] = lifestyle.getPerfumeUsageType().getIndex();
+        vector[10] = lifestyle.getExamPreparationType().getIndex();
+        return vector;
+    }
+
+    public void indexPreferenceVector(Long memberId, PreferenceOrder order, Member member) {
+        try {
+            float[] weightVector = new float[11];
+            float[] preferredValues = new float[11];
+            for (int i = 0; i < 11; i++) {
+                weightVector[i] = 0.1f;
+                preferredValues[i] = 0.0f;
+            }
+
+            setWeightAndValue(weightVector, preferredValues, order.getFirstPreferenceOrder(), 1.0f);
+            setWeightAndValue(weightVector, preferredValues, order.getSecondPreferenceOrder(), 0.7f);
+            setWeightAndValue(weightVector, preferredValues, order.getThirdPreferenceOrder(), 0.5f);
+            setWeightAndValue(weightVector, preferredValues, order.getFourthPreferenceOrder(), 0.2f);
+
+            Map<String, Object> document = new HashMap<>();
+            document.put("member_id", memberId);
+            document.put(FIELD_PREFERENCE_WEIGHT, weightVector);
+            document.put(FIELD_PREFERRED_VALUES, preferredValues);
+            document.put("dormitory", member.getDormitoryType().name());
+
+            IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
+                    .index(PREFERENCE_INDEX)
+                    .id(memberId.toString())
+                    .document(document));
+
+            IndexResponse response = elasticsearchClient.index(request);
+            if (response.result() != Result.Created && response.result() != Result.Updated) {
+                System.err.println("⚠️ 저장 예외 상태: " + response.result());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Elasticsearch preference vector 저장 실패", e);
+        }
+    }
+
+    private void setWeightAndValue(float[] vector, float[] values, Enum<?> preference, float weight) {
+        LifestyleType type = LifestyleType.fromTypeName(preference.getClass().getSimpleName());
+        int index = type.getVectorIndex();
+        if (index >= 0 && index < vector.length) {
+            vector[index] = weight;
+            values[index] = ((LifestyleAttribute) preference).getIndex();
+        }
+    }
 
     /**
      * 엘라스틱서치에서 특정 ID의 벡터 데이터 조회

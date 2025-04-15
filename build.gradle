@@ -80,6 +80,7 @@ dependencies {
 	implementation 'co.elastic.clients:elasticsearch-java:8.12.0'
 	implementation 'jakarta.json:jakarta.json-api:2.1.1'
 	implementation 'org.glassfish:jakarta.json:2.0.1'
+
 }
 
 tasks.named('test') {

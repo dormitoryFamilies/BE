@@ -16,15 +16,13 @@ import dormitoryfamily.doomz.domain.roommate.preference.exception.AlreadyRegiste
 import dormitoryfamily.doomz.domain.roommate.preference.exception.DuplicatePreferenceOrderException;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.preference.repository.PreferenceOrderRepository;
+import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import static dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.LifestyleType.fromType;
 
@@ -35,9 +33,7 @@ public class PreferenceOrderService {
 
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final MemberRepository memberRepository;
-    private final ElasticsearchClient elasticsearchClient;
-
-    private static final String PREFERENCE_INDEX = "preference_vectors";
+    private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
 
     public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
@@ -53,7 +49,7 @@ public class PreferenceOrderService {
                 .build();
 
         preferenceOrderRepository.save(order);
-        indexPreferenceVector(loginMember.getId(), order, loginMember);
+        elasticScriptQueryExecutor.indexPreferenceVector(loginMember.getId(), order, loginMember);
     }
 
     public void updatePreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
@@ -69,50 +65,7 @@ public class PreferenceOrderService {
                 getPreference(requestDto.fourthPreference())
         );
 
-        indexPreferenceVector(loginMember.getId(), preferenceOrder, loginMember);
-    }
-
-    private void indexPreferenceVector(Long memberId, PreferenceOrder order, Member member) {
-        try {
-            float[] weightVector = new float[11];
-            float[] preferredValues = new float[11];
-            for (int i = 0; i < 11; i++) {
-                weightVector[i] = 0.1f;
-                preferredValues[i] = 0.0f;
-            }
-
-            setWeightAndValue(weightVector, preferredValues, order.getFirstPreferenceOrder(), 1.0f);
-            setWeightAndValue(weightVector, preferredValues, order.getSecondPreferenceOrder(), 0.7f);
-            setWeightAndValue(weightVector, preferredValues, order.getThirdPreferenceOrder(), 0.5f);
-            setWeightAndValue(weightVector, preferredValues, order.getFourthPreferenceOrder(), 0.2f);
-
-            Map<String, Object> document = new HashMap<>();
-            document.put("member_id", memberId);
-            document.put("preference_weight", weightVector);
-            document.put("preferred_values", preferredValues);
-            document.put("dormitory", member.getDormitoryType().name());
-
-            IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
-                    .index(PREFERENCE_INDEX)
-                    .id(memberId.toString())
-                    .document(document));
-
-            IndexResponse response = elasticsearchClient.index(request);
-            if (response.result() != Result.Created && response.result() != Result.Updated) {
-                System.err.println("⚠️ 저장 예외 상태: " + response.result());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Elasticsearch preference vector 저장 실패", e);
-        }
-    }
-
-    private void setWeightAndValue(float[] vector, float[] values, Enum<?> preference, float weight) {
-        LifestyleType type = LifestyleType.fromTypeName(preference.getClass().getSimpleName());
-        int index = type.getVectorIndex();
-        if (index >= 0 && index < vector.length) {
-            vector[index] = weight;
-            values[index] = ((LifestyleAttribute) preference).getIndex();
-        }
+        elasticScriptQueryExecutor.indexPreferenceVector(loginMember.getId(), preferenceOrder, loginMember);
     }
 
     private Enum<?> getPreference(String preferenceTypeInput) {

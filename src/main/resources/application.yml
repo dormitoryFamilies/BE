@@ -33,3 +33,10 @@ management:
       exposure:
         include: "*"
       base-path: /api/actuator
+  health:
+    elasticsearch:
+      enabled: false
+opensearch:
+  endpoint: ${OPEN_SEARCH_ENDPOINT}
+  username: ${OPEN_SEARCH_USERNAME}
+  password: ${OPEN_SEARCH_PASSWORD}

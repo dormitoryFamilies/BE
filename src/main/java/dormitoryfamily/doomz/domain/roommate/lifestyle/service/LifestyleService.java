@@ -1,5 +1,8 @@
 package dormitoryfamily.doomz.domain.roommate.lifestyle.service;
 
+import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.FIELD_LIFESTYLE_VECTOR;
+import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.LIFESTYLE_INDEX;
+
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -14,6 +17,7 @@ import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.AlreadyRegisterMyLifestyleException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.repository.LifestyleRepository;
+import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,65 +35,21 @@ public class LifestyleService {
 
     private final LifestyleRepository lifestyleRepository;
     private final MemberRepository memberRepository;
-    private final ElasticsearchClient elasticsearchClient;
-    private static final String LIFESTYLE_INDEX = "lifestyle_vectors";
+    private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
 
     public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySetLifestyle(loginMember);
         Lifestyle lifestyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
         lifestyleRepository.save(lifestyle);
-        indexLifestyleVector(loginMember, lifestyle);
+        elasticScriptQueryExecutor.indexLifestyleVector(loginMember, lifestyle);
     }
 
     public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Lifestyle lifestyle = getLifestyleByMember(loginMember);
         lifestyle.updateMyLifestyle(requestDto);
-        indexLifestyleVector(loginMember, lifestyle);
-    }
-
-    private void indexLifestyleVector(Member member, Lifestyle lifestyle) {
-        try {
-            float[] vector = convertToVector(lifestyle);
-
-            Map<String, Object> document = new HashMap<>();
-            document.put("member_id", member.getId());
-            document.put("lifestyle_vector", vector);
-            document.put("dormitory", member.getDormitoryType().name());
-
-            IndexRequest<Map<String, Object>> request = IndexRequest.of(i -> i
-                    .index(LIFESTYLE_INDEX)
-                    .id(member.getId().toString())
-                    .document(document)
-            );
-
-            IndexResponse response = elasticsearchClient.index(request);
-
-            if (response.result() != Result.Created && response.result() != Result.Updated) {
-                System.err.println(" 저장은 됐지만 예외적인 상태: " + response.result());
-            }
-
-        } catch (IOException e) {
-            System.err.println(" Elasticsearch 저장 실패: " + e.getMessage());
-            throw new RuntimeException("엘라스틱서치 저장 중 오류 발생", e);
-        }
-    }
-
-    private float[] convertToVector(Lifestyle lifestyle) {
-        float[] vector = new float[11];
-        vector[0] = lifestyle.getSleepTimeType().getIndex();
-        vector[1] = lifestyle.getWakeUpTimeType().getIndex();
-        vector[2] = lifestyle.getSleepingHabitType().getIndex();
-        vector[3] = lifestyle.getSleepingSensitivityType().getIndex();
-        vector[4] = lifestyle.getSmokingType().getIndex();
-        vector[5] = lifestyle.getDrinkingFrequencyType().getIndex();
-        vector[6] = lifestyle.getCleaningFrequencyType().getIndex();
-        vector[7] = lifestyle.getHeatToleranceType().getIndex();
-        vector[8] = lifestyle.getColdToleranceType().getIndex();
-        vector[9] = lifestyle.getPerfumeUsageType().getIndex();
-        vector[10] = lifestyle.getExamPreparationType().getIndex();
-        return vector;
+        elasticScriptQueryExecutor.indexLifestyleVector(loginMember, lifestyle);
     }
 
     private void checkAlreadySetLifestyle(Member loginMember) {
