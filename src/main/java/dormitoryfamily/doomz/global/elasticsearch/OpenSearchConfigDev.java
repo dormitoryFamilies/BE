@@ -1,4 +1,4 @@
-package dormitoryfamily.doomz.global.config;
+package dormitoryfamily.doomz.global.elasticsearch;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
@@ -20,10 +20,12 @@ import org.apache.http.HttpResponseInterceptor;
 
 import javax.net.ssl.SSLContext;
 import java.util.Arrays;
+import org.springframework.context.annotation.Profile;
 
 @Slf4j
 @Configuration
-public class ElasticsearchConfig {
+@Profile("dev")
+public class OpenSearchConfigDev {
 
     @Value("${opensearch.endpoint}")
     private String endpoint;
@@ -37,7 +39,7 @@ public class ElasticsearchConfig {
     @Bean
     public RestClient restClient() {
         try {
-            // SSL 인증서 검증을 비활성화함 (개발 환경에서만 사용할 것)
+            // SSL 인증서 검증을 비활성화함
             SSLContext sslContext = SSLContextBuilder.create()
                     .loadTrustMaterial(null, (x509Certificates, s) -> true)
                     .build();
@@ -55,7 +57,6 @@ public class ElasticsearchConfig {
                                     .setSocketTimeout(60000)  // 60초
                     )
                     .setHttpClientConfigCallback(httpClientBuilder -> {
-                        // disableAuthCaching() 제거함 - 이것이 문제의 원인일 수 있음
                         httpClientBuilder.setDefaultHeaders(Arrays.asList(
                                 new BasicHeader("Content-Type", "application/json")));
                         httpClientBuilder.addInterceptorLast((HttpResponseInterceptor)
