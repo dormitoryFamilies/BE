@@ -104,6 +104,11 @@ public class RecommendationService {
             // 내 라이프스타일 벡터 추출
             float[] lifestyleVector = convertToArray(myLifestyle.get(FIELD_LIFESTYLE_VECTOR));
 
+            log.info("벡터 쿼리 시작 - memberId: {}", memberId);
+            log.info("선호도 가중치: {}", Arrays.toString(preferenceWeights));
+            log.info("선호 값: {}", Arrays.toString(preferredValues));
+            log.info("라이프스타일 벡터: {}", Arrays.toString(lifestyleVector));
+
             // 1단계: 내 선호도를 기준으로 각 사용자의 라이프스타일과 매칭 점수 계산 (나 → 상대방)
             List<Entry<Long, Double>> fromMyView = elasticScriptQueryExecutor.calculateScoresWithScript(
                     preferenceWeights,
@@ -119,43 +124,51 @@ public class RecommendationService {
                     member.getDormitoryType().name()
             );
 
-            // 점수 합산
+            //` 3단계: 두 점수를 합산하여 최종 추천 점수 계산
             Map<Long, Double> combinedScores = new HashMap<>();
-
-            // 내 관점에서의 점수 합산
             for (Entry<Long, Double> entry : fromMyView) {
                 combinedScores.put(entry.getKey(), entry.getValue());
             }
 
-            // 상대방 관점에서의 점수 합산
             for (Entry<Long, Double> entry : fromTheirView) {
                 combinedScores.merge(entry.getKey(), entry.getValue(), Double::sum);
             }
 
-            // 점수 내림차순 정렬 후 상위 N개 반환
             return combinedScores.entrySet().stream()
-                    .sorted(Entry.comparingByValue(Comparator.reverseOrder()))
-                    .limit(RECOMMENDATIONS_MAX_COUNT)
-                    .collect(Collectors.toList());
+                    .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // 내림차순
+                    .toList();
 
         } catch (Exception e) {
+            log.error("벡터 쿼리 기반 추천 계산 중 오류 발생", e);
             return Collections.emptyList();
         }
     }
-
 
     /**
      * 이미 매칭 요청한 사용자 필터링
      */
     private List<Entry<Long, Double>> filterMatchingRequests(Member loginMember, List<Entry<Long, Double>> scores) {
-        return scores.stream()
+        log.info("필터링 전 추천 점수: {}", scores);
+        
+        List<Entry<Long, Double>> filteredScores = scores.stream()
                 .filter(entry -> {
                     Member candidateMember = memberRepository.findById(entry.getKey()).orElse(null);
-                    return candidateMember != null &&
+                    boolean isValid = candidateMember != null &&
                             !matchingRequestService.isMatchingRequestAlreadyExits(loginMember, candidateMember);
+                    
+                    if (!isValid) {
+                        log.info("후보 제외: memberId={}, reason={}", 
+                            entry.getKey(),
+                            candidateMember == null ? "존재하지 않는 사용자" : "이미 매칭 요청 있음");
+                    }
+                    
+                    return isValid;
                 })
                 .limit(RECOMMENDATIONS_MAX_COUNT)
                 .collect(Collectors.toList());
+                
+        log.info("필터링 후 추천 점수: {}", filteredScores);
+        return filteredScores;
     }
 
     /**
