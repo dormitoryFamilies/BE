@@ -71,10 +71,7 @@ public class RecommendationService {
         // 만료 시간 설정
         redisTemplate.expire(candidatesKey, REDIS_CACHE_DURATION);
 
-        return new RecommendationResponseDto(
-                memberId,
-                candidateIds
-        );
+        return RecommendationResponseDto.of(candidateIds);
     }
 
     /**
@@ -255,9 +252,6 @@ public class RecommendationService {
         }
 
         // RecommendationResponseDto 생성
-        return new RecommendationResponseDto(
-                memberId,
-                candidateIds
-        );
+        return RecommendationResponseDto.of(candidateIds);
     }
 }
