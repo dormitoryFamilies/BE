@@ -226,19 +226,34 @@ public class RecommendationService {
     public RecommendationResponseDto findRecommendedCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Long memberId = loginMember.getId();
-        
+
         // Redis에서 추천 정보 조회
         String candidatesKey = REDIS_CANDIDATES_KEY_PREFIX + memberId;
-        
+
         // 후보 ID 리스트 조회
-        @SuppressWarnings("unchecked")
-        List<Long> candidateIds = (List<Long>) redisTemplate.opsForValue().get(candidatesKey);
-        
-        // 캐시에 없는 경우 빈 리스트 반환
-        if (candidateIds == null) {
-            return new RecommendationResponseDto(memberId, List.of());
+        Object candidatesObj = redisTemplate.opsForValue().get(candidatesKey);
+
+        List<Long> candidateIds;
+        if (candidatesObj == null) {
+            candidateIds = List.of();
+        } else if (candidatesObj instanceof List<?>) {
+            // 타입 변환 처리
+            candidateIds = ((List<?>) candidatesObj).stream()
+                    .map(item -> {
+                        if (item instanceof Integer) {
+                            return ((Integer) item).longValue();
+                        } else if (item instanceof Long) {
+                            return (Long) item;
+                        } else {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } else {
+            candidateIds = List.of();
         }
-        
+
         // RecommendationResponseDto 생성
         return new RecommendationResponseDto(
                 memberId,

@@ -3,6 +3,7 @@ package dormitoryfamily.doomz.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.List;
 import org.springframework.context.annotation.Primary;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.ChatDto;
 import org.springframework.beans.factory.annotation.Value;
