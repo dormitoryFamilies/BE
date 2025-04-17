@@ -34,7 +34,7 @@ management:
     web:
       base-path: /api/actuator
       exposure:
-        include: prometheus
+        include: prometheus, health
   endpoint:
     prometheus:
       enabled: true
