@@ -46,12 +46,14 @@ jobs:
           cp ./appspec.yml ./deploy/
           cp ./Dockerfile ./deploy/
           cp ./docker-compose.yml ./deploy/
-          cp ./scripts/*.sh ./deploy/
           cp ./prometheus.yml ./deploy/
-          cp ./build/libs/*.jar ./deploy/
           cp ./.env ./deploy/
-          zip -r -qq -j ./doomz-build.zip ./deploy
+          cp ./scripts/*.sh ./deploy/                
+          cp -r ./fluent-bit-config ./deploy/        
+          cp ./build/libs/*.jar ./deploy/          
           
+          zip -r -qq ./doomz-build.zip ./deploy
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
