@@ -28,14 +28,21 @@ cloud:
       static: ${AWS_S3_REGION}
 
 management:
+  security:
+    enabled: false
   endpoints:
     web:
-      exposure:
-        include: "*"
       base-path: /api/actuator
-  health:
-    elasticsearch:
-      enabled: false
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 opensearch:
   endpoint: ${OPEN_SEARCH_ENDPOINT}
   username: ${OPEN_SEARCH_USERNAME}
