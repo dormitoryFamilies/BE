@@ -7,6 +7,14 @@ services:
       - "6379:6379"
     environment:
       TZ: "Asia/Seoul"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "redis.service"
+    depends_on:
+      fluent-bit:
+        condition: service_healthy
 
   spring-blue:
     build:
@@ -15,12 +23,22 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      fluent-bit:
+        condition: service_healthy
     environment:
       TZ: "Asia/Seoul"
       SPRING_PROFILES_ACTIVE: prod
     env_file:
       - .env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "spring.blue"
+    volumes:
+      - ./logs/blue:/app/logs
 
   spring-green:
     build:
@@ -29,9 +47,38 @@ services:
     ports:
       - "8081:8080"
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      fluent-bit:
+        condition: service_healthy
     environment:
       TZ: "Asia/Seoul"
       SPRING_PROFILES_ACTIVE: prod
     env_file:
       - .env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "spring.green"
+    volumes:
+      - ./logs/green:/app/logs
+
+  fluent-bit:
+    image: amazon/aws-for-fluent-bit:latest
+    container_name: fluent-bit
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./fluent-bit-config:/fluent-bit/etc
+    environment:
+      TZ: "Asia/Seoul"
+      AWS_ACCESS_KEY_ID: ${AWS_LOGS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_LOGS_SECRET_ACCESS_KEY}
+      AWS_REGION: ap-northeast-2
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "24224"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
