@@ -75,4 +75,4 @@ Doomz는 충북대학교 재학생을 위한 기숙사 룸메이트 매칭 추�
 <br>
 
 ## 💡 CI/CD
-<img src="https://github.com/user-attachments/assets/54c8da49-2a57-45b0-806d-343955c52814"/>
+<img src="https://github.com/user-attachments/assets/6fbfa9da-a337-49e5-bdcc-eafac465643d"/>
