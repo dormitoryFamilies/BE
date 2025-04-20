@@ -69,10 +69,10 @@ Doomz는 충북대학교 재학생을 위한 기숙사 룸메이트 매칭 추�
 <br>
 
 ## 💡 ERD
-<img src="https://github.com/user-attachments/assets/43dc5e69-f1a0-4d2a-8c15-2edfed84fc79"/> 
+<img src="https://github.com/user-attachments/assets/22710345-4dc9-46a9-9c79-21e4cbb28e40"/> 
 
 <br>
 <br>
 
-## 💡 CI/CD
+## 💡 Infra
 <img src="https://github.com/user-attachments/assets/6fbfa9da-a337-49e5-bdcc-eafac465643d"/>
