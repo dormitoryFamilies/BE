@@ -17,6 +17,7 @@ services:
         condition: service_healthy
 
   spring-blue:
+    container_name: spring-blue
     build:
       context: .
       dockerfile: Dockerfile
@@ -41,6 +42,7 @@ services:
       - ./logs/blue:/app/logs
 
   spring-green:
+    container_name: spring-green
     build:
       context: .
       dockerfile: Dockerfile
