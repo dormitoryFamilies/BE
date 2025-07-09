@@ -118,8 +118,7 @@ public enum ErrorCode {
 
     //matching result
     MATCHING_RESULT_NOT_EXISTS(CONFLICT,"해당 사용자와 룸메이트 매칭이 이루어지지 않은 상태입니다." ),
-    MATCHING_LOCK(CONFLICT, "매칭 락을 획득하지 못했습니다."),
-    INTERRUPTED(NOT_FOUND, "인터럽트 에러"),
+    MATCHING_CONFLICT(CONFLICT, "현재 요청이 많아 처리되지 않았습니다. 잠시 후 다시 시도해주세요." ),
 
     //roommate wish
     ROOMMATE_WISH_NOT_EXIT(NOT_FOUND, "룸메이트 찜하지 않은 사용자입니다."),

@@ -13,6 +13,8 @@ import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import jakarta.persistence.LockTimeoutException;
+import jakarta.persistence.PessimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -38,16 +40,20 @@ public class MatchingRequestService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void saveMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-        Member loginMember = members.getFirst();
-        Member targetMember = members.getSecond();
+        try{
+            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+            Member loginMember = members.getFirst();
+            Member targetMember = members.getSecond();
 
-        validateMatchingRequestCapability(loginMember, targetMember);
+            validateMatchingRequestCapability(loginMember, targetMember);
 
-        MatchingRequest matchingRequest = MatchingRequest.createMatchingRequest(loginMember, targetMember);
-        matchingRequestRepository.save(matchingRequest);
-        //알림 전송
-        notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
+            MatchingRequest matchingRequest = MatchingRequest.createMatchingRequest(loginMember, targetMember);
+            matchingRequestRepository.save(matchingRequest);
+            //알림 전송
+            notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
+        }catch (PessimisticLockException | LockTimeoutException e){
+            throw new MatchingConflictException();
+        }
     }
 
     public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
@@ -107,14 +113,18 @@ public class MatchingRequestService {
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-        Member loginMember = members.getFirst();
-        Member targetMember = members.getSecond();
+        try{
+            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+            Member loginMember = members.getFirst();
+            Member targetMember = members.getSecond();
 
-        MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
-        matchingRequestRepository.delete(matchingRequest);
-        //알림 전송
-        notifyMatchingRequestInfo(matchingRequest, MATCHING_REJECT);
+            MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
+            matchingRequestRepository.delete(matchingRequest);
+            //알림 전송
+            notifyMatchingRequestInfo(matchingRequest, MATCHING_REJECT);
+        }  catch (PessimisticLockException | LockTimeoutException e) {
+            throw new MatchingConflictException();
+        }
     }
 
     public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember) {

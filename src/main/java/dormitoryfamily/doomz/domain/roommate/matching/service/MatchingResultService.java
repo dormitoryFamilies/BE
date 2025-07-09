@@ -6,10 +6,13 @@ import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.roommate.matching.event.result.MatchingResultEvent;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingConflictException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MemberDormitoryMismatchException;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import jakarta.persistence.LockTimeoutException;
+import jakarta.persistence.PessimisticLockException;
 import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,19 +39,24 @@ public class MatchingResultService {
 
     @Transactional
     public void saveMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-        Member loginMember = members.getFirst();
-        Member targetMember = members.getSecond();
+        try{
+            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+            Member loginMember = members.getFirst();
+            Member targetMember = members.getSecond();
 
-        validateMatchingCapability(loginMember, targetMember);
-        MatchingResult matchingResult = MatchingResult.createMatchingResult(loginMember, targetMember);
-        matchingResultRepository.save(matchingResult);
-        updateMemberMatchingStatus(loginMember, targetMember);
-        matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
-        notifyMatchingResultInfo(matchingResult);
+            validateMatchingCapability(loginMember, targetMember);
+            MatchingResult matchingResult = MatchingResult.createMatchingResult(loginMember, targetMember);
+            matchingResultRepository.save(matchingResult);
+            updateMemberMatchingStatus(loginMember, targetMember);
+            matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
+            notifyMatchingResultInfo(matchingResult);
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new MatchingConflictException();
+        }
     }
 
     public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
+
         Long loginMemberId = principalDetails.getMember().getId();
 
         // ID 정렬 (데드락 방지)
@@ -96,14 +104,18 @@ public class MatchingResultService {
     }
 
     public void cancelMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-        Member loginMember = members.getFirst();
-        Member targetMember = members.getSecond();
+        try{
+            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
+            Member loginMember = members.getFirst();
+            Member targetMember = members.getSecond();
 
-        MatchingResult matchingResult = getMatchingResultByMembers(loginMember, targetMember);
-        matchingResultRepository.delete(matchingResult);
+            MatchingResult matchingResult = getMatchingResultByMembers(loginMember, targetMember);
+            matchingResultRepository.delete(matchingResult);
 
-        resetMemberMatchingStatus(loginMember, targetMember);
+            resetMemberMatchingStatus(loginMember, targetMember);
+        } catch (PessimisticLockException | LockTimeoutException e) {
+            throw new MatchingConflictException();
+        }
     }
 
     private MatchingResult getMatchingResultByMembers(Member loginMember, Member targetMember) {
