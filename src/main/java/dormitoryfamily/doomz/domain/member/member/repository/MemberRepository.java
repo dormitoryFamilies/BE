@@ -3,12 +3,14 @@ package dormitoryfamily.doomz.domain.member.member.repository;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.entity.type.RoleType;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -44,6 +46,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     void changeMyAuthority(@Param("authority") RoleType authority, @Param("memberId") Long memberId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints(@QueryHint(name = "javax.persistence.lock.timeout", value = "3000"))
     @Query("SELECT m FROM Member m WHERE m.id = :id")
     Optional<Member> findByIdWithPessimisticLock(@Param("id") Long id);
 }
