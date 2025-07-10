@@ -14,12 +14,14 @@ import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationRe
 import dormitoryfamily.doomz.domain.roommate.util.ScoreCalculator;
 import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.concurrent.TimeoutException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -109,35 +111,72 @@ public class RecommendationService {
             log.info("선호 값: {}", Arrays.toString(preferredValues));
             log.info("라이프스타일 벡터: {}", Arrays.toString(lifestyleVector));
 
-            // 1단계: 내 선호도를 기준으로 각 사용자의 라이프스타일과 매칭 점수 계산 (나 → 상대방)
-            List<Entry<Long, Double>> fromMyView = elasticScriptQueryExecutor.calculateScoresWithScript(
-                    preferenceWeights,
-                    preferredValues,
-                    memberId,
-                    member.getDormitoryType().name()
-            );
+            String dormitoryType = member.getDormitoryType().name();
 
-            // 2단계: 다른 사용자의 선호도를 기준으로 내 라이프스타일과 매칭 점수 계산 (상대방 → 나)
-            List<Entry<Long, Double>> fromTheirView = elasticScriptQueryExecutor.calculateReversedScoresWithScript(
-                    lifestyleVector,
-                    memberId,
-                    member.getDormitoryType().name()
-            );
+            // 병렬 처리: 두 방향의 점수 계산을 동시에 실행
+            CompletableFuture<List<Entry<Long, Double>>> fromMyViewFuture = CompletableFuture.supplyAsync(() -> {
+                try {
+                    // 1단계: 내 선호도를 기준으로 각 사용자의 라이프스타일과 매칭 점수 계산 (나 → 상대방)
+                    return elasticScriptQueryExecutor.calculateScoresWithScript(
+                            preferenceWeights,
+                            preferredValues,
+                            memberId,
+                            dormitoryType
+                    );
+                } catch (Exception e) {
+                    log.error("나 → 상대방 점수 계산 중 오류 발생", e);
+                    return Collections.emptyList();
+                }
+            });
 
-            //` 3단계: 두 점수를 합산하여 최종 추천 점수 계산
+            CompletableFuture<List<Entry<Long, Double>>> fromTheirViewFuture = CompletableFuture.supplyAsync(() -> {
+                try {
+                    // 2단계: 다른 사용자의 선호도를 기준으로 내 라이프스타일과 매칭 점수 계산 (상대방 → 나)
+                    return elasticScriptQueryExecutor.calculateReversedScoresWithScript(
+                            lifestyleVector,
+                            memberId,
+                            dormitoryType
+                    );
+                } catch (Exception e) {
+                    log.error("상대방 → 나 점수 계산 중 오류 발생", e);
+                    return Collections.emptyList();
+                }
+            });
+
+            // 두 작업이 모두 완료될 때까지 대기
+            CompletableFuture<Void> allTasks = CompletableFuture.allOf(fromMyViewFuture, fromTheirViewFuture);
+
+            // 타임아웃 설정 (예: 30초)
+            allTasks.get(30, TimeUnit.SECONDS);
+
+            // 결과 가져오기
+            List<Entry<Long, Double>> fromMyView = fromMyViewFuture.get();
+            List<Entry<Long, Double>> fromTheirView = fromTheirViewFuture.get();
+
+            log.info("병렬 처리 완료 - 나→상대방: {}개, 상대방→나: {}개", fromMyView.size(), fromTheirView.size());
+
+            // 3단계: 두 점수를 합산하여 최종 추천 점수 계산
             Map<Long, Double> combinedScores = new HashMap<>();
+
+            // 나 → 상대방 점수 추가
             for (Entry<Long, Double> entry : fromMyView) {
                 combinedScores.put(entry.getKey(), entry.getValue());
             }
 
+            // 상대방 → 나 점수 추가 (합산)
             for (Entry<Long, Double> entry : fromTheirView) {
                 combinedScores.merge(entry.getKey(), entry.getValue(), Double::sum);
             }
+
+            log.info("최종 합산 완료 - 총 {}명의 후보", combinedScores.size());
 
             return combinedScores.entrySet().stream()
                     .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // 내림차순
                     .toList();
 
+        } catch (TimeoutException e) {
+            log.error("벡터 쿼리 처리 시간 초과 (30초)", e);
+            return Collections.emptyList();
         } catch (Exception e) {
             log.error("벡터 쿼리 기반 추천 계산 중 오류 발생", e);
             return Collections.emptyList();
