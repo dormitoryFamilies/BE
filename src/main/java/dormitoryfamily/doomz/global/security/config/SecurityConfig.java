@@ -48,6 +48,7 @@ public class SecurityConfig {
                     configuration.addAllowedOriginPattern("http://34.64.76.111/");
                     configuration.addAllowedOriginPattern("https://doomz.vercel.app/");
                     configuration.addAllowedOriginPattern("http://13.124.186.20:8080/");
+                    configuration.addAllowedOriginPattern("http://127.0.0.1:5500/");
                     configuration.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"));
 

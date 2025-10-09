@@ -34,14 +34,13 @@ public class ChatController {
         // 채팅 메시지 유효성 검사
         chatService.validateChat(chatMessage);
 
-        try{
-            chatRoomService.joinChatRoom(chatMessage.getRoomUUID());
-        }catch (Exception e){
-            log.error("Error occurred while processing chat message: {}", chatMessage, e);
-        }
+        String streamKey = chatRoomService.getStreamKey(chatMessage.getRoomUUID());
+
+        // 채팅방 구독
+        chatRoomService.joinChatRoom(streamKey);
 
         // 채팅 메시지 발행
-        redisPublisher.publish(chatRoomService.getTopic(chatMessage.getRoomUUID()), chatMessage);
+        redisPublisher.publish(streamKey, chatMessage);
 
         // 채팅 메시지 저장
         chatService.saveChat(chatMessage);

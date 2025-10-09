@@ -6,10 +6,12 @@ import dormitoryfamily.doomz.domain.chatting.chatroom.entity.ChatRoom;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class ChatMessage implements Serializable {
