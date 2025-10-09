@@ -1,6 +1,5 @@
 package dormitoryfamily.doomz.domain.chatting.chat.service;
 
-import dormitoryfamily.doomz.domain.chatting.chat.dto.ChatDto;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.ChatListResponseDto;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.ChatResponseDto;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.response.SearchChatListResponseDto;
@@ -20,28 +19,26 @@ import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.CHAT;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ChatService {
 
-    private final RedisTemplate<String, ChatDto> redisTemplateMessage;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -52,7 +49,6 @@ public class ChatService {
         Chat chat = ChatMessage.toEntity(chatMessage, chatRoom);
 
         chatRepository.save(chat);
-        saveChatInRedis(chatMessage.getRoomUUID(), chat);
         //알림 전송
         notifySavingChatInfo(chat);
     }
@@ -66,18 +62,31 @@ public class ChatService {
                 .orElseThrow(ChatRoomNotExistsException::new);
     }
 
-    private void saveChatInRedis(String roomUUID, Chat chat) {
-        ChatDto chatDto = ChatDto.fromEntity(chat);
-        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatDto.class));
-
-        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
-        zSetOps.add(roomUUID, chatDto, chat.getCreatedAt().toEpochSecond(ZoneOffset.UTC));
-        redisTemplateMessage.expire(roomUUID, 1, TimeUnit.DAYS);
-    }
 
     public void deleteInvisibleChat(LocalDateTime enteredAt, String roomUUID) {
         chatRepository.deleteByCreatedAtBefore(roomUUID, enteredAt);
-        redisTemplateMessage.delete(roomUUID);
+
+        // Redis Streams에서 입장 시간 이전 메시지 삭제
+        String streamKey = "chat:stream:" + roomUUID;
+        String maxStreamId = convertTimestampToStreamId(enteredAt);
+
+        try {
+            // XTRIM으로 해당 시간 이전 메시지 삭제
+            List<org.springframework.data.redis.connection.stream.MapRecord<String, Object, Object>> oldMessages =
+                redisTemplate.opsForStream().range(streamKey,
+                    org.springframework.data.domain.Range.closed("-", maxStreamId));
+
+            if (oldMessages != null && !oldMessages.isEmpty()) {
+                org.springframework.data.redis.connection.stream.RecordId[] messageIds =
+                    oldMessages.stream()
+                        .map(org.springframework.data.redis.connection.stream.MapRecord::getId)
+                        .toArray(org.springframework.data.redis.connection.stream.RecordId[]::new);
+
+                redisTemplate.opsForStream().delete(streamKey, messageIds);
+            }
+        } catch (Exception e) {
+            // Stream이 없거나 삭제 실패해도 무시 (MySQL은 이미 삭제됨)
+        }
     }
 
     public ChatListResponseDto findAllChatHistory(PrincipalDetails principalDetails, Long roomId, Pageable pageable) {
@@ -117,66 +126,26 @@ public class ChatService {
 
     private ChatListResponseDto createChatListResponse(ChatRoom chatRoom, Member loginMember, boolean isInitiator, Pageable pageable) {
         String roomUUID = chatRoom.getRoomUUID();
-        ZSetOperations<String, ChatDto> zSetOps = redisTemplateMessage.opsForZSet();
+        LocalDateTime enteredAt = isInitiator ? chatRoom.getInitiatorEnteredAt() : chatRoom.getParticipantEnteredAt();
 
-        Long cachedMessageCount = zSetOps.zCard(chatRoom.getRoomUUID());
+        Slice<Chat> chatSlice = chatRepository.findByChatRoomRoomUUIDAndCreatedAtAfter(roomUUID, enteredAt, pageable);
 
-        //redis에 캐시된 값이 없으면 db에서 redis로 보냄
-        if (cachedMessageCount == 0) {
-            cacheChatMessagesFromDB(chatRoom, roomUUID, zSetOps);
-        }
+        List<ChatResponseDto> chatResponseDtos = chatSlice.getContent().stream()
+            .map(chat -> {
+                Member chatMember = Objects.equals(chat.getSenderId(), chatRoom.getInitiator().getId()) ?
+                        chatRoom.getInitiator() : chatRoom.getParticipant();
+                boolean isChatInitiator = chat.getSenderId().equals(loginMember.getId());
+                return ChatResponseDto.fromEntity(chat, chatMember, isChatInitiator);
+            })
+            .collect(Collectors.toList());
 
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
-        double startScore = calculateStartScore(chatRoom, isInitiator);
-        double endScore = Double.POSITIVE_INFINITY;
-
-        //입장 시간 이후에 해당 되는 채팅 개수 카운트
-        Long sizeInRange = zSetOps.count(chatRoom.getRoomUUID(), startScore, endScore);
-
-        //아직 반환하지 않은 채팅 개수 카운트
-        long remainingCount = sizeInRange - ((long) pageSize * pageNumber);
-        //이미 다 반환한 경우에는 공백으로 반환
-        if (remainingCount < 0) {
-            return ChatListResponseDto.from(pageNumber, true, chatRoom.getRoomUUID(), Collections.emptyList());
-        }
-
-        long offset = Math.max(sizeInRange - (long) (pageNumber + 1) * pageSize, 0);
-        long count = Math.min(remainingCount, pageable.getPageSize());
-
-        //해당 score에 포함되는 chat 중 offset부터 count 만큼 가져옴
-        Set<ChatDto> chatSet = zSetOps.rangeByScore(chatRoom.getRoomUUID(), startScore, endScore, offset, count);
-
-        List<ChatResponseDto> chatResponseDtos = CreateChatResponseDtoList(chatSet, chatRoom, loginMember);
-        boolean isLast = chatResponseDtos.size() < pageSize;
-        return ChatListResponseDto.from(pageNumber, isLast, chatRoom.getRoomUUID(), chatResponseDtos);
+        return ChatListResponseDto.from(pageable.getPageNumber(), !chatSlice.hasNext(), chatRoom.getRoomUUID(), chatResponseDtos);
     }
 
-    private void cacheChatMessagesFromDB(ChatRoom chatRoom, String roomUUID, ZSetOperations<String, ChatDto> zSetOps) {
-        List<Chat> dbChatList = chatRepository.findAllByChatRoomRoomUUID(roomUUID);
-        dbChatList.stream()
-                .map(ChatDto::fromEntity)
-                .forEach(chatDto -> {
-                    zSetOps.add(roomUUID, chatDto, chatDto.sentTime().toEpochSecond(ZoneOffset.UTC));
-                    redisTemplateMessage.expire(roomUUID, 1, TimeUnit.DAYS);
-                });
-    }
-
-    private double calculateStartScore(ChatRoom chatRoom, boolean isInitiator) {
-        return isInitiator ? chatRoom.getInitiatorEnteredAt().toEpochSecond(ZoneOffset.UTC) :
-                chatRoom.getParticipantEnteredAt().toEpochSecond(ZoneOffset.UTC);
-    }
-
-    private List<ChatResponseDto> CreateChatResponseDtoList(Set<ChatDto> chatSet, ChatRoom chatRoom, Member loginMember) {
-        List<ChatDto> chatList = new ArrayList<>(chatSet);
-        return chatList.stream()
-                .map(chat -> {
-                    Member chatMember = Objects.equals(chat.senderId(), chatRoom.getInitiator().getId()) ?
-                            chatRoom.getInitiator() : chatRoom.getParticipant();
-                    boolean isChatInitiator = chat.senderId().equals(loginMember.getId());
-                    return ChatResponseDto.fromChatDto(chat, chatMember, isChatInitiator);
-                })
-                .collect(Collectors.toList());
+    private String convertTimestampToStreamId(LocalDateTime dateTime) {
+        // LocalDateTime을 시스템 기본 시간대(KST)로 변환
+        long timestamp = dateTime.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return timestamp + "-0";
     }
 
     public void validateChat(ChatMessage chatMessage) {

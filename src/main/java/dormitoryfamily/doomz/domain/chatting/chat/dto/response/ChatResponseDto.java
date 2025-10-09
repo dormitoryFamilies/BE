@@ -2,6 +2,7 @@ package dormitoryfamily.doomz.domain.chatting.chat.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dormitoryfamily.doomz.domain.chatting.chat.dto.ChatDto;
+import dormitoryfamily.doomz.domain.chatting.chat.entity.Chat;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 
 import java.time.LocalDateTime;
@@ -24,6 +25,17 @@ public record ChatResponseDto(
                 chatMember.getProfileUrl(),
                 chatDto.message(),
                 chatDto.sentTime()
+        );
+    }
+
+    public static ChatResponseDto fromEntity(Chat chat, Member chatMember, boolean isChatSender) {
+        return new ChatResponseDto(
+                chatMember.getId(),
+                isChatSender,
+                chatMember.getNickname(),
+                chatMember.getProfileUrl(),
+                chat.getMessage(),
+                chat.getCreatedAt()
         );
     }
 

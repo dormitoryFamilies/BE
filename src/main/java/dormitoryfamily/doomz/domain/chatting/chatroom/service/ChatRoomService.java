@@ -258,7 +258,9 @@ public class ChatRoomService {
 
     private void deleteOrChangeChatRoomStatus(ChatRoom chatRoom, boolean isInitiator, boolean isInitiatorDeleted, boolean isParticipantDeleted) {
         if (isInitiatorDeleted || isParticipantDeleted) {
+            // 양쪽 다 나갔으면 채팅방 + Redis Stream 삭제
             chatRoomRepository.delete(chatRoom);
+            deleteStream(chatRoom.getRoomUUID());
         } else {
             if (isInitiator) {
                 chatRoom.deleteInitiator();
@@ -266,6 +268,16 @@ public class ChatRoomService {
                 chatRoom.deleteParticipant();
             }
             chatService.deleteInvisibleChat(isInitiator ? chatRoom.getParticipantEnteredAt() : chatRoom.getInitiatorEnteredAt(), chatRoom.getRoomUUID());
+        }
+    }
+
+    private void deleteStream(String roomUUID) {
+        try {
+            String streamKey = getStreamKey(roomUUID);
+            redisTemplate.delete(streamKey);
+            subscribedStreams.remove(streamKey);
+        } catch (Exception e) {
+            log.error("[ChatRoomService] Failed to delete stream for room: {}", roomUUID, e);
         }
     }
 
@@ -353,5 +365,9 @@ public class ChatRoomService {
                 .orElseThrow(MemberChatRoomNotExistsException::new);
 
         return ChatRoomEntryResponseDto.fromEntity(chatRoom);
+    }
+
+    public Map<String, Boolean> getSubscribedStreams() {
+        return subscribedStreams;
     }
 }

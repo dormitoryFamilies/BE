@@ -2,6 +2,8 @@ package dormitoryfamily.doomz.domain.chatting.chat.repository;
 
 import dormitoryfamily.doomz.domain.chatting.chat.entity.Chat;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
@@ -15,12 +17,13 @@ public interface ChatRepository extends JpaRepository<Chat, Long>, ChatRepositor
 
     Optional<Chat> findTopByChatRoomRoomUUIDOrderByCreatedAtDesc(String roomUUID);
 
-    List<Chat> findAllByChatRoomRoomUUID(String roomUUID);
-
     @Transactional
     @Modifying
     @Query("DELETE FROM Chat c WHERE c.chatRoom.roomUUID = :roomUUID AND c.createdAt < :enteredAt")
     void deleteByCreatedAtBefore(String roomUUID, LocalDateTime enteredAt);
 
     boolean existsByChatRoomRoomUUID(String roomUUID);
+
+    @Query("SELECT c FROM Chat c WHERE c.chatRoom.roomUUID = :roomUUID AND c.createdAt >= :enteredAt ORDER BY c.createdAt ASC")
+    Slice<Chat> findByChatRoomRoomUUIDAndCreatedAtAfter(String roomUUID, LocalDateTime enteredAt, Pageable pageable);
 }
