@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +18,7 @@ public class RecommendationController {
 
     private final RecommendationService recommendationService;
 
-    @PostMapping("/recommendations")
+    @GetMapping("/recommendations")
     public ResponseEntity<ResponseDto<RecommendationResponseDto>> suggestCandidates(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
@@ -27,7 +26,7 @@ public class RecommendationController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 
-    @GetMapping("/recommendations")
+    @GetMapping("/recommendations/results")
     public ResponseEntity<ResponseDto<RecommendationResponseDto>> getRecommendedCandidates(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {

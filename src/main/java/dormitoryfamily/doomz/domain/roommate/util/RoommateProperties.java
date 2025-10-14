@@ -30,6 +30,9 @@ public class RoommateProperties {
     /** 추천 후보 최대 수 */
     public static final int RECOMMENDATIONS_MAX_COUNT = 5;
 
+    /** ANN 후보 풀 크기 (kNN으로 추출할 1차 후보 수) */
+    public static final int ANN_CANDIDATE_POOL_SIZE = 100;
+
     /** Redis 키 접두사 */
     public static final String REDIS_CANDIDATES_KEY_PREFIX = "recommend:candidates:";
 

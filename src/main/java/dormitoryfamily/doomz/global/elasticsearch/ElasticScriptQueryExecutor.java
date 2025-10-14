@@ -158,6 +158,54 @@ public class ElasticScriptQueryExecutor {
     }
 
     /**
+     * kNN으로 Top-K 후보 빠르게 추출
+     */
+    public List<Long> findTopKCandidates(
+            float[] queryVector,
+            String dormitoryFilter,
+            Long excludeMemberId,
+            int k
+    ) throws IOException {
+        try {
+            // float[] -> List<Float> 변환
+            List<Float> queryVectorList = new ArrayList<>();
+            for (float v : queryVector) {
+                queryVectorList.add(v);
+            }
+
+            SearchRequest request = SearchRequest.of(r -> r
+                    .index(LIFESTYLE_INDEX)
+                    .knn(knn -> knn
+                            .field(FIELD_LIFESTYLE_VECTOR)
+                            .queryVector(queryVectorList)
+                            .k(k)
+                            .numCandidates(k * 3)
+                            .filter(f -> f
+                                    .bool(b -> b
+                                            .must(mb -> mb.match(m -> m.field("dormitory").query(dormitoryFilter)))
+                                            .mustNot(mn -> mn.term(t -> t.field("member_id").value(v -> v.longValue(excludeMemberId))))
+                                    )
+                            )
+                    )
+            );
+
+            SearchResponse<Map<String, Object>> response =
+                    elasticsearchClient.search(request, (Type) Map.class);
+
+            List<Long> candidateIds = response.hits().hits().stream()
+                    .map(hit -> ((Number) hit.source().get("member_id")).longValue())
+                    .collect(Collectors.toList());
+
+            log.info("kNN 후보 추출 완료: {}명 (요청: {}명)", candidateIds.size(), k);
+            return candidateIds;
+
+        } catch (Exception e) {
+            log.error("kNN 후보 추출 실패: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    /**
      * 스크립트 쿼리 실행 메서드
      */
     public List<Entry<Long, Double>> executeScriptQuery(
@@ -165,19 +213,36 @@ public class ElasticScriptQueryExecutor {
             String scriptSource,
             Map<String, Object> params,
             Long excludeMemberId,
-            String dormitoryFilter
+            String dormitoryFilter,
+            List<Long> candidateIds
     ) throws IOException {
 
         log.info("스크립트 쿼리 실행 시작: index={}, excludeId={}, dormitory={}",
                 indexName, excludeMemberId, dormitoryFilter);
 
         try {
-            // term 대신 match 쿼리 사용
+            // 후보 ID 필터 추가
             Query filterQuery = Query.of(q -> q
-                    .bool(b -> b
-                            .must(mb -> mb.match(m -> m.field("dormitory").query(dormitoryFilter)))
-                            .mustNot(mn -> mn.term(t -> t.field("member_id").value(v -> v.longValue(excludeMemberId))))))
-                    ;
+                    .bool(b -> {
+                        var boolBuilder = b
+                                .must(mb -> mb.match(m -> m.field("dormitory").query(dormitoryFilter)))
+                                .mustNot(mn -> mn.term(t -> t.field("member_id").value(v -> v.longValue(excludeMemberId))));
+
+                        // 후보 ID가 있으면 필터 추가
+                        if (candidateIds != null && !candidateIds.isEmpty()) {
+                            boolBuilder.must(mb -> mb.terms(t -> t
+                                    .field("member_id")
+                                    .terms(terms -> terms.value(
+                                            candidateIds.stream()
+                                                    .map(id -> co.elastic.clients.elasticsearch._types.FieldValue.of(id))
+                                                    .collect(Collectors.toList())
+                                    ))
+                            ));
+                        }
+
+                        return boolBuilder;
+                    })
+            );
 
             // 2. Script 객체 구성
             Script script = Script.of(s -> s
@@ -238,7 +303,7 @@ public class ElasticScriptQueryExecutor {
      * 내 선호도와 다른 사용자의 라이프스타일 간의 점수 계산
      */
     public List<Entry<Long, Double>> calculateScoresWithScript(
-            float[] weights, float[] preferredValues, Long excludeMemberId, String dormitoryFilter) throws IOException {
+            float[] weights, float[] preferredValues, Long excludeMemberId, String dormitoryFilter, List<Long> candidateIds) throws IOException {
 
         // Elasticsearch 스크립트 파라미터 설정
         Map<String, Object> params = new HashMap<>();
@@ -249,7 +314,7 @@ public class ElasticScriptQueryExecutor {
         String scriptSource = """
         double score = 0.0;
         def targetVector = params._source.lifestyle_vector;
-        
+
         for (int i = 0; i < params.weights.length && i < targetVector.length; i++) {
             if (params.weights[i] >= 0.1) {
                 double difference = Math.abs(params.preferredValues[i] - targetVector[i]);
@@ -260,7 +325,7 @@ public class ElasticScriptQueryExecutor {
         return score;
     """;
 
-        return executeScriptQuery(LIFESTYLE_INDEX, scriptSource, params, excludeMemberId, dormitoryFilter);
+        return executeScriptQuery(LIFESTYLE_INDEX, scriptSource, params, excludeMemberId, dormitoryFilter, candidateIds);
     }
 
     /**
@@ -268,7 +333,7 @@ public class ElasticScriptQueryExecutor {
      * 다른 사용자의 선호도와 내 라이프스타일 간의 점수 계산
      */
     public List<Entry<Long, Double>> calculateReversedScoresWithScript(
-            float[] myLifestyleVector, Long excludeMemberId, String dormitoryFilter) throws IOException {
+            float[] myLifestyleVector, Long excludeMemberId, String dormitoryFilter, List<Long> candidateIds) throws IOException {
 
         Map<String, Object> params = new HashMap<>();
         params.put("myLifestyle", myLifestyleVector); // 내가 가진 lifestyle 벡터
@@ -278,7 +343,7 @@ public class ElasticScriptQueryExecutor {
         double score = 0.0;
         def weights = params._source.preference_weight;
         def preferredValues = params._source.preferred_values;
-        
+
         for (int i = 0; i < weights.length && i < params.myLifestyle.length; i++) {
             if (weights[i] >= 0.1) {
                 double difference = Math.abs(preferredValues[i] - params.myLifestyle[i]);
@@ -289,6 +354,102 @@ public class ElasticScriptQueryExecutor {
         return score;
     """;
 
-        return executeScriptQuery(PREFERENCE_INDEX, scriptSource, params, excludeMemberId, dormitoryFilter);
+        return executeScriptQuery(PREFERENCE_INDEX, scriptSource, params, excludeMemberId, dormitoryFilter, candidateIds);
+    }
+
+    /**
+     * kNN + Rescore 방식 (1회 네트워크 왕복)
+     * kNN으로 후보를 추출하고, 동일 쿼리 내에서 rescore로 script 기반 재점수 계산
+     */
+    public List<Entry<Long, Double>> findTopKWithScript(
+            float[] queryVector,
+            float[] weights,
+            float[] preferredValues,
+            String dormitoryFilter,
+            Long excludeMemberId,
+            int k
+    ) throws IOException {
+
+        List<Float> queryVectorList = new ArrayList<>();
+        for (float v : queryVector) {
+            queryVectorList.add(v);
+        }
+
+        Map<String, Object> scriptParams = new HashMap<>();
+        scriptParams.put("weights", weights);
+        scriptParams.put("preferredValues", preferredValues);
+
+        String scriptSource = """
+        double score = 0.0;
+        def targetVector = params._source.lifestyle_vector;
+
+        for (int i = 0; i < params.weights.length && i < targetVector.length; i++) {
+            if (params.weights[i] >= 0.1) {
+                double difference = Math.abs(params.preferredValues[i] - targetVector[i]);
+                double attributeScore = 10 - difference;
+                score += attributeScore * params.weights[i];
+            }
+        }
+        return score;
+    """;
+
+        // Script 객체 구성
+        Script script = Script.of(s -> s
+                .inline(inline -> inline
+                        .source(scriptSource)
+                        .lang("painless")
+                        .params(scriptParams.entrySet().stream()
+                                .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        e -> JsonData.of(e.getValue())
+                                ))
+                        )
+                )
+        );
+
+        int windowSize = Math.min(k * 2, 100); // rescore 대상 수
+
+        SearchRequest request = SearchRequest.of(r -> r
+                .index(LIFESTYLE_INDEX)
+                .knn(knn -> knn
+                        .field(FIELD_LIFESTYLE_VECTOR)
+                        .queryVector(queryVectorList)
+                        .k(windowSize)
+                        .numCandidates(windowSize * 3)
+                        .filter(f -> f
+                                .bool(b -> b
+                                        .must(mb -> mb.match(m -> m.field("dormitory").query(dormitoryFilter)))
+                                        .mustNot(mn -> mn.term(t -> t.field("member_id").value(v -> v.longValue(excludeMemberId))))
+                                )
+                        )
+                )
+                .rescore(rs -> rs
+                        .windowSize(windowSize)
+                        .query(rsq -> rsq
+                                .query(rq -> rq
+                                        .scriptScore(ss -> ss
+                                                .query(qb -> qb.matchAll(ma -> ma))
+                                                .script(script)
+                                        )
+                                )
+                                .queryWeight(1.0)    // kNN 원본 점수 가중치
+                                .rescoreQueryWeight(1.0)  // rescore 점수 가중치
+                        )
+                )
+                .size(k)
+        );
+
+        SearchResponse<Map<String, Object>> response =
+                elasticsearchClient.search(request, (Type) Map.class);
+
+        log.info("kNN + Rescore 통합 쿼리 완료: {}개 결과, 실행 시간 {}ms",
+                response.hits().hits().size(), response.took());
+
+        return response.hits().hits().stream()
+                .map(hit -> new AbstractMap.SimpleEntry<>(
+                        ((Number) hit.source().get("member_id")).longValue(),
+                        hit.score()
+                ))
+                .collect(Collectors.toList());
     }
 }

@@ -46,7 +46,7 @@ public class RecommendationService {
         checkAlreadyMatched(loginMember);
 
         Long memberId = loginMember.getId();
-        
+
         // 엘라스틱서치 벡터 쿼리 기반으로 추천 점수 계산
         List<Entry<Long, Double>> scores = findTopMatchingCandidatesWithVectorQuery(loginMember);
 
@@ -113,6 +113,24 @@ public class RecommendationService {
 
             String dormitoryType = member.getDormitoryType().name();
 
+            // 0단계: kNN으로 후보 추출
+            List<Long> candidates;
+            try {
+                candidates = elasticScriptQueryExecutor.findTopKCandidates(
+                        preferredValues,  // 내 선호 값으로 유사한 사람 찾기
+                        dormitoryType,
+                        memberId,
+                        ANN_CANDIDATE_POOL_SIZE
+                );
+                log.info("kNN으로 추출된 후보: {}명", candidates.size());
+            } catch (Exception e) {
+                log.error("kNN 후보 추출 실패, 전체 대상으로 진행", e);
+                candidates = null;  // null이면 executeScriptQuery에서 전체 대상
+            }
+
+            // 최종 후보 리스트
+            final List<Long> finalCandidates = candidates;
+
             // 병렬 처리: 두 방향의 점수 계산을 동시에 실행
             CompletableFuture<List<Entry<Long, Double>>> fromMyViewFuture = CompletableFuture.supplyAsync(() -> {
                 try {
@@ -121,7 +139,8 @@ public class RecommendationService {
                             preferenceWeights,
                             preferredValues,
                             memberId,
-                            dormitoryType
+                            dormitoryType,
+                            finalCandidates
                     );
                 } catch (Exception e) {
                     log.error("나 → 상대방 점수 계산 중 오류 발생", e);
@@ -135,7 +154,8 @@ public class RecommendationService {
                     return elasticScriptQueryExecutor.calculateReversedScoresWithScript(
                             lifestyleVector,
                             memberId,
-                            dormitoryType
+                            dormitoryType,
+                            finalCandidates
                     );
                 } catch (Exception e) {
                     log.error("상대방 → 나 점수 계산 중 오류 발생", e);
