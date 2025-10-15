@@ -6,13 +6,11 @@ import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.roommate.matching.event.result.MatchingResultEvent;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
-import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingConflictException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MatchingResultNotExistException;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.MemberDormitoryMismatchException;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.util.OptimisticLockRetryHelper;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import jakarta.persistence.LockTimeoutException;
-import jakarta.persistence.PessimisticLockException;
 import jakarta.transaction.Transactional;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +37,7 @@ public class MatchingResultService {
 
     @Transactional
     public void saveMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        try{
+        OptimisticLockRetryHelper.executeWithRetry(() -> {
             Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
             Member loginMember = members.getFirst();
             Member targetMember = members.getSecond();
@@ -50,29 +48,17 @@ public class MatchingResultService {
             updateMemberMatchingStatus(loginMember, targetMember);
             matchingRequestService.deleteMatchingRequestWhenMatched(loginMember, targetMember);
             notifyMatchingResultInfo(matchingResult);
-        } catch (PessimisticLockException | LockTimeoutException e) {
-            throw new MatchingConflictException();
-        }
+        });
     }
 
     public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
-
         Long loginMemberId = principalDetails.getMember().getId();
 
-        // ID 정렬 (데드락 방지)
-        Long firstId = Math.min(loginMemberId, memberId);
-        Long secondId = Math.max(loginMemberId, memberId);
-
-        // 비관적 락으로 조회
-        Member firstMember = memberRepository.findByIdWithPessimisticLock(firstId)
+        Member loginMember = memberRepository.findByIdWithOptimisticLock(loginMemberId)
                 .orElseThrow(MemberNotExistsException::new);
 
-        Member secondMember = memberRepository.findByIdWithPessimisticLock(secondId)
+        Member targetMember = memberRepository.findByIdWithOptimisticLock(memberId)
                 .orElseThrow(MemberNotExistsException::new);
-
-        // 정확한 loginMember, targetMember 할당
-        Member loginMember = (firstMember.getId().equals(loginMemberId)) ? firstMember : secondMember;
-        Member targetMember = (firstMember.getId().equals(loginMemberId)) ? secondMember : firstMember;
 
         return Pair.of(loginMember, targetMember);
     }
@@ -104,7 +90,7 @@ public class MatchingResultService {
     }
 
     public void cancelMatchingResult(PrincipalDetails principalDetails, Long memberId) {
-        try{
+        OptimisticLockRetryHelper.executeWithRetry(() -> {
             Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
             Member loginMember = members.getFirst();
             Member targetMember = members.getSecond();
@@ -113,9 +99,7 @@ public class MatchingResultService {
             matchingResultRepository.delete(matchingResult);
 
             resetMemberMatchingStatus(loginMember, targetMember);
-        } catch (PessimisticLockException | LockTimeoutException e) {
-            throw new MatchingConflictException();
-        }
+        });
     }
 
     private MatchingResult getMatchingResultByMembers(Member loginMember, Member targetMember) {

@@ -11,10 +11,10 @@ import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.event.request.MatchingRequestEvent;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.util.OptimisticLockRetryHelper;
 import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import jakarta.persistence.LockTimeoutException;
-import jakarta.persistence.PessimisticLockException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,7 +40,7 @@ public class MatchingRequestService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void saveMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        try{
+        OptimisticLockRetryHelper.executeWithRetry(() -> {
             Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
             Member loginMember = members.getFirst();
             Member targetMember = members.getSecond();
@@ -51,28 +51,17 @@ public class MatchingRequestService {
             matchingRequestRepository.save(matchingRequest);
             //알림 전송
             notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
-        }catch (PessimisticLockException | LockTimeoutException e){
-            throw new MatchingConflictException();
-        }
+        });
     }
 
     public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
         Long loginMemberId = principalDetails.getMember().getId();
 
-        // ID 정렬 (데드락 방지)
-        Long firstId = Math.min(loginMemberId, memberId);
-        Long secondId = Math.max(loginMemberId, memberId);
-
-        // 비관적 락으로 조회
-        Member firstMember = memberRepository.findByIdWithPessimisticLock(firstId)
+        Member loginMember = memberRepository.findByIdWithOptimisticLock(loginMemberId)
                 .orElseThrow(MemberNotExistsException::new);
 
-        Member secondMember = memberRepository.findByIdWithPessimisticLock(secondId)
+        Member targetMember = memberRepository.findByIdWithOptimisticLock(memberId)
                 .orElseThrow(MemberNotExistsException::new);
-
-        // 정확한 loginMember, targetMember 할당
-        Member loginMember = (firstMember.getId().equals(loginMemberId)) ? firstMember : secondMember;
-        Member targetMember = (firstMember.getId().equals(loginMemberId)) ? secondMember : firstMember;
 
         return Pair.of(loginMember, targetMember);
     }
@@ -113,7 +102,7 @@ public class MatchingRequestService {
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        try{
+        OptimisticLockRetryHelper.executeWithRetry(() -> {
             Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
             Member loginMember = members.getFirst();
             Member targetMember = members.getSecond();
@@ -122,9 +111,7 @@ public class MatchingRequestService {
             matchingRequestRepository.delete(matchingRequest);
             //알림 전송
             notifyMatchingRequestInfo(matchingRequest, MATCHING_REJECT);
-        }  catch (PessimisticLockException | LockTimeoutException e) {
-            throw new MatchingConflictException();
-        }
+        });
     }
 
     public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember) {
