@@ -1,5 +1,7 @@
 package dormitoryfamily.doomz.global.chat;
 
+import static dormitoryfamily.doomz.global.chat.ChatProperties.CONSUMER_GROUP;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -20,35 +22,30 @@ public class RedisSubscriber implements StreamListener<String, MapRecord<String,
 
     @Override
     public void onMessage(MapRecord<String, String, String> message) {
+        String streamKey = message.getStream();
+        String messageId = message.getId().getValue();
+
         try {
+            // 메시지 데이터 추출
             Map<String, String> messageMap = message.getValue();
 
+            // ChatMessage 생성
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setRoomUUID(messageMap.get("roomUUID"));
-
-            String senderIdStr = messageMap.get("senderId");
-            if (senderIdStr != null && !senderIdStr.isEmpty()) {
-                chatMessage.setSenderId(Long.parseLong(senderIdStr));
-            } else {
-                log.error("[RedisSubscriber] senderId is null or empty in message: {}", messageMap);
-                return;
-            }
-
+            chatMessage.setSenderId(Long.parseLong(messageMap.get("senderId")));
             chatMessage.setMessage(messageMap.get("message"));
 
+            // WebSocket 전송
             String destination = "/sub/chat/room/" + chatMessage.getRoomUUID();
             messagingTemplate.convertAndSend(destination, chatMessage);
-            log.info("[RedisSubscriber] Message sent successfully to: {}", destination);
+            log.debug("[RedisSubscriber] Message sent to: {}", destination);
 
-            // ACK 처리 (메시지 처리 완료)
-            redisTemplate.opsForStream().acknowledge(
-                    message.getStream(),
-                    "chat-consumer-group",
-                    message.getId()
-            );
+            // ACK 처리
+            redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP, messageId);
 
         } catch (Exception e) {
-            log.error("Failed to process stream message: {}", e.getMessage(), e);
+            // → Pending 유지 (재시도 가능)
+            log.error("[RedisSubscriber] Processing failed, will retry: {}", messageId, e);
         }
     }
 }

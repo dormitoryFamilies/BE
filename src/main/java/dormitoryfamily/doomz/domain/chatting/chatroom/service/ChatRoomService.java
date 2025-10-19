@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.CHAT;
+import static dormitoryfamily.doomz.global.chat.ChatProperties.STREAM_KEY_PREFIX;
 
 @Slf4j
 @Service
@@ -186,7 +187,7 @@ public class ChatRoomService {
     }
 
     public String getStreamKey(String roomUUID) {
-        return "chat:stream:" + roomUUID;
+        return STREAM_KEY_PREFIX + roomUUID;
     }
 
     public void updateUnreadCount(ChatMessage chatMessage) {
