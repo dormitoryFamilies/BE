@@ -22,7 +22,7 @@ public class PendingRetryScheduler {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisSubscriber redisSubscriber;
 
-    private static final int MAX_RETRY_COUNT = 3;
+    private static final int MAX_RETRY_COUNT = 1;
     private static final long PENDING_THRESHOLD_MILLIS = 10000;
 
     @Scheduled(initialDelay = 0, fixedDelay = 30000)

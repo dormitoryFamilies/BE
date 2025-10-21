@@ -68,7 +68,7 @@ public class RedisConfig {
     public StreamMessageListenerContainer<String, ?> streamMessageListenerContainer(RedisConnectionFactory connectionFactory) {
         StreamMessageListenerContainerOptions<String, ?> options = StreamMessageListenerContainerOptions
                 .builder()
-                .pollTimeout(Duration.ofMillis(100))
+                .pollTimeout(Duration.ofMillis(3000))
                 .build();
 
         StreamMessageListenerContainer<String, ?> container =

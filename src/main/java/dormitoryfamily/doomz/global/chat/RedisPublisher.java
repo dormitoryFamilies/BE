@@ -21,6 +21,7 @@ public class RedisPublisher {
             messageMap.put("senderId", String.valueOf(chatMessage.getSenderId()));
             messageMap.put("message", chatMessage.getMessage());
             redisTemplate.opsForStream().add(streamKey, messageMap);
+            redisTemplate.opsForStream().trim(streamKey, 10000, true);
         } catch (Exception e) {
             log.error("Failed to publish message to Redis Stream: {}", e.getMessage(), e);
         }
