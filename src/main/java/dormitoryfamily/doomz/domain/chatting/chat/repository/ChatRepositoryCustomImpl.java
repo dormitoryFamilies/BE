@@ -21,9 +21,10 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
 
     @Override
     public Slice<Chat> findByChatMessage(Member member, String keyword, Pageable pageable, String sortType) {
-
         List<Chat> content = queryFactory.selectFrom(chat)
-                .join(chat.chatRoom)
+                .join(chat.chatRoom).fetchJoin()
+                .join(chat.chatRoom.initiator).fetchJoin()
+                .join(chat.chatRoom.participant).fetchJoin()
                 .where(chat.message.lower().likeIgnoreCase("%" + keyword + "%")
                         .and(
                                 (chat.chatRoom.initiator.eq(member).and(chat.chatRoom.initiator.isNotNull()))

@@ -1,5 +1,6 @@
 package dormitoryfamily.doomz.domain.member.member.service;
 
+import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
 import dormitoryfamily.doomz.domain.member.follow.repository.FollowRepository;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MemberSetUpProfileRequestDto;
 import dormitoryfamily.doomz.domain.member.member.dto.request.MyProfileModifyRequestDto;
@@ -13,10 +14,12 @@ import dormitoryfamily.doomz.domain.member.member.exception.NotVisitorOrRejected
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
+import dormitoryfamily.doomz.domain.roommate.wish.entity.RoommateWish;
 import dormitoryfamily.doomz.domain.roommate.wish.repository.RoommateWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,10 +80,22 @@ public class MemberService {
     }
 
     private List<AllMembersResponseDto> convertToDtoList(List<Member> members, Member loginMember) {
+        // 팔로우 정보 조회
+        List<Follow> followList = followRepository.findAllByFollowerAndFollowingIn(loginMember, members);
+        Set<Long> followingIds = followList.stream()
+                .map(f -> f.getFollowing().getId())
+                .collect(Collectors.toSet());
+
+        // 룸메이트 위시 정보를 한 번에 조회
+        List<RoommateWish> wishList = roommateWishRepository.findAllByWisherAndWishedIn(loginMember, members);
+        Set<Long> wishedIds = wishList.stream()
+                .map(w -> w.getWished().getId())
+                .collect(Collectors.toSet());
+
         return members.stream()
                 .map(member -> {
-                    boolean isFollowing = followRepository.existsByFollowerAndFollowing(loginMember, member);
-                    boolean isRoommateWished = roommateWishRepository.existsByWisherAndWished(loginMember, member);
+                    boolean isFollowing = followingIds.contains(member.getId());
+                    boolean isRoommateWished = wishedIds.contains(member.getId());
                     return AllMembersResponseDto.fromEntity(member, isFollowing, isRoommateWished);
                 })
                 .collect(Collectors.toList());

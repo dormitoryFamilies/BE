@@ -5,7 +5,9 @@ import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.repository.LifestyleRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
+import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
@@ -40,6 +42,7 @@ public class RecommendationService {
     private final MatchingRequestService matchingRequestService;
     private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final MatchingRequestRepository matchingRequestRepository;
 
     public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
@@ -207,26 +210,49 @@ public class RecommendationService {
      * 이미 매칭 요청한 사용자 필터링
      */
     private List<Entry<Long, Double>> filterMatchingRequests(Member loginMember, List<Entry<Long, Double>> scores) {
-        log.info("필터링 전 추천 점수: {}", scores);
-        
+
+        // 모든 후보 ID 수집
+        List<Long> candidateIds = scores.stream()
+                .map(Entry::getKey)
+                .collect(Collectors.toList());
+
+        // 존재하는 Member들을 한 번에 조회
+        List<Member> existingMembers = memberRepository.findAllById(candidateIds);
+        Set<Long> existingMemberIds = existingMembers.stream()
+                .map(Member::getId)
+                .collect(Collectors.toSet());
+
+        // 매칭 요청 이력을 한 번에 조회
+        List<MatchingRequest> existingRequests = matchingRequestRepository
+                .findAllByMemberAndCandidateIds(loginMember, candidateIds);
+
+        // 매칭 요청이 있는 멤버 ID들을 Set으로 변환
+        Set<Long> requestedMemberIds = existingRequests.stream()
+                .map(request -> {
+                    // sender가 loginMember면 receiver의 ID, 아니면 sender의 ID
+                    return request.getSender().getId().equals(loginMember.getId())
+                            ? request.getReceiver().getId()
+                            : request.getSender().getId();
+                })
+                .collect(Collectors.toSet());
+
         List<Entry<Long, Double>> filteredScores = scores.stream()
                 .filter(entry -> {
-                    Member candidateMember = memberRepository.findById(entry.getKey()).orElse(null);
-                    boolean isValid = candidateMember != null &&
-                            !matchingRequestService.isMatchingRequestAlreadyExits(loginMember, candidateMember);
-                    
+                    Long candidateId = entry.getKey();
+                    boolean isValid = existingMemberIds.contains(candidateId) &&  // 존재하는 멤버인가?
+                            !requestedMemberIds.contains(candidateId);   // 매칭 요청 없는가?
+
                     if (!isValid) {
-                        log.info("후보 제외: memberId={}, reason={}", 
-                            entry.getKey(),
-                            candidateMember == null ? "존재하지 않는 사용자" : "이미 매칭 요청 있음");
+                        log.info("후보 제외: memberId={}, reason={}",
+                                candidateId,
+                                !existingMemberIds.contains(candidateId) ? "존재하지 않는 사용자" : "이미 매칭 요청 있음");
                     }
-                    
+
                     return isValid;
                 })
                 .limit(RECOMMENDATIONS_MAX_COUNT)
                 .collect(Collectors.toList());
-                
-        log.info("필터링 후 추천 점수: {}", filteredScores);
+
         return filteredScores;
     }
 
@@ -258,16 +284,53 @@ public class RecommendationService {
         // 나를 제외한 전체 사용자의 라이프 스타일 조회
         List<Lifestyle> allUsersLifestyles = lifestyleRepository.findAllExcludingMember(loginMember);
 
+        // 1. 모든 후보 Member 객체 수집
+        List<Member> candidateMembers = allUsersLifestyles.stream()
+                .map(Lifestyle::getMember)
+                .collect(Collectors.toList());
+
+        //2. 모든 후보의 PreferenceOrder를 한 번에 조회
+        List<PreferenceOrder> allPreferences = preferenceOrderRepository.findAllByMemberIn(candidateMembers);
+
+        // 3. Map으로 변환
+        Map<Long, PreferenceOrder> preferenceMap = allPreferences.stream()
+                .collect(Collectors.toMap(
+                        p -> p.getMember().getId(),
+                        p -> p
+                ));
+
+        // 4. 해당 멤버가 포함된 모든 매칭 요청 이력 조회
+        List<MatchingRequest> existingRequests = matchingRequestRepository
+                .findAllByMemberAndCandidates(loginMember, candidateMembers);
+
+        // 5. 매칭 요청이 있는 멤버 ID들을 Set으로 변환
+        Set<Long> requestedMemberIds = existingRequests.stream()
+                .map(request -> {
+                    return request.getSender().getId().equals(loginMember.getId())
+                            ? request.getReceiver().getId()
+                            : request.getSender().getId();
+                })
+                .collect(Collectors.toSet());
+
+        // 6. Stream으로 점수 계산
         return allUsersLifestyles.stream()
-                .filter(userLifestyle -> !matchingRequestService.isMatchingRequestAlreadyExits(myPreference.getMember(), userLifestyle.getMember()))
+                .filter(userLifestyle -> {
+                    // 이미 매칭 요청한 사용자는 제외
+                    return !requestedMemberIds.contains(userLifestyle.getMember().getId());
+                })
                 .map(userLifestyle -> {
+                    // 내가 상대방을 보는 점수
                     double scoreFromMyView = ScoreCalculator.calculateScoreForUser(myPreference, userLifestyle);
-                    double scoreFromTheirView = preferenceOrderRepository.findByMember(userLifestyle.getMember())
+
+                    // 상대방이 나를 보는 점수
+                    double scoreFromTheirView = Optional.ofNullable(
+                            // map에서 상대방의 선호도 가져오기
+                                    preferenceMap.get(userLifestyle.getMember().getId())
+                            )
                             .map(userPreference -> ScoreCalculator.calculateScoreForUser(userPreference, myLifestyle))
                             .orElse(ZERO);
 
                     double totalScore = scoreFromMyView + scoreFromTheirView;
-
                     return new AbstractMap.SimpleEntry<>(userLifestyle.getMember().getId(), totalScore);
                 })
                 .sorted(Entry.comparingByValue(Comparator.reverseOrder()))

@@ -198,7 +198,7 @@ public class ChatService {
         List<SearchChatResponseDto> searchChatDtos = chatMessages.stream()
                 .map(chat -> {
                     Member chatMember = determineChatMember(chat, loginMember);
-                    ChatRoom chatRoom = findChatRoomByChat(chat);
+                    ChatRoom chatRoom = chat.getChatRoom();
                     return SearchChatResponseDto.fromEntity(chat, chatMember, chatRoom);
                 })
                 .collect(Collectors.toList());
@@ -209,11 +209,5 @@ public class ChatService {
     private Member determineChatMember(Chat chat, Member loginMember) {
         return Objects.equals(chat.getChatRoom().getInitiator().getId(), loginMember.getId()) ?
                 chat.getChatRoom().getParticipant() : chat.getChatRoom().getInitiator();
-
-    }
-
-    private ChatRoom findChatRoomByChat(Chat chat) {
-        return chatRoomRepository.findById(chat.getChatRoom().getId())
-                .orElseThrow(ChatRoomNotExistsException::new);
     }
 }

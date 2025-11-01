@@ -2,6 +2,7 @@ package dormitoryfamily.doomz.domain.member.follow.repository;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.follow.entity.Follow;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -27,4 +28,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("SELECT f FROM Follow f WHERE f.following = :following AND LOWER(f.follower.nickname) " +
             "LIKE LOWER(concat('%', :keyword, '%')) ORDER BY f.createdAt DESC")
     Slice<Follow> findByFollowingAndFollowerNicknameContaining(Member following, String keyword, Pageable pageable);
+
+    @Query("SELECT f FROM Follow f WHERE f.follower = :follower AND f.following IN :followings")
+    List<Follow> findAllByFollowerAndFollowingIn(Member follower, List<Member> followings);
 }
