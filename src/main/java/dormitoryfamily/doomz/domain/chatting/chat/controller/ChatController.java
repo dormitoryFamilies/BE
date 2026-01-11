@@ -36,9 +36,6 @@ public class ChatController {
 
         String streamKey = chatRoomService.getStreamKey(chatMessage.getRoomUUID());
 
-        // 채팅방 구독
-        chatRoomService.joinChatRoom(streamKey);
-
         // 채팅 메시지 발행
         redisPublisher.publish(streamKey, chatMessage);
 

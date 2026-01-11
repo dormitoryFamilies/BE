@@ -26,4 +26,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long>, ChatRepositor
 
     @Query("SELECT c FROM Chat c WHERE c.chatRoom.roomUUID = :roomUUID AND c.createdAt >= :enteredAt ORDER BY c.createdAt ASC")
     Slice<Chat> findByChatRoomRoomUUIDAndCreatedAtAfter(String roomUUID, LocalDateTime enteredAt, Pageable pageable);
+
+    List<Chat> findAllByChatRoomRoomUUID(String roomUUID);
 }

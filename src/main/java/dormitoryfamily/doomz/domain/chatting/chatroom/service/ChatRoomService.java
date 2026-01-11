@@ -15,30 +15,21 @@ import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsExcep
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.notification.service.NotificationService;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
-import dormitoryfamily.doomz.global.chat.RedisSubscriber;
+import dormitoryfamily.doomz.global.chat.ChatProperties;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.redis.connection.stream.Consumer;
-import org.springframework.data.redis.connection.stream.MapRecord;
-import org.springframework.data.redis.connection.stream.ReadOffset;
-import org.springframework.data.redis.connection.stream.StreamOffset;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.CHAT;
-import static dormitoryfamily.doomz.global.chat.ChatProperties.STREAM_KEY_PREFIX;
 
 @Slf4j
 @Service
@@ -51,20 +42,7 @@ public class ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatService chatService;
     private final NotificationService notificationService;
-
-    private final StreamMessageListenerContainer<String, ?> streamMessageListenerContainer;
-    private final RedisSubscriber redisSubscriber;
     private final RedisTemplate<String, Object> redisTemplate;
-
-    private static final String CONSUMER_GROUP = "chat-consumer-group";
-    private static final String CONSUMER_NAME = "chat-consumer";
-
-    private Map<String, Boolean> subscribedStreams;
-
-    @PostConstruct
-    private void init() {
-        subscribedStreams = new ConcurrentHashMap<>();
-    }
 
     public ChatRoomEntryResponseDto createChatRoom(Long memberId, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
@@ -146,48 +124,11 @@ public class ChatRoomService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void joinChatRoom(String streamKey) {
-        if (subscribedStreams.putIfAbsent(streamKey, true) != null) {
-            return; // 이미 다른 스레드가 구독 중
-        }
-
-        try {
-            // Consumer Group 생성
-            createConsumerGroupIfNotExists(streamKey);
-
-            // Stream 리스너 등록
-            ((StreamMessageListenerContainer<String, MapRecord<String, String, String>>) streamMessageListenerContainer)
-                    .receive(
-                            Consumer.from(CONSUMER_GROUP, CONSUMER_NAME),
-                            StreamOffset.create(streamKey, ReadOffset.lastConsumed()),
-                            redisSubscriber
-                    );
-        } catch (Exception e) {
-            subscribedStreams.remove(streamKey);
-            log.error("[ChatRoomService] Failed to join chat room stream: {}", streamKey, e);
-        }
-    }
-
-    private void createConsumerGroupIfNotExists(String streamKey) {
-        try {
-            // MKSTREAM 옵션으로 Stream + Consumer Group 동시 생성
-            redisTemplate.execute((RedisCallback<Object>) connection -> {
-                connection.streamCommands().xGroupCreate(
-                        streamKey.getBytes(),
-                        CONSUMER_GROUP,
-                        ReadOffset.latest(),
-                        true  // MKSTREAM: Stream이 없으면 자동 생성
-                );
-                return null;
-            });
-        } catch (Exception e) {
-            log.debug("[ChatRoomService] Consumer group already exists for stream: {}", streamKey);
-        }
-    }
-
+    /**
+     * 채팅방 UUID를 해시하여 스트림 풀 중 하나의 스트림 키를 반환
+     */
     public String getStreamKey(String roomUUID) {
-        return STREAM_KEY_PREFIX + roomUUID;
+        return ChatProperties.getStreamKey(roomUUID);
     }
 
     public void updateUnreadCount(ChatMessage chatMessage) {
@@ -259,9 +200,9 @@ public class ChatRoomService {
 
     private void deleteOrChangeChatRoomStatus(ChatRoom chatRoom, boolean isInitiator, boolean isInitiatorDeleted, boolean isParticipantDeleted) {
         if (isInitiatorDeleted || isParticipantDeleted) {
-            // 양쪽 다 나갔으면 채팅방 + Redis Stream 삭제
+            // 양쪽 다 나갔으면 채팅방 + Redis 캐시 삭제
             chatRoomRepository.delete(chatRoom);
-            deleteStream(chatRoom.getRoomUUID());
+            deleteChatCache(chatRoom.getRoomUUID());
         } else {
             if (isInitiator) {
                 chatRoom.deleteInitiator();
@@ -272,14 +213,10 @@ public class ChatRoomService {
         }
     }
 
-    private void deleteStream(String roomUUID) {
-        try {
-            String streamKey = getStreamKey(roomUUID);
-            redisTemplate.delete(streamKey);
-            subscribedStreams.remove(streamKey);
-        } catch (Exception e) {
-            log.error("[ChatRoomService] Failed to delete stream for room: {}", roomUUID, e);
-        }
+    private void deleteChatCache(String roomUUID) {
+        String cacheKey = ChatProperties.getCacheKey(roomUUID);
+        redisTemplate.delete(cacheKey);
+        log.debug("[ChatRoomService] Deleted chat cache for room: {}", roomUUID);
     }
 
     public void deleteEmptyChatRoom(Long roomId) {
@@ -368,7 +305,4 @@ public class ChatRoomService {
         return ChatRoomEntryResponseDto.fromEntity(chatRoom);
     }
 
-    public Map<String, Boolean> getSubscribedStreams() {
-        return subscribedStreams;
-    }
 }
