@@ -8,27 +8,25 @@ import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
 import dormitoryfamily.doomz.domain.notification.entity.type.NotificationType;
 import dormitoryfamily.doomz.domain.roommate.matching.dto.response.MatchingRequestCountResponseDto;
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.RequestStatus;
 import dormitoryfamily.doomz.domain.roommate.matching.event.request.MatchingRequestEvent;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.*;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
-import dormitoryfamily.doomz.domain.roommate.matching.util.OptimisticLockRetryHelper;
 import dormitoryfamily.doomz.domain.roommate.matching.util.StatusType;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
-import jakarta.persistence.OptimisticLockException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MATCHING_REJECT;
-import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.MATCHING_REQUEST;
+import static dormitoryfamily.doomz.domain.notification.entity.type.NotificationType.*;
+import static dormitoryfamily.doomz.domain.roommate.matching.entity.RequestStatus.*;
 
 @Service
 @Transactional
@@ -40,30 +38,20 @@ public class MatchingRequestService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void saveMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        OptimisticLockRetryHelper.executeWithRetry(() -> {
-            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-            Member loginMember = members.getFirst();
-            Member targetMember = members.getSecond();
+        Member loginMember = principalDetails.getMember();
+        Member targetMember = getMemberById(memberId);
 
-            validateMatchingRequestCapability(loginMember, targetMember);
+        validateMatchingRequestCapability(loginMember, targetMember);
 
-            MatchingRequest matchingRequest = MatchingRequest.createMatchingRequest(loginMember, targetMember);
-            matchingRequestRepository.save(matchingRequest);
-            //알림 전송
-            notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
-        });
+        MatchingRequest matchingRequest = MatchingRequest.createMatchingRequest(loginMember, targetMember);
+        matchingRequestRepository.save(matchingRequest);
+
+        notifyMatchingRequestInfo(matchingRequest, MATCHING_REQUEST);
     }
 
-    public Pair<Member, Member> getOrderedMembersWithLock(Long memberId, PrincipalDetails principalDetails) {
-        Long loginMemberId = principalDetails.getMember().getId();
-
-        Member loginMember = memberRepository.findByIdWithOptimisticLock(loginMemberId)
+    private Member getMemberById (Long memberId) {
+        return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotExistsException::new);
-
-        Member targetMember = memberRepository.findByIdWithOptimisticLock(memberId)
-                .orElseThrow(MemberNotExistsException::new);
-
-        return Pair.of(loginMember, targetMember);
     }
 
     private void notifyMatchingRequestInfo(MatchingRequest matchingRequest, NotificationType notificationType) {
@@ -102,31 +90,16 @@ public class MatchingRequestService {
     }
 
     public void deleteMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
-        OptimisticLockRetryHelper.executeWithRetry(() -> {
-            Pair<Member, Member> members = getOrderedMembersWithLock(memberId, principalDetails);
-            Member loginMember = members.getFirst();
-            Member targetMember = members.getSecond();
+            Member loginMember = principalDetails.getMember();
+            Member targetMember = getMemberById(memberId);
 
-            MatchingRequest matchingRequest = getMatchingRequestByMembers(loginMember, targetMember);
-            matchingRequestRepository.delete(matchingRequest);
-            //알림 전송
-            notifyMatchingRequestInfo(matchingRequest, MATCHING_REJECT);
-        });
-    }
+            // PENDING 상태인 요청만 삭제
+            int deleted = matchingRequestRepository.deleteByMembersAndStatus(loginMember, targetMember, PENDING);
 
-    public MatchingRequest getMatchingRequestByMembers(Member loginMember, Member targetMember) {
-        return matchingRequestRepository.findByMembers(loginMember, targetMember)
-                .orElseThrow(MatchingRequestNotExistException::new);
-    }
+            if (deleted == 0) {
+                throw new MatchingRequestNotExistException();
+            }
 
-    public void deleteMatchingRequestWhenMatched(Member loginMember, Member targetMember) {
-        MatchingRequest matchingRequest = getMatchingSenderAndReceiver(loginMember, targetMember);
-        matchingRequestRepository.delete(matchingRequest);
-    }
-
-    public MatchingRequest getMatchingSenderAndReceiver(Member loginMember, Member targetMember) {
-        return matchingRequestRepository.findBySenderAndReceiver(targetMember, loginMember)
-                .orElseThrow(MatchingRequestNotExistException::new);
     }
 
     public MemberProfilePagingListResponseDto findMyMatchingRequest(PrincipalDetails principalDetails, String status, Pageable pageable) {
@@ -166,5 +139,64 @@ public class MatchingRequestService {
         long count = matchingRequestRepository.countMatchingRequestsByReceiver(loginMember);
         return MatchingRequestCountResponseDto.from(loginMember, count);
     }
-}
 
+    public void acceptMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
+        Long loginMemberId = principalDetails.getMember().getId();
+
+        Member loginMember = getMemberById(loginMemberId);
+        Member targetMember = getMemberById(memberId);
+
+        MatchingRequest matchingRequest = matchingRequestRepository
+                .findBySenderAndReceiverAndStatus(targetMember, loginMember, PENDING)
+                .orElseThrow(MatchingRequestNotExistException::new);
+
+        // Member 매칭 상태 업데이트
+        updateMemberMatchingStatus(loginMember, targetMember);
+
+        // 매칭 요청 상태 업데이트 (PENDING -> ACCEPTED)
+        int updated = matchingRequestRepository.updateStatus(
+                matchingRequest.getId(),
+                PENDING,
+                ACCEPTED
+        );
+
+        if (updated == 0) {
+            throw new MatchingConflictException();
+        }
+
+        notifyMatchingAcceptInfo(matchingRequest);
+    }
+
+    // 매칭 취소 (ACCEPTED -> 삭제)
+    public void cancelMatchingRequest(PrincipalDetails principalDetails, Long memberId) {
+        Long loginMemberId = principalDetails.getMember().getId();
+
+        Member loginMember = getMemberById(loginMemberId);
+        Member targetMember = getMemberById(memberId);
+
+        // ACCEPTED 상태인 요청만 삭제 (CAS)
+        int deleted = matchingRequestRepository.deleteByMembersAndStatus(loginMember, targetMember, ACCEPTED);
+
+        if (deleted == 0) {
+            throw new MatchingRequestNotExistException();
+        }
+
+        // Member 매칭 상태 해제
+        memberRepository.markUnmatched(loginMember.getId());
+        memberRepository.markUnmatched(targetMember.getId());
+    }
+
+    private void updateMemberMatchingStatus(Member loginMember, Member targetMember) {
+        int updatedLogin = memberRepository.markMatched(loginMember.getId(), loginMember.getDormitoryType());
+        int updatedTarget = memberRepository.markMatched(targetMember.getId(), loginMember.getDormitoryType());
+
+        if (updatedLogin == 0 || updatedTarget == 0) {
+            // 둘 중 하나라도 이미 매칭된 상태 (CAS 실패)
+            throw new AlreadyMatchedMemberException();
+        }
+    }
+
+    private void notifyMatchingAcceptInfo(MatchingRequest matchingRequest) {
+        eventPublisher.publishEvent(new MatchingRequestEvent(matchingRequest, MATCHING_ACCEPT));
+    }
+}

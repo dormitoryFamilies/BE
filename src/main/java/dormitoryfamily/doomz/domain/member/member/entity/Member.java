@@ -21,9 +21,6 @@ public class Member extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Version
-    private Long version;
-
     private String name;
     private String nickname;
     private String studentNumber;

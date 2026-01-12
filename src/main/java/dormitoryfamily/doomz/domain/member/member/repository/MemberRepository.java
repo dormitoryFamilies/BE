@@ -1,12 +1,11 @@
 package dormitoryfamily.doomz.domain.member.member.repository;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
+import dormitoryfamily.doomz.domain.member.member.entity.type.MemberDormitoryType;
 import dormitoryfamily.doomz.domain.member.member.entity.type.RoleType;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,14 +34,22 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "ORDER BY m.createdAt ASC")
     Page<Member> findNonVerifiedMember(Pageable pageable);
 
-    /**
-     * 개발용 임시. 삭제 예정
-     */
     @Query("UPDATE Member m SET m.authority = :authority WHERE m.id = :memberId")
     @Modifying
     void changeMyAuthority(@Param("authority") RoleType authority, @Param("memberId") Long memberId);
 
-    @Lock(LockModeType.OPTIMISTIC)
-    @Query("SELECT m FROM Member m WHERE m.id = :id")
-    Optional<Member> findByIdWithOptimisticLock(@Param("id") Long id);
+    @Modifying
+    @Query("""
+    UPDATE Member m
+       SET m.isRoommateMatched = true
+     WHERE m.id = :id
+       AND m.isRoommateMatched = false
+       AND m.dormitoryType = :dormitoryType
+""")
+    int markMatched(@Param("id") Long id,
+            @Param("dormitoryType") MemberDormitoryType dormitoryType);
+
+    @Modifying
+    @Query("UPDATE Member m SET m.isRoommateMatched = false WHERE m.id = :id")
+    void markUnmatched(Long id);
 }

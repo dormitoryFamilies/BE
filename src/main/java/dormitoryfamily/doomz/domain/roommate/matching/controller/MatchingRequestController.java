@@ -29,11 +29,29 @@ public class MatchingRequestController {
 
 
     @DeleteMapping("/members/{memberId}/matching-requests")
-    public ResponseEntity<ResponseDto<Void>> cancelMatchingRequest(
+    public ResponseEntity<ResponseDto<Void>> deleteMatchingRequest(
             @PathVariable Long memberId,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         matchingRequestService.deleteMatchingRequest(principalDetails, memberId);
+        return ResponseEntity.ok(ResponseDto.ok());
+    }
+
+    @PostMapping("/members/{memberId}/matching-requests/accept")
+    public ResponseEntity<ResponseDto<Void>> acceptMatchingRequest(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        matchingRequestService.acceptMatchingRequest(principalDetails, memberId);
+        return ResponseEntity.ok(ResponseDto.created());
+    }
+
+    @DeleteMapping("/members/{memberId}/matching-requests/cancel")
+    public ResponseEntity<ResponseDto<Void>> cancelMatchingRequest(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        matchingRequestService.cancelMatchingRequest(principalDetails, memberId);
         return ResponseEntity.ok(ResponseDto.ok());
     }
 
@@ -55,4 +73,3 @@ public class MatchingRequestController {
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }
-

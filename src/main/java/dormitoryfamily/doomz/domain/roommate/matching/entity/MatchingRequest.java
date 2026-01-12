@@ -25,16 +25,23 @@ public class MatchingRequest extends BaseTimeEntity {
     @JoinColumn(name = "receiver_id")
     private Member receiver;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RequestStatus status;
+
     @Builder
-    public MatchingRequest(Member sender, Member receiver) {
+    public MatchingRequest(Member sender, Member receiver, RequestStatus status) {
         this.sender = sender;
         this.receiver = receiver;
+        this.status = status != null ? status : RequestStatus.PENDING;
     }
 
     public static MatchingRequest createMatchingRequest(Member sender, Member receiver) {
         return MatchingRequest.builder()
                 .sender(sender)
                 .receiver(receiver)
+                .status(RequestStatus.PENDING)
                 .build();
     }
+
 }
