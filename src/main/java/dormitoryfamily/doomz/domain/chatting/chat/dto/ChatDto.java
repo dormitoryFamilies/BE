@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ChatDto(
         Long chatId,
+        String messageId,
         Long senderId,
         String message,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -25,6 +26,7 @@ public record ChatDto(
     public static ChatDto fromEntity(Chat chat) {
         return new ChatDto(
                 chat.getId(),
+                chat.getMessageId(),
                 chat.getSenderId(),
                 chat.getMessage(),
                 chat.getCreatedAt()

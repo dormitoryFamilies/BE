@@ -36,8 +36,9 @@ public class ChatController {
 
         String streamKey = chatRoomService.getStreamKey(chatMessage.getRoomUUID());
 
-        // 채팅 메시지 발행
-        redisPublisher.publish(streamKey, chatMessage);
+        // 채팅 메시지 발행 및 messageId 설정
+        String messageId = redisPublisher.publish(streamKey, chatMessage);
+        chatMessage.setMessageId(messageId);
 
         // 채팅 메시지 저장
         chatService.saveChat(chatMessage);

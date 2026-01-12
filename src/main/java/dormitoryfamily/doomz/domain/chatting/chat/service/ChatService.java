@@ -50,14 +50,18 @@ public class ChatService {
     private final ApplicationEventPublisher eventPublisher;
 
     public void saveChat(ChatMessage chatMessage) {
-        ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
+        try {
+            ChatRoom chatRoom = getChatRoomByRoomUUID(chatMessage.getRoomUUID());
 
-        Chat chat = ChatMessage.toEntity(chatMessage, chatRoom);
+            Chat chat = ChatMessage.toEntity(chatMessage, chatRoom);
 
-        chatRepository.save(chat);
-        saveChatInRedis(chatMessage.getRoomUUID(), chat);
-        //알림 전송
-        notifySavingChatInfo(chat);
+            chatRepository.save(chat);
+            saveChatInRedis(chatMessage.getRoomUUID(), chat);
+            //알림 전송
+            notifySavingChatInfo(chat);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            log.warn("[ChatService] Duplicate message detected and ignored: messageId={}", chatMessage.getMessageId());
+        }
     }
 
     private void notifySavingChatInfo(Chat chat) {

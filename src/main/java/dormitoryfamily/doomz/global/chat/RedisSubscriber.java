@@ -31,6 +31,7 @@ public class RedisSubscriber implements StreamListener<String, MapRecord<String,
 
             // ChatMessage 생성
             ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setMessageId(messageId);
             chatMessage.setRoomUUID(messageMap.get("roomUUID"));
             chatMessage.setSenderId(Long.parseLong(messageMap.get("senderId")));
             chatMessage.setMessage(messageMap.get("message"));

@@ -16,12 +16,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ChatMessage implements Serializable {
 
+    private String messageId;
     private String roomUUID;
     private Long senderId;
     private String message;
 
     public static Chat toEntity(ChatMessage chatMessage, ChatRoom chatRoom){
         return Chat.builder()
+                .messageId(chatMessage.getMessageId())
                 .senderId(chatMessage.getSenderId())
                 .message(chatMessage.getMessage())
                 .chatRoom(chatRoom)
