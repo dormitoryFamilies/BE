@@ -25,7 +25,7 @@ public class PendingRetryScheduler {
     private static final int MAX_RETRY_COUNT = 1;
     private static final long PENDING_THRESHOLD_MILLIS = 10000;
 
-    @Scheduled(initialDelay = 0, fixedDelay = 30000)
+    @Scheduled(initialDelay = 0, fixedDelay = 10000)
     public void retryPendingMessages() {
         // 모든 채팅 스트림 키 조회
         Set<String> streamKeys = findAllChatStreams();
