@@ -187,6 +187,7 @@ public class ElasticScriptQueryExecutor {
                                     )
                             )
                     )
+                    .size(k)
             );
 
             SearchResponse<Map<String, Object>> response =
