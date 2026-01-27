@@ -12,8 +12,8 @@ import dormitoryfamily.doomz.domain.member.member.exception.NicknameDuplicatedEx
 import dormitoryfamily.doomz.domain.member.member.exception.NotRoleMemberException;
 import dormitoryfamily.doomz.domain.member.member.exception.NotVisitorOrRejectedMemberRoleException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
-import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingResult;
-import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingResultRepository;
+import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
+import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
 import dormitoryfamily.doomz.domain.roommate.wish.entity.RoommateWish;
 import dormitoryfamily.doomz.domain.roommate.wish.repository.RoommateWishRepository;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -37,7 +37,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final RoommateWishRepository roommateWishRepository;
-    private final MatchingResultRepository matchingResultRepository;
+    private final MatchingRequestRepository matchingRequestRepository;
 
     public NicknameCheckResponseDto checkNickname(String nickname) {
         boolean isDuplicated = memberRepository.existsByNickname(nickname);
@@ -157,9 +157,9 @@ public class MemberService {
 
     public MatchingStatusResponseDto getMyMatchedId(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
-        Optional<MatchingResult> matchingResult = matchingResultRepository.findBySenderOrReceiver(loginMember);
+        Optional<MatchingRequest> matchingRequest = matchingRequestRepository.findBySenderOrReceiverAndStatus(loginMember);
 
-        Long matchedId = matchingResult.map(result -> {
+        Long matchedId = matchingRequest.map(result -> {
             if (result.getSender().getId().equals(loginMember.getId())) {
                 return result.getReceiver().getId();
             } else {
