@@ -47,3 +47,7 @@ opensearch:
   endpoint: ${OPEN_SEARCH_ENDPOINT}
   username: ${OPEN_SEARCH_USERNAME}
   password: ${OPEN_SEARCH_PASSWORD}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

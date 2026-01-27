@@ -17,6 +17,8 @@ import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.global.chat.ChatMessage;
 import dormitoryfamily.doomz.global.chat.ChatProperties;
 import dormitoryfamily.doomz.global.chat.exception.InvalidChatMessageException;
+import dormitoryfamily.doomz.global.chat.moderation.ModerationResult;
+import dormitoryfamily.doomz.global.chat.moderation.ModerationService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.SearchRequestDto;
 import jakarta.transaction.Transactional;
@@ -48,6 +50,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final ModerationService moderationService;
 
     public void saveChat(ChatMessage chatMessage) {
         try {
@@ -196,6 +199,16 @@ public class ChatService {
 
         validateMemberInChatRoom(chatRoom, senderId);
         validateChatMessageContent(chatMessage.getMessage());
+        validateMessageModeration(chatMessage.getMessage());
+    }
+
+    private void validateMessageModeration(String message) {
+        ModerationResult result = moderationService.moderateMessage(message);
+
+        if (result.isFlagged()) {
+            String categories = String.join(", ", result.getCategories());
+            throw new InvalidChatMessageException("부적절한 내용이 포함된 메시지입니다: " + categories);
+        }
     }
 
     //웹 소켓 요청에 대한 예외
