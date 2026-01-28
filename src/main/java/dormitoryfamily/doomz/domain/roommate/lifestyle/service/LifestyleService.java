@@ -1,12 +1,5 @@
 package dormitoryfamily.doomz.domain.roommate.lifestyle.service;
 
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.FIELD_LIFESTYLE_VECTOR;
-import static dormitoryfamily.doomz.domain.roommate.util.RoommateProperties.LIFESTYLE_INDEX;
-
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
-import co.elastic.clients.elasticsearch._types.Result;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
@@ -17,16 +10,12 @@ import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.AlreadyRegisterMyLifestyleException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.LifestyleNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.repository.LifestyleRepository;
-import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
+import dormitoryfamily.doomz.domain.roommate.event.LifestyleIndexEvent;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -35,21 +24,21 @@ public class LifestyleService {
 
     private final LifestyleRepository lifestyleRepository;
     private final MemberRepository memberRepository;
-    private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySetLifestyle(loginMember);
         Lifestyle lifestyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
         lifestyleRepository.save(lifestyle);
-        elasticScriptQueryExecutor.indexLifestyleVector(loginMember, lifestyle);
+        eventPublisher.publishEvent(LifestyleIndexEvent.of(loginMember, lifestyle));
     }
 
     public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Lifestyle lifestyle = getLifestyleByMember(loginMember);
         lifestyle.updateMyLifestyle(requestDto);
-        elasticScriptQueryExecutor.indexLifestyleVector(loginMember, lifestyle);
+        eventPublisher.publishEvent(LifestyleIndexEvent.of(loginMember, lifestyle));
     }
 
     private void checkAlreadySetLifestyle(Member loginMember) {
