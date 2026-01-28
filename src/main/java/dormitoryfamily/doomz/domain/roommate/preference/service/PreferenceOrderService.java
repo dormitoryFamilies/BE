@@ -1,9 +1,5 @@
 package dormitoryfamily.doomz.domain.roommate.preference.service;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.Result;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
@@ -16,9 +12,10 @@ import dormitoryfamily.doomz.domain.roommate.preference.exception.AlreadyRegiste
 import dormitoryfamily.doomz.domain.roommate.preference.exception.DuplicatePreferenceOrderException;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.preference.repository.PreferenceOrderRepository;
-import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
+import dormitoryfamily.doomz.domain.roommate.event.PreferenceIndexEvent;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +30,7 @@ public class PreferenceOrderService {
 
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final MemberRepository memberRepository;
-    private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void setPreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
@@ -49,7 +46,7 @@ public class PreferenceOrderService {
                 .build();
 
         preferenceOrderRepository.save(order);
-        elasticScriptQueryExecutor.indexPreferenceVector(loginMember.getId(), order, loginMember);
+        eventPublisher.publishEvent(PreferenceIndexEvent.of(loginMember.getId(), order, loginMember));
     }
 
     public void updatePreferenceOrders(PreferenceOrderRequestDto requestDto, PrincipalDetails principalDetails) {
@@ -65,7 +62,7 @@ public class PreferenceOrderService {
                 getPreference(requestDto.fourthPreference())
         );
 
-        elasticScriptQueryExecutor.indexPreferenceVector(loginMember.getId(), preferenceOrder, loginMember);
+        eventPublisher.publishEvent(PreferenceIndexEvent.of(loginMember.getId(), preferenceOrder, loginMember));
     }
 
     private Enum<?> getPreference(String preferenceTypeInput) {

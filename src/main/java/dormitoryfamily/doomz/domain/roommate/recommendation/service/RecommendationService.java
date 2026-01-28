@@ -8,11 +8,11 @@ import dormitoryfamily.doomz.domain.roommate.lifestyle.repository.LifestyleRepos
 import dormitoryfamily.doomz.domain.roommate.matching.entity.MatchingRequest;
 import dormitoryfamily.doomz.domain.roommate.matching.exception.AlreadyMatchedMemberException;
 import dormitoryfamily.doomz.domain.roommate.matching.repository.MatchingRequestRepository;
-import dormitoryfamily.doomz.domain.roommate.matching.service.MatchingRequestService;
 import dormitoryfamily.doomz.domain.roommate.preference.entity.PreferenceOrder;
 import dormitoryfamily.doomz.domain.roommate.preference.exception.PreferenceOrderNotExistsException;
 import dormitoryfamily.doomz.domain.roommate.preference.repository.PreferenceOrderRepository;
-import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationResponseDto;
+import dormitoryfamily.doomz.domain.roommate.recommendation.dto.CandidateWithExplanationDto;
+import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationWithExplanationResponseDto;
 import dormitoryfamily.doomz.domain.roommate.util.ScoreCalculator;
 import dormitoryfamily.doomz.global.elasticsearch.ElasticScriptQueryExecutor;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
@@ -20,7 +20,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.TimeoutException;
@@ -39,16 +38,13 @@ public class RecommendationService {
     private final MemberRepository memberRepository;
     private final PreferenceOrderRepository preferenceOrderRepository;
     private final LifestyleRepository lifestyleRepository;
-    private final MatchingRequestService matchingRequestService;
     private final ElasticScriptQueryExecutor elasticScriptQueryExecutor;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final MatchingRequestRepository matchingRequestRepository;
+    private final RecommendationExplanationService recommendationExplanationService;
 
-    public RecommendationResponseDto findTopCandidates(PrincipalDetails principalDetails) {
+    public RecommendationWithExplanationResponseDto findTopCandidatesWithExplanations(PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadyMatched(loginMember);
-
-        Long memberId = loginMember.getId();
 
         // 엘라스틱서치 벡터 쿼리 기반으로 추천 점수 계산
         List<Entry<Long, Double>> scores = findTopMatchingCandidatesWithVectorQuery(loginMember);
@@ -61,22 +57,21 @@ public class RecommendationService {
 
         // 매칭 요청 이력 필터링
         scores = filterMatchingRequests(loginMember, scores);
-        
-        // 추천 정보를 Redis에 저장
-        String candidatesKey = REDIS_CANDIDATES_KEY_PREFIX + memberId;
-        
+
         // 후보 ID 리스트를 생성
         List<Long> candidateIds = scores.stream()
                 .map(Entry::getKey)
                 .collect(Collectors.toList());
-        
-        // Redis에 저장 - 후보 ID 리스트 저장
-        redisTemplate.opsForValue().set(candidatesKey, candidateIds);
-        
-        // 만료 시간 설정
-        redisTemplate.expire(candidatesKey, REDIS_CACHE_DURATION);
 
-        return RecommendationResponseDto.of(candidateIds);
+        if (candidateIds.isEmpty()) {
+            return RecommendationWithExplanationResponseDto.of(List.of());
+        }
+
+        // 설명 생성
+        List<CandidateWithExplanationDto> candidatesWithExplanations =
+                recommendationExplanationService.getExplanationsForCandidates(loginMember, candidateIds);
+
+        return RecommendationWithExplanationResponseDto.of(candidatesWithExplanations);
     }
 
     /**
@@ -354,39 +349,4 @@ public class RecommendationService {
                 .orElseThrow(LifestyleNotExistsException::new);
     }
 
-    @Transactional(readOnly = true)
-    public RecommendationResponseDto findRecommendedCandidates(PrincipalDetails principalDetails) {
-        Member loginMember = principalDetails.getMember();
-        Long memberId = loginMember.getId();
-
-        // Redis에서 추천 정보 조회
-        String candidatesKey = REDIS_CANDIDATES_KEY_PREFIX + memberId;
-
-        // 후보 ID 리스트 조회
-        Object candidatesObj = redisTemplate.opsForValue().get(candidatesKey);
-
-        List<Long> candidateIds;
-        if (candidatesObj == null) {
-            candidateIds = List.of();
-        } else if (candidatesObj instanceof List<?>) {
-            // 타입 변환 처리
-            candidateIds = ((List<?>) candidatesObj).stream()
-                    .map(item -> {
-                        if (item instanceof Integer) {
-                            return ((Integer) item).longValue();
-                        } else if (item instanceof Long) {
-                            return (Long) item;
-                        } else {
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        } else {
-            candidateIds = List.of();
-        }
-
-        // RecommendationResponseDto 생성
-        return RecommendationResponseDto.of(candidateIds);
-    }
 }

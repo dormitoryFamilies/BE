@@ -1,6 +1,6 @@
 package dormitoryfamily.doomz.domain.roommate.recommendation.controller;
 
-import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationResponseDto;
+import dormitoryfamily.doomz.domain.roommate.recommendation.dto.RecommendationWithExplanationResponseDto;
 import dormitoryfamily.doomz.domain.roommate.recommendation.service.RecommendationService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
@@ -19,19 +19,11 @@ public class RecommendationController {
     private final RecommendationService recommendationService;
 
     @GetMapping("/recommendations")
-    public ResponseEntity<ResponseDto<RecommendationResponseDto>> suggestCandidates(
+    public ResponseEntity<ResponseDto<RecommendationWithExplanationResponseDto>> suggestCandidates(
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        RecommendationResponseDto responseDto = recommendationService.findTopCandidates(principalDetails);
-        return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
-    }
-
-    @GetMapping("/recommendations/results")
-    public ResponseEntity<ResponseDto<RecommendationResponseDto>> getRecommendedCandidates(
-            @AuthenticationPrincipal PrincipalDetails principalDetails
-    ) {
-        RecommendationResponseDto responseDto =
-                recommendationService.findRecommendedCandidates(principalDetails);
+        RecommendationWithExplanationResponseDto responseDto =
+                recommendationService.findTopCandidatesWithExplanations(principalDetails);
         return ResponseEntity.ok(ResponseDto.okWithData(responseDto));
     }
 }

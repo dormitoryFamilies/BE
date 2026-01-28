@@ -36,8 +36,14 @@ public class RoommateProperties {
     /** Redis 키 접두사 */
     public static final String REDIS_CANDIDATES_KEY_PREFIX = "recommend:candidates:";
 
+    /** Redis 설명 캐시 키 접두사 */
+    public static final String REDIS_EXPLANATION_KEY_PREFIX = "recommend:explanation:";
+
     /** 추천 캐시 유지 시간 (30분) */
     public static final Duration REDIS_CACHE_DURATION = Duration.ofMinutes(30);
+
+    /** 설명 캐시 유지 시간 (30분) */
+    public static final Duration EXPLANATION_CACHE_DURATION = Duration.ofMinutes(30);
 
     // ==========================
     //  점수 계산 기준
