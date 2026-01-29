@@ -1,7 +1,7 @@
 package dormitoryfamily.doomz.domain.roommate.lifestyle.entity;
 
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
-import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.LifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.*;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -164,7 +164,7 @@ public class Lifestyle {
         this.drunkHabit = drunkHabit;
     }
 
-    public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto) {
+    public void updateMyLifestyle(LifestyleRequestDto requestDto) {
         if (requestDto.drunkHabit() != null) {
             this.drunkHabit = requestDto.drunkHabit();
         }

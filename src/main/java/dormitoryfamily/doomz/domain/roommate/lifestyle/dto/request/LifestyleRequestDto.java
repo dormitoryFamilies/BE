@@ -6,39 +6,39 @@ import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.type.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record CreateMyLifestyleRequestDto(
+public record LifestyleRequestDto(
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String sleepTime,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String wakeUpTime,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String sleepingHabit,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String sleepingSensitivity,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String smoking,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String drinkingFrequency,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String cleaningFrequency,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String heatTolerance,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String coldTolerance,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String perfumeUsage,
 
-        @NotBlank(message = "필수 값 입니다.")
+        @NotBlank(groups = CreateValidation.class, message = "필수 값 입니다.")
         String examPreparation,
 
         @Size(max = 12, message = "최대 글자수는 12자 입니다.")
@@ -56,7 +56,11 @@ public record CreateMyLifestyleRequestDto(
         String insectTolerance
 
 ) {
-    public static Lifestyle toEntity(Member member, CreateMyLifestyleRequestDto requestDto) {
+    public interface CreateValidation {}
+
+    public interface UpdateValidation {}
+
+    public static Lifestyle toEntity(Member member, LifestyleRequestDto requestDto) {
         return Lifestyle.builder()
                 .member(member)
                 .sleepTimeType(SleepTimeType.fromDescription(requestDto.sleepTime()))

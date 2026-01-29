@@ -1,15 +1,16 @@
 package dormitoryfamily.doomz.domain.roommate.lifestyle.controller;
 
-import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.CreateMyLifestyleRequestDto;
-import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.LifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.LifestyleRequestDto.CreateValidation;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.LifestyleRequestDto.UpdateValidation;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.service.LifestyleService;
 import dormitoryfamily.doomz.global.security.dto.PrincipalDetails;
 import dormitoryfamily.doomz.global.util.ResponseDto;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class LifestyleController {
 
     @PostMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> registerMyLifestyle(
-            @RequestBody @Valid CreateMyLifestyleRequestDto requestDto,
+            @RequestBody @Validated(CreateValidation.class) LifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         lifestyleService.saveMyLifestyle(requestDto, principalDetails);
@@ -30,7 +31,7 @@ public class LifestyleController {
 
     @PatchMapping("/my/lifestyles")
     public ResponseEntity<ResponseDto<Void>> editMyLifestyle(
-            @RequestBody @Valid UpdateMyLifestyleRequestDto requestDto,
+            @RequestBody @Validated(UpdateValidation.class) LifestyleRequestDto requestDto,
             @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         lifestyleService.updateMyLifestyle(requestDto, principalDetails);

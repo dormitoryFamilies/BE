@@ -3,8 +3,7 @@ package dormitoryfamily.doomz.domain.roommate.lifestyle.service;
 import dormitoryfamily.doomz.domain.member.member.entity.Member;
 import dormitoryfamily.doomz.domain.member.member.exception.MemberNotExistsException;
 import dormitoryfamily.doomz.domain.member.member.repository.MemberRepository;
-import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.CreateMyLifestyleRequestDto;
-import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.UpdateMyLifestyleRequestDto;
+import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.request.LifestyleRequestDto;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.dto.response.LifestyleResponseDto;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.entity.Lifestyle;
 import dormitoryfamily.doomz.domain.roommate.lifestyle.exception.AlreadyRegisterMyLifestyleException;
@@ -26,15 +25,15 @@ public class LifestyleService {
     private final MemberRepository memberRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void saveMyLifestyle(CreateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void saveMyLifestyle(LifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         checkAlreadySetLifestyle(loginMember);
-        Lifestyle lifestyle = CreateMyLifestyleRequestDto.toEntity(loginMember, requestDto);
+        Lifestyle lifestyle = LifestyleRequestDto.toEntity(loginMember, requestDto);
         lifestyleRepository.save(lifestyle);
         eventPublisher.publishEvent(LifestyleIndexEvent.of(loginMember, lifestyle));
     }
 
-    public void updateMyLifestyle(UpdateMyLifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
+    public void updateMyLifestyle(LifestyleRequestDto requestDto, PrincipalDetails principalDetails) {
         Member loginMember = principalDetails.getMember();
         Lifestyle lifestyle = getLifestyleByMember(loginMember);
         lifestyle.updateMyLifestyle(requestDto);
